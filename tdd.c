@@ -6,5 +6,7 @@
 int main(int argc, const char** argv)
 {
   c_script_init();
+
+  printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
   return 0;
 }

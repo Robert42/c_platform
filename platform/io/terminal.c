@@ -1,6 +1,9 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "terminal.h"
 
+const char* TERM_GREEN_BOLD = "";
+const char* TERM_NORMAL = "";
+
 void platform_io_terminal_init()
 {
 #ifdef __linux__
@@ -9,9 +12,15 @@ void platform_io_terminal_init()
 #error unimplemented
 #endif
   
-
   if(is_terminal)
-    printf("TTY!\n");
-  else
-    printf(":(\n");
+  {
+#define NORMAL "0"
+#define BOLD "1"
+#define GREEN_FG "32"
+    TERM_GREEN_BOLD = "\e[" BOLD ";" GREEN_FG "m";
+    TERM_NORMAL = "\e[" NORMAL "m";
+#undef BOLD
+#undef NORMAL
+#undef GREEN_FG
+  }
 }
