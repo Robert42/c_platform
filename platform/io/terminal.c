@@ -2,11 +2,10 @@
 #include "terminal.h"
 
 const char* TERM_RED = "";
-const char* TERM_GREEN = "";
-const char* TERM_YELLOW = "";
-
 const char* TERM_RED_BOLD = "";
+const char* TERM_GREEN = "";
 const char* TERM_GREEN_BOLD = "";
+const char* TERM_YELLOW = "";
 const char* TERM_YELLOW_BOLD = "";
 
 const char* TERM_NORMAL = "";
