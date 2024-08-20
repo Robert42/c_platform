@@ -35,9 +35,9 @@ void term_init()
 
 void term_demo()
 {
-  printf("%s-- red --\n", TERM_RED);
+  printf("%s-- red normal --\n", TERM_RED);
   printf("%s-- red bold --\n", TERM_RED_BOLD);
-  printf("%s-- green --\n", TERM_GREEN);
+  printf("%s-- green normal --\n", TERM_GREEN);
   printf("%s-- green bold --\n", TERM_GREEN_BOLD);
   printf("%s-- normal --\n", TERM_NORMAL);
 }
