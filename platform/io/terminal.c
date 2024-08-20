@@ -9,6 +9,8 @@ const char* TERM_YELLOW = "";
 const char* TERM_YELLOW_BOLD = "";
 const char* TERM_BLUE = "";
 const char* TERM_BLUE_BOLD = "";
+const char* TERM_MAGENTA = "";
+const char* TERM_MAGENTA_BOLD = "";
 const char* TERM_CYAN = "";
 const char* TERM_CYAN_BOLD = "";
 
@@ -30,6 +32,7 @@ void term_init()
 #define GREEN_FG "32"
 #define YELLOW_FG "33"
 #define BLUE_FG "34"
+#define MAGENTA_FG "35"
 #define CYAN_FG "36"
     TERM_RED = "\e[" NORMAL ";" RED_FG "m";
     TERM_RED_BOLD = "\e[" BOLD ";" RED_FG "m";
@@ -39,6 +42,8 @@ void term_init()
     TERM_YELLOW_BOLD = "\e[" BOLD ";" YELLOW_FG "m";
     TERM_BLUE = "\e[" NORMAL ";" BLUE_FG "m";
     TERM_BLUE_BOLD = "\e[" BOLD ";" BLUE_FG "m";
+    TERM_MAGENTA = "\e[" NORMAL ";" MAGENTA_FG "m";
+    TERM_MAGENTA_BOLD = "\e[" BOLD ";" MAGENTA_FG "m";
     TERM_CYAN = "\e[" NORMAL ";" CYAN_FG "m";
     TERM_CYAN_BOLD = "\e[" BOLD ";" CYAN_FG "m";
     TERM_NORMAL = "\e[" NORMAL "m";
@@ -48,6 +53,7 @@ void term_init()
 #undef GREEN_FG
 #undef YELLOW_FG
 #undef BLUE_FG
+#undef MAGENTA_FG
 #undef CYAN_FG
   }
 }
@@ -62,6 +68,8 @@ void term_demo()
   printf("%s-- yellow bold --\n", TERM_YELLOW_BOLD);
   printf("%s-- blue normal --\n", TERM_BLUE);
   printf("%s-- blue bold --\n", TERM_BLUE_BOLD);
+  printf("%s-- magenta normal --\n", TERM_MAGENTA);
+  printf("%s-- magenta bold --\n", TERM_MAGENTA_BOLD);
   printf("%s-- cyan normal --\n", TERM_CYAN);
   printf("%s-- cyan bold --\n", TERM_CYAN_BOLD);
   printf("%s-- normal --\n", TERM_NORMAL);
