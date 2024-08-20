@@ -4,7 +4,7 @@
 const char* TERM_GREEN_BOLD = "";
 const char* TERM_NORMAL = "";
 
-void platform_io_terminal_init()
+void term_init()
 {
 #ifdef __linux__
   bool is_terminal = isatty(STDOUT_FILENO) == 1;
