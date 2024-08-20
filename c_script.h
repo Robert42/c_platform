@@ -4,7 +4,7 @@
 #include "platform/system_header.h"
 
 #include "platform/platform.c"
-#include "platform/io/terminal/colors.c"
+#include "platform/io/terminal.c"
 
 void c_script_init()
 {

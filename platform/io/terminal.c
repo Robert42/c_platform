@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
-#include "colors.h"
+#include "terminal.h"
 
-void platform_io_terminal_colors_init()
+void platform_io_terminal_init()
 {
 #ifdef __linux__
   bool is_terminal = isatty(STDOUT_FILENO) == 1;
