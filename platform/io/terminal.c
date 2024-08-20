@@ -24,3 +24,9 @@ void term_init()
 #undef GREEN_FG
   }
 }
+
+void term_demo()
+{
+  printf("%s-- green bold --\n", TERM_GREEN_BOLD);
+  printf("%s-- normal --\n", TERM_NORMAL);
+}
