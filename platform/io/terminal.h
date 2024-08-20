@@ -9,6 +9,8 @@ extern const char* TERM_YELLOW;
 extern const char* TERM_YELLOW_BOLD;
 extern const char* TERM_BLUE;
 extern const char* TERM_BLUE_BOLD;
+extern const char* TERM_CYAN;
+extern const char* TERM_CYAN_BOLD;
 
 extern const char* TERM_NORMAL;
 
