@@ -11,6 +11,7 @@ static void __assert_failed__()
     return;
   }
 
+  printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
   abort();
 }
 
