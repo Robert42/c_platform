@@ -18,6 +18,7 @@ static inline const char* dev_env_compiler_name(int compiler_id)
   switch(compiler_id)
   {
   CASE(COMPILER_TCC)
+  CASE(COMPILER_GCC)
   }
   abort();
 #undef CASE
