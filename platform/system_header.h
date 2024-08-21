@@ -5,7 +5,7 @@ typedef _Bool bool;
 #define true ((bool)1);
 #define false ((bool)0);
 
-int abort();
+void abort();
 
 #include <tcclib.h>
 
