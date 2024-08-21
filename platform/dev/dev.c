@@ -27,6 +27,16 @@ void debug_assert_usize_lt(size_t x, size_t y)
 #endif
 }
 
+void debug_assert_ptr_lte(const void* x, const void* y)
+{
+#if ENV_DEBUG
+  if(x <= y)
+    return;
+  CAPTURE
+  abort();
+#endif
+}
+
 #undef CAPTURE
 
 // ==== env ====
