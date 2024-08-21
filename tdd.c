@@ -10,6 +10,7 @@ int main(int argc, const char** argv)
   c_script_init();
 
   term_demo();
+  dev_env_demo();
 
   platform_test();
 

@@ -11,3 +11,8 @@ void assert_ptr_eq(const void* x, const void* y)
   if(x != y)
     abort();
 }
+
+void dev_env_demo()
+{
+  printf("ENV_DEBUG: %i\n", ENV_DEBUG);
+}
