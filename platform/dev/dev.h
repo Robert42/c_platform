@@ -21,10 +21,9 @@ void debug_assert_ptr_lte(const void* x, const void* y);
   assert_usize_lt(__prev__, _assert_captured); \
 }
 
-#define EXPECT_DEBUG_ASSERT(STMTS) { \
-  const size_t __prev__ = _assert_captured; \
-  _assert_capture++; \
-  {STMTS} \
-  _assert_capture--; \
-  debug_assert_usize_lt(__prev__, _assert_captured); \
-}
+#if ENV_DEBUG
+#define EXPECT_DEBUG_ASSERT(STMTS) EXPECT_ASSERT(STMTS)
+#else
+#define EXPECT_DEBUG_ASSERT(STMTS) {STMTS}
+#endif
+
