@@ -6,10 +6,10 @@ void mem_test()
 {
 #define LEN 5
   uint32_t abc[LEN];
-  if(ARRAY_LEN(abc) != LEN) abort();
+  assert_usize_eq(ARRAY_LEN(abc), LEN);
   
   Mem_Region region = MEM_REGION_FROM_ARRAY(abc);
-  if(region.begin != &abc[0]) abort();
-  if(region.end != &abc[LEN]) abort();
+  assert_ptr_eq(region.begin, &abc[0]);
+  assert_ptr_eq(region.end, &abc[LEN]);
 #undef LEN
 }
