@@ -3,18 +3,29 @@
 size_t _assert_capture = 0;
 size_t _assert_captured = 0;
 
-#define CAPTURE if(_assert_capture) {_assert_captured++; return;}
+static void __assert_failed__()
+{
+  if(_assert_capture)
+  {
+    _assert_captured++;
+    return;
+  }
+
+  abort();
+}
 
 void assert_usize_eq(size_t x, size_t y)
 {
-  if(x != y)
-    abort();
+  if(x == y)
+    return;
+  __assert_failed__();
 }
 
 void assert_ptr_eq(const void* x, const void* y)
 {
-  if(x != y)
-    abort();
+  if(x == y)
+    return;
+  __assert_failed__();
 }
 
 void debug_assert_usize_lt(size_t x, size_t y)
@@ -22,8 +33,7 @@ void debug_assert_usize_lt(size_t x, size_t y)
 #if ENV_DEBUG
   if(x < y)
     return;
-  CAPTURE
-  abort();
+  __assert_failed__();
 #endif
 }
 
@@ -32,12 +42,9 @@ void debug_assert_ptr_lte(const void* x, const void* y)
 #if ENV_DEBUG
   if(x <= y)
     return;
-  CAPTURE
-  abort();
+  __assert_failed__();
 #endif
 }
-
-#undef CAPTURE
 
 // ==== env ====
 
