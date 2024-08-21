@@ -1,6 +1,8 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #pragma once
 
+#include "dev/env.h"
+
 typedef _Bool bool;
 #define true ((bool)1);
 #define false ((bool)0);
