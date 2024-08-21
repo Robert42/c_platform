@@ -22,6 +22,13 @@ void assert_usize_eq(size_t x, size_t y)
   __assert_failed__();
 }
 
+void assert_usize_lt(size_t x, size_t y)
+{
+  if(x < y)
+    return;
+  __assert_failed__();
+}
+
 void assert_ptr_eq(const void* x, const void* y)
 {
   if(x == y)
