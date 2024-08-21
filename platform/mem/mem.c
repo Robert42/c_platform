@@ -14,5 +14,6 @@ void* mem_region_alloc_bytes_unaligned(Mem_Region* region, size_t num_bytes)
 {
   void* bytes = region->begin;
   region->begin += num_bytes;
+  debug_assert_ptr_lte(region->begin, region->end);
   return bytes;
 }
