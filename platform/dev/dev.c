@@ -17,7 +17,7 @@ void assert_ptr_eq(const void* x, const void* y)
     abort();
 }
 
-void debug_assert_usize_lt(const void* x, const void* y)
+void debug_assert_usize_lt(size_t x, size_t y)
 {
 #if ENV_DEBUG
   if(x < y)
