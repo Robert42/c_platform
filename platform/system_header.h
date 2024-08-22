@@ -33,6 +33,8 @@ ssize_t read(int fd, void* buffer, size_t num_bytes);
 // NOT portable! Works on x86 and and aarch64
 int pipe(int pipefd[2]);
 
+int strcmp(const char* x, const char* y);
+
 #endif // __linux__
 
 #else // ENV_COMPILER == COMPILER_TCC
@@ -43,6 +45,8 @@ int pipe(int pipefd[2]);
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h> // waitpid
+
+#include <string.h>
 
 #endif // ENV_COMPILER == COMPILER_TCC
 

@@ -6,19 +6,21 @@
 extern size_t __assert_capture__;
 extern size_t __assert_caught__;
 
-#define DEFINE_BIN(NAME, TY) \
+#define DECLARE_BIN(NAME, TY) \
   void assert_ ## NAME(TY x, TY y); \
   void debug_assert_ ## NAME(TY x, TY y);
 #define BIN_ASSERT_NUM_CMP(NAME, TY) \
-  DEFINE_BIN(NAME ## _eq, TY); \
-  DEFINE_BIN(NAME ## _ne, TY); \
-  DEFINE_BIN(NAME ## _lt, TY); \
-  DEFINE_BIN(NAME ## _lte, TY); \
-  DEFINE_BIN(NAME ## _gt, TY); \
-  DEFINE_BIN(NAME ## _gte, TY);
+  DECLARE_BIN(NAME ## _eq, TY); \
+  DECLARE_BIN(NAME ## _ne, TY); \
+  DECLARE_BIN(NAME ## _lt, TY); \
+  DECLARE_BIN(NAME ## _lte, TY); \
+  DECLARE_BIN(NAME ## _gt, TY); \
+  DECLARE_BIN(NAME ## _gte, TY);
+#define BIN_ASSERT_CUSTOM(NAME, TY, CHECK) DECLARE_BIN(NAME, TY)
 #include "assertions.h"
 #undef BIN_ASSERT_NUM_CMP
-#undef DEFINE_BIN
+#undef BIN_ASSERT_CUSTOM
+#undef DECLARE_BIN
 
 #define EXPECT_ASSERT(...) { \
   const size_t __prev__ = __assert_caught__; \

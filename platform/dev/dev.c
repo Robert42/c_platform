@@ -30,9 +30,10 @@ static void __assert_failed__()
   DEFINE_NUM(NAME ## _lte, TY, <=) \
   DEFINE_NUM(NAME ## _gt, TY, >) \
   DEFINE_NUM(NAME ## _gte, TY, >=)
-
+#define BIN_ASSERT_CUSTOM(NAME, TY, CHECK) void assert_ ## NAME(TY x, TY y){if(CHECK)return;else __assert_failed__(); } DEBUG_VERSION_BIN(NAME, TY)
 #include "assertions.h"
 #undef BIN_ASSERT_NUM_CMP
+#undef BIN_ASSERT_CUSTOM
 #undef DEBUG_VERSION_BIN
 #undef DEFINE_NUM
 
