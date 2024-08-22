@@ -9,10 +9,11 @@ void proc_test()
   const struct Proc_Exec_Blocking_Settings capture_stdout = {.capture_stdout=true, .region_stdout=&region};
 
   {
-    char* const args[] = {"echo", "Hello, World!", NULL};
+    char msg[] = "Hello, World!";
+    char* const args[] = {"echo", "-n", msg, NULL};
     struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, capture_stdout);
 
-    debug_assert_ptr_eq(region.begin, BUFFER+15);
+    debug_assert_ptr_eq(region.begin, BUFFER + ARRAY_LEN(msg));
 
     printf("CAPTURED: `%s`\n", result.captured_stdout);
   }
