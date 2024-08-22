@@ -5,8 +5,12 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(const char* const args[], st
 {
   int pipefd_stdout[2];
   if(settings.capture_stdout)
-  {
     LINUX_ASSERT_EQ(pipe(pipefd_stdout), 0);
+  // TODO: pipe for stderr
+
+  const pid_t child_pid = fork();
+  if(child_pid == 0) // Is this the child process?
+  {
   }
 
   if(settings.capture_stdout)

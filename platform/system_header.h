@@ -15,12 +15,15 @@ void abort();
 
 #ifdef __linux__
 
+#include <sys/types.h> // pid_t
+
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
 
 int isatty(int fd);
 int close(int fd);
+pid_t fork(void);
 
 // NOT portable! Works on x86 and and aarch64
 int pipe(int pipefd[2]);
