@@ -32,15 +32,11 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
     ssize_t bytes_read = read(pipefd_stdout[0], region->begin, bytes_available);
     LINUX_ASSERT_NE(bytes_read, -1);
 
-    if(bytes_read == bytes_available)
-    {
-      // TODO: check if the buffer was large enough
-    }
-
     result.captured_stdout = region->begin;
     region->begin += bytes_read;
 
     // Add nullterminator
+    assert_ptr_lt(region->begin, region->end); // No more space for the nullterminator
     *(uint8_t*)region->begin = 0;
     region->begin++;
     // TODO: typedef int types
