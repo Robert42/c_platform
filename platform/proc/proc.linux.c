@@ -38,8 +38,12 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
     }
 
     result.captured_stdout = region->begin;
-    // TODO:
-    // region->begin += bytes_read;
+    region->begin += bytes_read;
+
+    // Add nullterminator
+    *(uint8_t*)region->begin = 0;
+    region->begin++;
+    // TODO: typedef int types
   
     LINUX_ASSERT_EQ(close(pipefd_stdout[0]), 0);
     LINUX_ASSERT_EQ(close(pipefd_stdout[1]), 0);
