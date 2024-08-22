@@ -6,8 +6,8 @@
 #if ENV_COMPILER == COMPILER_TCC
 
 typedef _Bool bool;
-#define true ((bool)1);
-#define false ((bool)0);
+#define true ((bool)1)
+#define false ((bool)0)
 
 void abort();
 
