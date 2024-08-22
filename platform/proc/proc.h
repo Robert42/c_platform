@@ -11,9 +11,9 @@ struct Proc_Exec_Blocking_Settings
 
 struct Proc_Exec_Blocking_Result
 {
+  char* captured_stdout;
+  char* captured_stderr;
   int result;
-  const char* captured_stdout;
-  const char* captured_stderr;
 };
 
 struct Proc_Exec_Blocking_Result proc_exec_blocking(const char* command, struct Proc_Exec_Blocking_Settings settings);
