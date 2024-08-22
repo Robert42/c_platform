@@ -10,8 +10,8 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
 
   const pid_t child_pid = fork();
   LINUX_ASSERT_NE(child_pid, -1);
-  if(child_pid == 0) // Is this the child process?
-  {
+  if(child_pid == 0)
+  { // child process
     if(settings.capture_stdout)
     {
       LINUX_ASSERT_NE(dup2(pipefd_stdout[1], STDOUT_FILENO), -1);
