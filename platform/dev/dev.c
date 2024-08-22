@@ -15,44 +15,26 @@ static void __assert_failed__()
   abort();
 }
 
-void assert_usize_eq(size_t x, size_t y)
-{
-  if(x == y)
-    return;
-  __assert_failed__();
-}
-
-void assert_usize_lt(size_t x, size_t y)
-{
-  if(x < y)
-    return;
-  __assert_failed__();
-}
-
-void assert_ptr_eq(const void* x, const void* y)
-{
-  if(x == y)
-    return;
-  __assert_failed__();
-}
-
-void debug_assert_usize_lt(size_t x, size_t y)
-{
 #if ENV_DEBUG
-  if(x < y)
-    return;
-  __assert_failed__();
+#define DEBUG_VERSION_BIN(NAME, TY) void debug_assert_ ## NAME(TY x, TY y){assert_ ## NAME(x, y);}
+#else
+#define DEBUG_VERSION_BIN(NAME, TY) void debug_assert_ ## NAME(TY x, TY y){(void)x;(void)y;}
 #endif
-}
+#define DEFINE_NUM(NAME, TY, OP) \
+  void assert_ ## NAME(TY x, TY y){if(x OP y)return;else __assert_failed__(); } \
+  DEBUG_VERSION_BIN(NAME, TY)
+#define BIN_ASSERT_NUM_CMP(NAME, TY) \
+  DEFINE_NUM(NAME ## _eq, TY, ==) \
+  DEFINE_NUM(NAME ## _ne, TY, !=) \
+  DEFINE_NUM(NAME ## _lt, TY, <) \
+  DEFINE_NUM(NAME ## _lte, TY, <=) \
+  DEFINE_NUM(NAME ## _gt, TY, >) \
+  DEFINE_NUM(NAME ## _gte, TY, >=)
 
-void debug_assert_ptr_lte(const void* x, const void* y)
-{
-#if ENV_DEBUG
-  if(x <= y)
-    return;
-  __assert_failed__();
-#endif
-}
+#include "assertions.h"
+#undef BIN_ASSERT_NUM_CMP
+#undef DEBUG_VERSION_BIN
+#undef DEFINE_NUM
 
 // ==== env ====
 

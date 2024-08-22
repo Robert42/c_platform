@@ -6,12 +6,19 @@
 extern size_t _assert_capture;
 extern size_t _assert_captured;
 
-void assert_usize_eq(size_t x, size_t y);
-void assert_usize_lt(size_t x, size_t y);
-void assert_ptr_eq(const void* x, const void* y);
-
-void debug_assert_usize_lt(size_t x, size_t y);
-void debug_assert_ptr_lte(const void* x, const void* y);
+#define DEFINE_BIN(NAME, TY) \
+  void assert_ ## NAME(TY x, TY y); \
+  void debug_assert_ ## NAME(TY x, TY y);
+#define BIN_ASSERT_NUM_CMP(NAME, TY) \
+  DEFINE_BIN(NAME ## _eq, TY); \
+  DEFINE_BIN(NAME ## _ne, TY); \
+  DEFINE_BIN(NAME ## _lt, TY); \
+  DEFINE_BIN(NAME ## _lte, TY); \
+  DEFINE_BIN(NAME ## _gt, TY); \
+  DEFINE_BIN(NAME ## _gte, TY);
+#include "assertions.h"
+#undef BIN_ASSERT_NUM_CMP
+#undef DEFINE_BIN
 
 #define EXPECT_ASSERT(STMTS) { \
   const size_t __prev__ = _assert_captured; \

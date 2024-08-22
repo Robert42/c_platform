@@ -12,12 +12,34 @@ void dev_test()
   );
 
   assert_usize_eq(1, 1);
+  assert_usize_eq(0, 0);
   EXPECT_ASSERT( assert_usize_eq(0, 1); );
   EXPECT_ASSERT( assert_usize_eq(1, 0); );
 
+  assert_usize_ne(42, 37);
+  assert_usize_ne(37, 42);
+  EXPECT_ASSERT( assert_usize_ne(37, 37); );
+  EXPECT_ASSERT( assert_usize_ne(42, 42); );
+
   assert_usize_lt(0, 1);
+  EXPECT_ASSERT( assert_usize_lt(0, 0); );
   EXPECT_ASSERT( assert_usize_lt(1, 1); );
   EXPECT_ASSERT( assert_usize_lt(1, 0); );
+
+  assert_usize_lte(42, 42);
+  assert_usize_lte(37, 37);
+  assert_usize_lte(37, 42);
+  EXPECT_ASSERT( assert_usize_lte(42, 37); );
+
+  assert_usize_gt(42, 37);
+  EXPECT_ASSERT( assert_usize_gt(42, 42); );
+  EXPECT_ASSERT( assert_usize_gt(37, 37); );
+  EXPECT_ASSERT( assert_usize_gt(37, 42); );
+
+  assert_usize_gte(42, 42);
+  assert_usize_gte(37, 37);
+  assert_usize_gte(42, 37);
+  EXPECT_ASSERT( assert_usize_gte(37, 42); );
 
   assert_ptr_eq(&xs[0], &xs[0]);
   EXPECT_ASSERT( assert_ptr_eq(&xs[0], &xs[1]); );
