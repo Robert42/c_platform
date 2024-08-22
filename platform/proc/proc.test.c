@@ -24,8 +24,6 @@ void proc_test()
     uint8_t BUFFER[4];
     Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
 
-    printf("region size: %zu\n", region.end - region.begin);
-
     char* const args[] = {"echo", "-n", "more than four bytes", NULL};
     const struct Proc_Exec_Blocking_Settings too_small_buffer = {.capture_stdout=true, .region_stdout=&region};
     proc_exec_blocking(args, too_small_buffer);
