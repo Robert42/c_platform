@@ -2,7 +2,7 @@
 
 #include "mem.h"
 
-Mem_Region _mem_region_from(void* begin, ssize len)
+Mem_Region _mem_region_from(void* begin, usize len)
 {
   return (Mem_Region){
     .begin = begin,

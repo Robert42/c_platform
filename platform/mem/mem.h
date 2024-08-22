@@ -13,7 +13,7 @@ typedef struct
 
 extern Mem_Region SCRATCH;
 
-Mem_Region _mem_region_from(void* begin, ssize len);
+Mem_Region _mem_region_from(void* begin, usize len);
 #define MEM_REGION_FROM_ARRAY(XS) _mem_region_from(XS, sizeof XS)
 
 void* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_bytes);
