@@ -22,9 +22,15 @@ void debug_assert_ptr_lte(const void* x, const void* y);
 }
 
 #if ENV_DEBUG
+
 #define EXPECT_DEBUG_ASSERT(STMTS) EXPECT_ASSERT(STMTS)
-#else
+#define UNREACHABLE() abort()
+
+#else // !ENV_DEBUG
+
 #define EXPECT_DEBUG_ASSERT(STMTS) {STMTS}
+#define UNREACHABLE() __builtin_unreachable()
+
 #endif
 
 #ifdef __linux__

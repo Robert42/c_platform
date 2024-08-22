@@ -18,6 +18,7 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
     }
 
     execvp(args[0], args);
+    UNREACHABLE();
   }
   
   LINUX_ASSERT_NE(waitpid(child_pid, NULL, 0), -1);
