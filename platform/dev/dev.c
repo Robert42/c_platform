@@ -75,3 +75,18 @@ void dev_env_demo()
 }
 
 
+#ifdef __linux__
+void __linux_call_failed__(const char* call, const char* file, int line)
+{
+  if(_assert_capture)
+  {
+    _assert_captured++;
+    return;
+  }
+
+  printf("%s==== ASSERT_LINUX ====%s\n", TERM_RED, TERM_RED_BOLD);
+  perror(call);
+  printf("%s%s:%d\n", TERM_NORMAL, __FILE__, __LINE__);
+  abort();
+}
+#endif
