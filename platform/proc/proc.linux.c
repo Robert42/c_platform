@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "proc.h"
 
-struct Proc_Exec_Blocking_Result proc_exec_blocking(const char* const args[], struct Proc_Exec_Blocking_Settings settings)
+struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct Proc_Exec_Blocking_Settings settings)
 {
   int pipefd_stdout[2];
   if(settings.capture_stdout)
@@ -11,6 +11,7 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(const char* const args[], st
   const pid_t child_pid = fork();
   if(child_pid == 0) // Is this the child process?
   {
+    execvp(args[0], args);
   }
 
   if(settings.capture_stdout)

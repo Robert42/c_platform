@@ -24,6 +24,8 @@ void abort();
 int isatty(int fd);
 int close(int fd);
 pid_t fork(void);
+int execvp(const char* file, char* const argv[]);
+int execvpe(const char* file, char* const argv[], char* const env[]);
 
 // NOT portable! Works on x86 and and aarch64
 int pipe(int pipefd[2]);
