@@ -45,8 +45,8 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
   {
     Mem_Region* region = settings.region_stdout;
     debug_assert_ptr_ne(region, NULL);
-    const size_t bytes_available = region->end-region->begin;
-    ssize_t bytes_read = read(pipefd_stdout[READ_END], region->begin, bytes_available);
+    const usize bytes_available = region->end-region->begin;
+    ssize bytes_read = read(pipefd_stdout[READ_END], region->begin, bytes_available);
     LINUX_ASSERT_NE(bytes_read, -1);
 
     result.captured_stdout = region->begin;
@@ -54,9 +54,8 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
 
     // Add nullterminator
     assert_ptr_lt(region->begin, region->end); // No more space for the nullterminator
-    *(uint8_t*)region->begin = 0;
+    *(u8*)region->begin = 0;
     region->begin++;
-    // TODO: typedef int types
   
     LINUX_ASSERT_EQ(close(pipefd_stdout[READ_END]), 0);
   }
@@ -65,8 +64,8 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
   {
     Mem_Region* region = settings.region_stderr;
     debug_assert_ptr_ne(region, NULL);
-    const size_t bytes_available = region->end-region->begin;
-    ssize_t bytes_read = read(pipefd_stderr[READ_END], region->begin, bytes_available);
+    const usize bytes_available = region->end-region->begin;
+    ssize bytes_read = read(pipefd_stderr[READ_END], region->begin, bytes_available);
     LINUX_ASSERT_NE(bytes_read, -1);
 
     result.captured_stderr = region->begin;
@@ -74,9 +73,8 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
 
     // Add nullterminator
     assert_ptr_lt(region->begin, region->end); // No more space for the nullterminator
-    *(uint8_t*)region->begin = 0;
+    *(u8*)region->begin = 0;
     region->begin++;
-    // TODO: typedef int types
   
     LINUX_ASSERT_EQ(close(pipefd_stderr[READ_END]), 0);
   }

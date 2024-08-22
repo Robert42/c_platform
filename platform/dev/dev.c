@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
-size_t __assert_capture__ = 0;
-size_t __assert_caught__ = 0;
+usize __assert_capture__ = 0;
+usize __assert_caught__ = 0;
 
 static void __assert_failed__()
 {

@@ -13,7 +13,7 @@
 
 Mem_Region SCRATCH = {};
 
-static uint8_t _SCRATCH_BUFFER_1[1024*1024] = {};
+static u8 _SCRATCH_BUFFER_1[1024*1024] = {};
 
 void c_script_init()
 {

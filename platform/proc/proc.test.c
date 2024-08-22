@@ -4,7 +4,7 @@
 struct S { bool x, y; };
 void proc_test()
 {
-  uint8_t BUFFER[512];
+  u8 BUFFER[512];
   Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
   const struct Proc_Exec_Blocking_Settings capture_stdout = {.capture_stdout=true, .region_stdout=&region};
   const struct Proc_Exec_Blocking_Settings capture_stderr = {.capture_stderr=true, .region_stderr=&region};
@@ -34,7 +34,7 @@ void proc_test()
   // assert when buffer way too small
   EXPECT_ASSERT(
   {
-    uint8_t BUFFER[4];
+    u8 BUFFER[4];
     Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
 
     char* const args[] = {"echo", "-n", "more than four bytes", NULL};

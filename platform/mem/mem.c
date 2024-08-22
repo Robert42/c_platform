@@ -2,7 +2,7 @@
 
 #include "mem.h"
 
-Mem_Region _mem_region_from(void* begin, ssize_t len)
+Mem_Region _mem_region_from(void* begin, ssize len)
 {
   return (Mem_Region){
     .begin = begin,
@@ -10,7 +10,7 @@ Mem_Region _mem_region_from(void* begin, ssize_t len)
   };
 }
 
-void* mem_region_alloc_bytes_unaligned(Mem_Region* region, size_t num_bytes)
+void* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_bytes)
 {
   void* bytes = region->begin;
   region->begin += num_bytes;

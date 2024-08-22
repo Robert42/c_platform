@@ -3,8 +3,8 @@
 
 // ==== assertions ====
 
-extern size_t __assert_capture__;
-extern size_t __assert_caught__;
+extern usize __assert_capture__;
+extern usize __assert_caught__;
 
 #define DECLARE_BIN(NAME, TY) \
   void assert_ ## NAME(TY x, TY y); \
@@ -23,7 +23,7 @@ extern size_t __assert_caught__;
 #undef DECLARE_BIN
 
 #define EXPECT_ASSERT(...) { \
-  const size_t __prev__ = __assert_caught__; \
+  const usize __prev__ = __assert_caught__; \
   __assert_capture__++; \
   {__VA_ARGS__} \
   __assert_capture__--; \
