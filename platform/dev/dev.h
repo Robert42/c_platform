@@ -30,4 +30,5 @@ void debug_assert_ptr_lte(const void* x, const void* y);
 #ifdef __linux__
 void __linux_call_failed__(const char* call, const char* file, int line);
 #define LINUX_ASSERT_EQ(CALL, SUCCESS) do{ if((CALL) != (SUCCESS)) {__linux_call_failed__(#CALL, __FILE__, __LINE__); } } while(0)
+#define LINUX_ASSERT_NE(CALL, FAILURE) do{ if((CALL) == (FAILURE)) {__linux_call_failed__(#CALL, __FILE__, __LINE__); } } while(0)
 #endif

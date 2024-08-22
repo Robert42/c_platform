@@ -26,6 +26,7 @@ int close(int fd);
 pid_t fork(void);
 int execvp(const char* file, char* const argv[]);
 int execvpe(const char* file, char* const argv[], char* const env[]);
+int waitpid(pid_t pid, int* status, int options);
 
 // NOT portable! Works on x86 and and aarch64
 int pipe(int pipefd[2]);
@@ -39,6 +40,7 @@ int pipe(int pipefd[2]);
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h> // waitpid
 
 #endif // ENV_COMPILER == COMPILER_TCC
 
