@@ -23,12 +23,28 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
   
   LINUX_ASSERT_NE(waitpid(child_pid, NULL, 0), -1);
 
+  struct Proc_Exec_Blocking_Result result = {};
+
   if(settings.capture_stdout)
   {
+    Mem_Region* region = settings.region_stdout;
+    const size_t bytes_available = region->end-region->begin;
+    ssize_t bytes_read = read(pipefd_stdout[0], region->begin, bytes_available);
+    LINUX_ASSERT_NE(bytes_read, -1);
+
+    if(bytes_read == bytes_available)
+    {
+      // TODO: check if the buffer was large enough
+    }
+
+    result.captured_stdout = region->begin;
+    // TODO:
+    // region->begin += bytes_read;
+  
     LINUX_ASSERT_EQ(close(pipefd_stdout[0]), 0);
     LINUX_ASSERT_EQ(close(pipefd_stdout[1]), 0);
   }
 
-  return (struct Proc_Exec_Blocking_Result){};
+  return result;
 }
 
