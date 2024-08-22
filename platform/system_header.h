@@ -20,6 +20,10 @@ void abort();
 #define STDERR_FILENO 2
 
 int isatty(int fd);
+int close(int fd);
+
+// NOT portable! Works on x86 and and aarch64
+int pipe(int pipefd[2]);
 
 #endif // __linux__
 
@@ -32,3 +36,4 @@ int isatty(int fd);
 #include <unistd.h>
 
 #endif // ENV_COMPILER == COMPILER_TCC
+
