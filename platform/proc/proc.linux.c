@@ -14,16 +14,21 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
   { // child process
     if(settings.capture_stdout)
     {
+      close(pipefd_stdout[0]);
       LINUX_ASSERT_NE(dup2(pipefd_stdout[1], STDOUT_FILENO), -1);
     }
 
     execvp(args[0], args);
     UNREACHABLE();
   }
+
+  if(settings.capture_stdout)
+    LINUX_ASSERT_EQ(close(pipefd_stdout[1]), 0);
   
   LINUX_ASSERT_NE(waitpid(child_pid, NULL, 0), -1);
 
   struct Proc_Exec_Blocking_Result result = {};
+  
 
   if(settings.capture_stdout)
   {
@@ -42,7 +47,6 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
     // TODO: typedef int types
   
     LINUX_ASSERT_EQ(close(pipefd_stdout[0]), 0);
-    LINUX_ASSERT_EQ(close(pipefd_stdout[1]), 0);
   }
 
   return result;
