@@ -16,5 +16,5 @@ struct Proc_Exec_Blocking_Result
   int result;
 };
 
-struct Proc_Exec_Blocking_Result proc_exec_blocking(const char* command, struct Proc_Exec_Blocking_Settings settings);
+struct Proc_Exec_Blocking_Result proc_exec_blocking(const char* const args[], struct Proc_Exec_Blocking_Settings settings);
 
