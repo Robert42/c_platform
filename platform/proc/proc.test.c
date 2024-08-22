@@ -19,7 +19,7 @@ void proc_test()
   }
 
   // assert when buffer way too small
-  EXPECT_ASSERT(({
+  EXPECT_ASSERT(
   {
     uint8_t BUFFER[4];
     Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
@@ -30,5 +30,5 @@ void proc_test()
     const struct Proc_Exec_Blocking_Settings too_small_buffer = {.capture_stdout=true, .region_stdout=&region};
     proc_exec_blocking(args, too_small_buffer);
   }
-  }););
+  );
 }

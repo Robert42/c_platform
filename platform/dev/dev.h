@@ -20,22 +20,22 @@ extern size_t __assert_caught__;
 #undef BIN_ASSERT_NUM_CMP
 #undef DEFINE_BIN
 
-#define EXPECT_ASSERT(STMTS) { \
+#define EXPECT_ASSERT(...) { \
   const size_t __prev__ = __assert_caught__; \
   __assert_capture__++; \
-  {STMTS} \
+  {__VA_ARGS__} \
   __assert_capture__--; \
   assert_usize_lt(__prev__, __assert_caught__); \
 }
 
 #if ENV_DEBUG
 
-#define EXPECT_DEBUG_ASSERT(STMTS) EXPECT_ASSERT(STMTS)
+#define EXPECT_DEBUG_ASSERT(...) EXPECT_ASSERT(__VA_ARGS__)
 #define UNREACHABLE() abort()
 
 #else // !ENV_DEBUG
 
-#define EXPECT_DEBUG_ASSERT(STMTS) {STMTS}
+#define EXPECT_DEBUG_ASSERT(...) {__VA_ARGS__}
 #define UNREACHABLE() __builtin_unreachable()
 
 #endif
