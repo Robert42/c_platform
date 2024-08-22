@@ -45,7 +45,7 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
   {
     Mem_Region* region = settings.region_stdout;
     debug_assert_ptr_ne(region, NULL);
-    const usize bytes_available = region->end-region->begin;
+    const usize bytes_available = mem_region_available_bytes(region);
     ssize bytes_read = read(pipefd_stdout[READ_END], region->begin, bytes_available);
     LINUX_ASSERT_NE(bytes_read, -1);
 
@@ -64,7 +64,7 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
   {
     Mem_Region* region = settings.region_stderr;
     debug_assert_ptr_ne(region, NULL);
-    const usize bytes_available = region->end-region->begin;
+    const usize bytes_available = mem_region_available_bytes(region);
     ssize bytes_read = read(pipefd_stderr[READ_END], region->begin, bytes_available);
     LINUX_ASSERT_NE(bytes_read, -1);
 
