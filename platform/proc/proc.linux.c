@@ -1,5 +1,6 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "proc.h"
+#include "../io/file.linux.h"
 
 #define READ_END 0
 #define WRITE_END 1
@@ -43,39 +44,13 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
 
   if(settings.capture_stdout)
   {
-    Mem_Region* region = settings.region_stdout;
-    debug_assert_ptr_ne(region, NULL);
-    const usize bytes_available = mem_region_available_bytes(region);
-    ssize bytes_read = read(pipefd_stdout[READ_END], region->begin, bytes_available);
-    LINUX_ASSERT_NE(bytes_read, -1);
-
-    result.captured_stdout = region->begin;
-    region->begin += bytes_read;
-
-    // Add nullterminator
-    assert_ptr_lt(region->begin, region->end); // No more space for the nullterminator
-    *(u8*)region->begin = 0;
-    region->begin++;
-  
+    result.captured_stdout = _linux_read_all_bytes_from_fd(pipefd_stdout[READ_END], settings.region_stdout);
     LINUX_ASSERT_EQ(close(pipefd_stdout[READ_END]), 0);
   }
   
   if(settings.capture_stderr)
   {
-    Mem_Region* region = settings.region_stderr;
-    debug_assert_ptr_ne(region, NULL);
-    const usize bytes_available = mem_region_available_bytes(region);
-    ssize bytes_read = read(pipefd_stderr[READ_END], region->begin, bytes_available);
-    LINUX_ASSERT_NE(bytes_read, -1);
-
-    result.captured_stderr = region->begin;
-    region->begin += bytes_read;
-
-    // Add nullterminator
-    assert_ptr_lt(region->begin, region->end); // No more space for the nullterminator
-    *(u8*)region->begin = 0;
-    region->begin++;
-  
+    result.captured_stderr = _linux_read_all_bytes_from_fd(pipefd_stderr[READ_END], settings.region_stderr);
     LINUX_ASSERT_EQ(close(pipefd_stderr[READ_END]), 0);
   }
 
