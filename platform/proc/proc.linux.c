@@ -9,6 +9,7 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
   // TODO: pipe for stderr
 
   const pid_t child_pid = fork();
+  LINUX_ASSERT_NE(child_pid, -1);
   if(child_pid == 0) // Is this the child process?
   {
     execvp(args[0], args);
