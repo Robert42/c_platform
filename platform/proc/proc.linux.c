@@ -36,6 +36,7 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
   if(settings.capture_stdout)
   {
     Mem_Region* region = settings.region_stdout;
+    debug_assert_ptr_ne(region, NULL);
     const size_t bytes_available = region->end-region->begin;
     ssize_t bytes_read = read(pipefd_stdout[READ_END], region->begin, bytes_available);
     LINUX_ASSERT_NE(bytes_read, -1);
