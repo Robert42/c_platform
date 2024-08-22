@@ -13,9 +13,8 @@ void proc_test()
     char* const args[] = {"echo", "-n", msg, NULL};
     struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, capture_stdout);
 
-    debug_assert_ptr_eq(region.begin, BUFFER + ARRAY_LEN(msg));
-
     assert_cstr_eq(result.captured_stdout, msg);
+    debug_assert_ptr_eq(region.begin, BUFFER + ARRAY_LEN(msg));
   }
 
   // assert when buffer way too small
