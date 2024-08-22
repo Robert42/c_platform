@@ -3,8 +3,8 @@
 
 // ==== assertions ====
 
-extern size_t _assert_capture;
-extern size_t _assert_captured;
+extern size_t __assert_capture__;
+extern size_t __assert_caught__;
 
 #define DEFINE_BIN(NAME, TY) \
   void assert_ ## NAME(TY x, TY y); \
@@ -21,11 +21,11 @@ extern size_t _assert_captured;
 #undef DEFINE_BIN
 
 #define EXPECT_ASSERT(STMTS) { \
-  const size_t __prev__ = _assert_captured; \
-  _assert_capture++; \
+  const size_t __prev__ = __assert_caught__; \
+  __assert_capture__++; \
   {STMTS} \
-  _assert_capture--; \
-  assert_usize_lt(__prev__, _assert_captured); \
+  __assert_capture__--; \
+  assert_usize_lt(__prev__, __assert_caught__); \
 }
 
 #if ENV_DEBUG

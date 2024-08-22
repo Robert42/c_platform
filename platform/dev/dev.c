@@ -1,13 +1,13 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
-size_t _assert_capture = 0;
-size_t _assert_captured = 0;
+size_t __assert_capture__ = 0;
+size_t __assert_caught__ = 0;
 
 static void __assert_failed__()
 {
-  if(_assert_capture)
+  if(__assert_capture__)
   {
-    _assert_captured++;
+    __assert_caught__++;
     return;
   }
 
@@ -60,9 +60,9 @@ void dev_env_demo()
 #ifdef __linux__
 void __linux_call_failed__(const char* call, const char* file, int line)
 {
-  if(_assert_capture)
+  if(__assert_capture__)
   {
-    _assert_captured++;
+    __assert_caught__++;
     return;
   }
 
