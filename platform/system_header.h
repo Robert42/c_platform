@@ -27,6 +27,7 @@ pid_t fork(void);
 int execvp(const char* file, char* const argv[]);
 int execvpe(const char* file, char* const argv[], char* const env[]);
 int waitpid(pid_t pid, int* status, int options);
+int dup2(int oldfd, int newfd);
 
 // NOT portable! Works on x86 and and aarch64
 int pipe(int pipefd[2]);
