@@ -15,7 +15,7 @@ void proc_test()
 
     debug_assert_ptr_eq(region.begin, BUFFER + ARRAY_LEN(msg));
 
-    printf("CAPTURED: `%s`\n", result.captured_stdout);
+    assert_cstr_eq(result.captured_stdout, msg);
   }
 
   // assert when buffer way too small
