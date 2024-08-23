@@ -9,6 +9,7 @@
 #include "platform/io/terminal.c"
 #include "platform/mem/mem.c"
 #include "platform/dev/dev.c"
+#include "utils/path.c"
 #ifdef __linux__
 #include "platform/io/file.linux.c"
 #include "platform/proc/proc.linux.c"
