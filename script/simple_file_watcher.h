@@ -12,5 +12,5 @@ struct Simple_File_Watcher
 };
 
 struct Simple_File_Watcher simple_file_watcher_init(const char* root, Fn_File_Filter *filter);
-bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher watcher);
+bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher);
 

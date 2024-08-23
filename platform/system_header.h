@@ -34,6 +34,7 @@ ssize_t read(int fd, void* buffer, size_t num_bytes);
 int pipe(int pipefd[2]);
 
 int strcmp(const char* x, const char* y);
+const char* dirname(const char* path);
 
 #endif // __linux__
 
