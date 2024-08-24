@@ -5,6 +5,7 @@
 #ifdef __linux__
 #include <sys/inotify.h>
 #include <sys/poll.h>
+#include <errno.h>
 #endif
 
 struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_File_Filter *filter)
@@ -14,7 +15,7 @@ struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_Fi
   };
 
 #ifdef __linux__
-  watcher.fd = inotify_init();
+  watcher.fd = inotify_init1(IN_NONBLOCK);
   LINUX_ASSERT_NE(watcher.fd, -1);
 
   const int root_wd = inotify_add_watch(watcher.fd, root_path, IN_MODIFY|IN_MOVE|IN_DELETE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CREATE);
@@ -54,10 +55,11 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
     debug_assert_bool_eq(fds[0].events & POLLIN, true);
   }
 
-  u8 BUFFER[4096];
-  ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
-  if(num_bytes_read != 0)
-    return true;
-
-  return false;
+  while(1)
+  {
+    u8 BUFFER[4096];
+    ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
+    if(num_bytes_read == -1 && errno==EAGAIN)
+      return true;
+  }
 }
