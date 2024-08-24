@@ -68,8 +68,40 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
     for(ssize i=0; i<num_bytes_read;)
     {
       const struct inotify_event* event = (const struct inotify_event*)&BUFFER[i];
+
+      switch(event->mask)
+      {
+      case IN_CREATE:
+        printf("IN_CREATE ", event->name);
+        break;
+      case IN_DELETE:
+        printf("IN_DELETE ", event->name);
+        break;
+      case IN_DELETE_SELF:
+        printf("IN_DELETE_SELF ", event->name);
+        break;
+      case IN_MODIFY:
+        printf("IN_MODIFY ", event->name);
+        break;
+      case IN_MOVE_SELF:
+        printf("IN_MOVE_SELF ", event->name);
+        break;
+      case IN_MOVED_FROM:
+        printf("IN_MOVED_FROM ", event->name);
+        break;
+      case IN_MOVED_TO:
+        printf("IN_MOVED_TO ", event->name);
+        break;
+      case IN_Q_OVERFLOW:
+        printf("IN_Q_OVERFLOW ", event->name);
+        // TODO: rebuild tree
+        break;
+      }
       if(event->len != 0)
         printf("name: %s\n", event->name);
+      else
+        printf("\n", event->name);
+
       i += sizeof(struct inotify_event) + event->len;
     }
   }
