@@ -46,6 +46,7 @@ const char* dirname(const char* path);
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <libgen.h>
 #include <sys/wait.h> // waitpid
 
 #include <string.h>

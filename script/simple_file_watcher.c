@@ -1,8 +1,10 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "simple_file_watcher.h"
+#include "gracefully_exit.c"
 
 #ifdef __linux__
 #include <sys/inotify.h>
+#include <sys/poll.h>
 #endif
 
 struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_File_Filter *filter)
@@ -21,11 +23,30 @@ struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_Fi
   // TODO: create watchers for each directory
 #endif
 
+  register_graceful_exit_via_sigint();
   return watcher;
 }
 
 bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 {
+  {
+    struct pollfd fds[1] = {
+      (struct pollfd){
+        .fd = watcher->fd,
+        .events = POLLIN,
+      },
+    };
+    const nfds_t nfds = ARRAY_LEN(fds);
+
+    const int result = poll(fds, nfds, -1);
+    if(result==-1 && exit_requested)
+    {
+      printf(" done\n");
+      return false;
+    }
+    LINUX_ASSERT_NE(result, -1);
+  }
+
   u8 BUFFER[4096];
   ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
   if(num_bytes_read != 0)
