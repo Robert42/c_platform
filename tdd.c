@@ -18,6 +18,7 @@ int main(int argc, const char** argv)
 
   printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
 
+  printf("To exit, press ctrl + z!\n");
   char path[] = __FILE__;
   struct Simple_File_Watcher watcher = simple_file_watcher_init(dirname(path), path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))

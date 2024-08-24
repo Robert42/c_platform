@@ -29,7 +29,6 @@ int execvpe(const char* file, char* const argv[], char* const env[]);
 int waitpid(pid_t pid, int* status, int options);
 int dup2(int oldfd, int newfd);
 ssize_t read(int fd, void* buffer, size_t num_bytes);
-int inotify_init();
 
 // NOT portable! Works on x86 and and aarch64
 // TODO: replace with portable `pipe2`
