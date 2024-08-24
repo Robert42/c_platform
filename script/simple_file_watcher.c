@@ -30,79 +30,90 @@ struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_Fi
 
 bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 {
+  while(true)
   {
-    struct pollfd fds[1] = {
-      (struct pollfd){
-        .fd = watcher->fd,
-        .events = POLLIN,
-      },
-    };
-    const nfds_t nfds = ARRAY_LEN(fds);
-
-    const int result = poll(fds, nfds, -1);
-    if(result==-1 && exit_requested)
     {
-      printf(" done\n");
-      return false;
-    }
-    LINUX_ASSERT_NE(result, -1);
+      struct pollfd fds[1] = {
+        (struct pollfd){
+          .fd = watcher->fd,
+          .events = POLLIN,
+        },
+      };
+      const nfds_t nfds = ARRAY_LEN(fds);
 
-    // If I had either had multiple `struct pollfd` entries in `fds` or pass a
-    // `timeout`, I would need to check, whether/which entry had an event.
-    // Without any of these, and errors already handeled we know we had an
-    // event.
-    debug_assert_int_eq(result, 1);
-    debug_assert_bool_eq(fds[0].events & POLLIN, true);
-  }
-
-  while(1)
-  {
-    __attribute((alignas(__alignof__(struct inotify_event))))
-    u8 BUFFER[4096];
-
-    const ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
-    if(num_bytes_read == -1 && errno==EAGAIN)
-      return true;
-
-    
-    for(ssize i=0; i<num_bytes_read;)
-    {
-      const struct inotify_event* event = (const struct inotify_event*)&BUFFER[i];
-
-      switch(event->mask)
+      const int result = poll(fds, nfds, -1);
+      if(result==-1 && exit_requested)
       {
-      case IN_CREATE:
-        printf("IN_CREATE ", event->name);
-        break;
-      case IN_DELETE:
-        printf("IN_DELETE ", event->name);
-        break;
-      case IN_DELETE_SELF:
-        printf("IN_DELETE_SELF ", event->name);
-        break;
-      case IN_MODIFY:
-        printf("IN_MODIFY ", event->name);
-        break;
-      case IN_MOVE_SELF:
-        printf("IN_MOVE_SELF ", event->name);
-        break;
-      case IN_MOVED_FROM:
-        printf("IN_MOVED_FROM ", event->name);
-        break;
-      case IN_MOVED_TO:
-        printf("IN_MOVED_TO ", event->name);
-        break;
-      case IN_Q_OVERFLOW:
-        printf("IN_Q_OVERFLOW ", event->name);
-        // TODO: rebuild tree
-        break;
+        printf(" done\n");
+        return false;
       }
-      if(event->len != 0)
-        printf("name: %s\n", event->name);
-      else
-        printf("\n", event->name);
+      LINUX_ASSERT_NE(result, -1);
 
-      i += sizeof(struct inotify_event) + event->len;
+      // If I had either had multiple `struct pollfd` entries in `fds` or pass a
+      // `timeout`, I would need to check, whether/which entry had an event.
+      // Without any of these, and errors already handeled we know we had an
+      // event.
+      debug_assert_int_eq(result, 1);
+      debug_assert_bool_eq(fds[0].events & POLLIN, true);
+    }
+
+    bool c_file_modified = false;
+    while(1)
+    {
+      __attribute((alignas(__alignof__(struct inotify_event))))
+      u8 BUFFER[4096];
+
+      const ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
+      if(num_bytes_read == -1 && errno==EAGAIN)
+      {
+        if(c_file_modified)
+          return true;
+        else
+          break;
+      }
+
+      
+      for(ssize i=0; i<num_bytes_read;)
+      {
+        const struct inotify_event* event = (const struct inotify_event*)&BUFFER[i];
+
+        switch(event->mask)
+        {
+        case IN_CREATE:
+          printf("IN_CREATE ", event->name);
+          break;
+        case IN_DELETE:
+          printf("IN_DELETE ", event->name);
+          break;
+        case IN_DELETE_SELF:
+          printf("IN_DELETE_SELF ", event->name);
+          break;
+        case IN_MODIFY:
+          printf("IN_MODIFY ", event->name);
+          break;
+        case IN_MOVE_SELF:
+          printf("IN_MOVE_SELF ", event->name);
+          break;
+        case IN_MOVED_FROM:
+          printf("IN_MOVED_FROM ", event->name);
+          break;
+        case IN_MOVED_TO:
+          printf("IN_MOVED_TO ", event->name);
+          break;
+        case IN_Q_OVERFLOW:
+          printf("IN_Q_OVERFLOW ", event->name);
+          // TODO: rebuild tree
+          break;
+        }
+        if(event->len != 0)
+        {
+          printf("name: %s\n", event->name);
+          c_file_modified = c_file_modified || watcher->filter(event->name);
+        }else
+          printf("\n", event->name);
+
+        i += sizeof(struct inotify_event) + event->len;
+      }
     }
   }
 }
