@@ -57,9 +57,20 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 
   while(1)
   {
+    __attribute((alignas(__alignof__(struct inotify_event))))
     u8 BUFFER[4096];
-    ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
+
+    const ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
     if(num_bytes_read == -1 && errno==EAGAIN)
       return true;
+
+    
+    for(ssize i=0; i<num_bytes_read;)
+    {
+      const struct inotify_event* event = (const struct inotify_event*)&BUFFER[i];
+      if(event->len != 0)
+        printf("name: %s\n", event->name);
+      i += sizeof(struct inotify_event) + event->len;
+    }
   }
 }
