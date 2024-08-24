@@ -45,6 +45,13 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
       return false;
     }
     LINUX_ASSERT_NE(result, -1);
+
+    // If I had either had multiple `struct pollfd` entries in `fds` or pass a
+    // `timeout`, I would need to check, whether/which entry had an event.
+    // Without any of these, and errors already handeled we know we had an
+    // event.
+    debug_assert_int_eq(result, 1);
+    debug_assert_bool_eq(fds[0].events & POLLIN, true);
   }
 
   u8 BUFFER[4096];
