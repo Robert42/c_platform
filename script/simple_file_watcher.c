@@ -53,8 +53,8 @@ static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher)
 
 static bool _simple_file_watcher_process_events(struct Simple_File_Watcher* watcher)
 {
-  __attribute((alignas(__alignof__(struct inotify_event))))
-  u8 BUFFER[4096];
+  u8 BUFFER [4096]
+    __attribute((aligned(__alignof__(struct inotify_event))));
 
   bool c_file_modified = false;
   while(true)
