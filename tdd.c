@@ -25,8 +25,9 @@ int main(int argc, const char** argv)
   struct Simple_File_Watcher watcher = simple_file_watcher_init(dirname(path), path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))
   {
-    printf("C FILE CHANGED!\n");
+    // TODO clear
     run_tests();
+    // TODO print time
   }
 
   simple_file_watcher_deinit(&watcher);
