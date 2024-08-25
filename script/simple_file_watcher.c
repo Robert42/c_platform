@@ -1,11 +1,14 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "simple_file_watcher.h"
-#include "gracefully_exit.c"
 
 #ifdef __linux__
+#include "gracefully_exit.c"
+
 #include <sys/inotify.h>
 #include <sys/poll.h>
 #include <errno.h>
+
+static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher);
 #endif
 
 struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_File_Filter *filter)
@@ -15,17 +18,37 @@ struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_Fi
   };
 
 #ifdef __linux__
-  watcher.fd = inotify_init1(IN_NONBLOCK);
-  LINUX_ASSERT_NE(watcher.fd, -1);
+  watcher.root_path = malloc(strlen(root_path)+1);
+  strcpy(watcher.root_path, root_path);
 
-  const int root_wd = inotify_add_watch(watcher.fd, root_path, IN_MODIFY|IN_MOVE|IN_DELETE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CREATE);
+  watcher.fd = -1; // prevent _simple_file_watcher_reinit from closing the fd
+  _simple_file_watcher_reinit(&watcher);
+  register_graceful_exit_via_sigint();
+#endif // __linux__
+  return watcher;
+}
+
+void simple_file_watcher_deinit(struct Simple_File_Watcher* watcher)
+{
+#ifdef __linux__
+  free(watcher->root_path);
+  close(watcher->fd);
+#endif
+}
+
+#ifdef __linux__
+static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher)
+{
+  if(watcher->fd != -1)
+    close(watcher->fd);
+
+  watcher->fd = inotify_init1(IN_NONBLOCK);
+  LINUX_ASSERT_NE(watcher->fd, -1);
+
+  const int root_wd = inotify_add_watch(watcher->fd, watcher->root_path, IN_MODIFY|IN_MOVE|IN_DELETE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CREATE);
   LINUX_ASSERT_NE(root_wd, -1);
 
   // TODO: create watchers for each directory
-#endif
-
-  register_graceful_exit_via_sigint();
-  return watcher;
 }
 
 bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
@@ -117,3 +140,5 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
     }
   }
 }
+#endif // __linux__
+

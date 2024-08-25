@@ -25,5 +25,7 @@ int main(int argc, const char** argv)
     printf("C FILE CHANGED!\n");
   }
 
+  simple_file_watcher_deinit(&watcher);
+
   return 0;
 }
