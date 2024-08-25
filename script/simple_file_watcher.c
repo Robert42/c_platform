@@ -21,9 +21,11 @@ struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_Fi
 
 #ifdef __linux__
   watcher.root_path = malloc(strlen(root_path)+1);
+  watcher.watched_files = calloc(sizeof(*watcher.watched_files), 1);
   strcpy(watcher.root_path, root_path);
 
   watcher.dirs_fd = -1; // prevent _simple_file_watcher_reinit from closing the fd
+  watcher.file_fd = -1; // prevent _simple_file_watcher_reinit from closing the fd
   _simple_file_watcher_reinit(&watcher);
   register_graceful_exit_via_sigint();
 #endif // __linux__
@@ -34,7 +36,9 @@ void simple_file_watcher_deinit(struct Simple_File_Watcher* watcher)
 {
 #ifdef __linux__
   free(watcher->root_path);
+  free(watcher->watched_files);
   close(watcher->dirs_fd);
+  close(watcher->file_fd);
 #endif
 }
 
@@ -57,8 +61,10 @@ usize path_join(char* path, const char* second, usize path_len)
   return path_len+second_len;
 }
 
-static void _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_Watcher* watcher, char* path, usize path_len)
+static usize _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_Watcher* watcher, char* path, usize path_len)
 {
+  usize number_relevant_files_added = 0;
+
   u8 BUFFER[1024]
     __attribute((aligned(__alignof__(struct linux_dirent64))));
 
@@ -71,39 +77,81 @@ static void _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_Wa
     {
       const struct linux_dirent64* entry = (const struct linux_dirent64*)&BUFFER[i];
 
-      if(entry->d_type == DT_DIR && !_dir_to_ignore(entry->d_name))
+      switch(entry->d_type)
       {
-        const usize new_len = path_join(path, entry->d_name, path_len); // modify path to point to the current dir
-        // printf("dir: %s\n", path);
+      case DT_DIR:
+        if(!_dir_to_ignore(entry->d_name))
+        {
+          const usize new_len = path_join(path, entry->d_name, path_len); // modify path to point to the current dir
+          // printf("dir: %s\n", path);
 
-        const int subdir_wd = inotify_add_watch(watcher->dirs_fd, path, IN_MODIFY|IN_MOVE|IN_DELETE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CREATE);
-        LINUX_ASSERT_NE(subdir_wd, -1);
+          const int subdir_wd = inotify_add_watch(watcher->dirs_fd, path, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
+          LINUX_ASSERT_NE(subdir_wd, -1);
 
-        const int subdir_fd = openat(dir_fd, entry->d_name, O_DIRECTORY | O_RDONLY, 0);
-        LINUX_ASSERT_NE(subdir_fd, -1);
-        _simple_file_watcher_watch_subdirs(subdir_fd, watcher, path, new_len);
-        close(subdir_fd);
+          const int subdir_fd = openat(dir_fd, entry->d_name, O_DIRECTORY | O_RDONLY, 0);
+          LINUX_ASSERT_NE(subdir_fd, -1);
+          number_relevant_files_added += _simple_file_watcher_watch_subdirs(subdir_fd, watcher, path, new_len);
+          close(subdir_fd);
 
-        path[path_len] = 0;
+          path[path_len] = 0; // modify path to point to the parent dir, again
+        }
+        break;
+      case DT_LNK:
+      {
+        // For now, symlinks to regular files aren't followed.
+        // If I ever use symlinks to C files in my bootstrapper, this is the place to change.
+        printf("warning: symlinks aren't followed for now(%s)\n", entry->d_name);
+        break;
+      }
+      case DT_REG:
+        if(watcher->filter(entry->d_name))
+        {
+          const usize new_len = path_join(path, entry->d_name, path_len); // modify path to point to the current dir
+          // printf("regular file: %s\n", path);
+
+          const int file_wd = inotify_add_watch(watcher->file_fd, path, IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
+          LINUX_ASSERT_NE(file_wd, -1);
+
+          number_relevant_files_added += setintcddo_insert(watcher->watched_files, file_wd) == SETINTCDDOC_NEW;
+
+          path[path_len] = 0; // modify path to point to the parent dir, again
+        }
+        break;
       }
       
       i += entry->d_reclen;
     }
   }
+
+  return number_relevant_files_added;
 }
 
+static void _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watcher);
 static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher)
+{
+  if(watcher->file_fd != -1)
+    close(watcher->file_fd);
+
+  // A dedicated inotify file descriptor for watching relevant files only
+  watcher->file_fd = inotify_init1(IN_NONBLOCK);
+  LINUX_ASSERT_NE(watcher->file_fd, -1);
+
+  _simple_file_watcher_rebuild_tree(watcher);
+}
+
+static void _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watcher)
 {
   if(watcher->dirs_fd != -1)
     close(watcher->dirs_fd);
 
+  // One inotify filedescriptor for watching directories (whether directories/files were added)
   watcher->dirs_fd = inotify_init1(IN_NONBLOCK);
   LINUX_ASSERT_NE(watcher->dirs_fd, -1);
 
-  const int root_wd = inotify_add_watch(watcher->dirs_fd, watcher->root_path, IN_MODIFY|IN_MOVE|IN_DELETE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CREATE);
+  const int root_wd = inotify_add_watch(watcher->dirs_fd, watcher->root_path, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
   LINUX_ASSERT_NE(root_wd, -1);
 
-  // recursively visit directories to watch those, too
+  // recursively visit directories to watch them and their content, too
   {
     u8 PATH_BUFFER[PATH_BUFFER_CAPACITY];
     strcpy(PATH_BUFFER, realpath(watcher->root_path));
@@ -116,18 +164,27 @@ static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher)
 }
 #undef PATH_BUFFER_CAPACITY
 
-static bool _simple_file_watcher_process_events(struct Simple_File_Watcher* watcher)
+static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher* watcher)
 {
+  usize number_relevant_files_added = 0;
+
   u8 BUFFER[4096]
     __attribute((aligned(__alignof__(struct inotify_event))));
 
-  bool c_file_modified = false;
+  bool rebuild_tree = false;
+  bool reinit = false;
   while(true)
   {
     const ssize num_bytes_read = read(watcher->dirs_fd, BUFFER, sizeof(BUFFER));
     const bool nothing_mode_to_read = num_bytes_read == -1 && errno==EAGAIN;
     if(nothing_mode_to_read)
-      break;
+    {
+      if(reinit)
+        _simple_file_watcher_reinit(watcher);
+      else if(rebuild_tree)
+        _simple_file_watcher_rebuild_tree(watcher);
+      return number_relevant_files_added;
+    }
     
     for(ssize i=0; i<num_bytes_read;)
     {
@@ -136,53 +193,62 @@ static bool _simple_file_watcher_process_events(struct Simple_File_Watcher* watc
       switch(event->mask)
       {
       case IN_CREATE:
-        printf("IN_CREATE ");
-        break;
-      case IN_DELETE:
-        printf("IN_DELETE ");
-        break;
-      case IN_DELETE_SELF:
-        printf("IN_DELETE_SELF ");
-        break;
-      case IN_MODIFY:
-        printf("IN_MODIFY ");
-        break;
-      case IN_MOVE_SELF:
-        printf("IN_MOVE_SELF ");
-        break;
-      case IN_MOVED_FROM:
-        printf("IN_MOVED_FROM ");
-        break;
       case IN_MOVED_TO:
-        printf("IN_MOVED_TO ");
+      case IN_MOVE_SELF:
+        rebuild_tree = true;
         break;
       case IN_Q_OVERFLOW:
-        printf("IN_Q_OVERFLOW ");
-        // TODO: rebuild tree
+        reinit = true;
         break;
       }
-      if(event->len != 0)
-      {
-        printf("name: %s\n", event->name);
-        c_file_modified = c_file_modified || watcher->filter(event->name);
-      }else
-        printf("\n");
+
+      // TODO: write a helper printing inotify events
+      // if(event->len != 0)
+      // {
+      //   printf("name: %s\n", event->name);
+      // }else
+      //   printf("\n");
 
       i += sizeof(struct inotify_event) + event->len;
     }
   }
+}
 
-  return c_file_modified;
+void _simple_file_watcher_process_file_events(struct Simple_File_Watcher* watcher)
+{
+  u8 BUFFER[4096]
+    __attribute((aligned(__alignof__(struct inotify_event))));
+  while(true)
+  {
+    const ssize num_bytes_read = read(watcher->file_fd, BUFFER, sizeof(BUFFER));
+    const bool nothing_mode_to_read = num_bytes_read == -1 && errno==EAGAIN;
+    if(nothing_mode_to_read)
+      return;
+      
+    for(ssize i=0; i<num_bytes_read;)
+    {
+      const struct inotify_event* event = (const struct inotify_event*)&BUFFER[i];
+
+      // TODO print the event
+
+      i += sizeof(struct inotify_event) + event->len;
+    }
+  }
 }
 
 bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 {
   while(true)
   {
+    usize relevant_files_changed = 0;
     {
-      struct pollfd fds[1] = {
+      struct pollfd fds[2] = {
         (struct pollfd){
           .fd = watcher->dirs_fd,
+          .events = POLLIN,
+        },
+        (struct pollfd){
+          .fd = watcher->file_fd,
           .events = POLLIN,
         },
       };
@@ -196,15 +262,27 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
       }
       LINUX_ASSERT_NE(result, -1);
 
-      // If I had either had multiple `struct pollfd` entries in `fds` or pass a
-      // `timeout`, I would need to check, whether/which entry had an event.
-      // Without any of these, and errors already handeled we know we had an
-      // event.
-      debug_assert_int_eq(result, 1);
-      debug_assert_bool_eq(fds[0].events & POLLIN, true);
+      // If I would pass a `timeout`, I would need to check, whether any entry
+      // had an event. Without a timeout, and errors already handeled we know
+      // we had an event.
+      debug_assert_int_gt(result, 0);
+
+      // handle dir events
+      if(fds[0].events & POLLIN)
+      {
+        usize number_relevant_files_added = _simple_file_watcher_process_dir_events(watcher);
+        relevant_files_changed = number_relevant_files_added != 0;
+      }
+
+      // handle file events
+      if(fds[1].events & POLLIN)
+      {
+        _simple_file_watcher_process_file_events(watcher);
+        relevant_files_changed = true;
+      }
     }
 
-    if(_simple_file_watcher_process_events(watcher))
+    if(relevant_files_changed)
       return true;
   }
 }
