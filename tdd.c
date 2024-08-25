@@ -7,7 +7,8 @@
 
 void run_tests()
 {
-  // TODO clear
+  printf(TERM_CLEAR);
+  fflush(stdout);
 
   // TODO: get the absolute path insteaed of depending on the current dir
   char test_path[] = "unit_test.c";

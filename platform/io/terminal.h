@@ -16,5 +16,7 @@ extern const char* TERM_CYAN_BOLD;
 
 extern const char* TERM_NORMAL;
 
+extern const char* TERM_CLEAR;
+
 void term_init();
 void term_demo();
