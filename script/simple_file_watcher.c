@@ -70,28 +70,28 @@ static bool _simple_file_watcher_process_events(struct Simple_File_Watcher* watc
       switch(event->mask)
       {
       case IN_CREATE:
-        printf("IN_CREATE ", event->name);
+        printf("IN_CREATE ");
         break;
       case IN_DELETE:
-        printf("IN_DELETE ", event->name);
+        printf("IN_DELETE ");
         break;
       case IN_DELETE_SELF:
-        printf("IN_DELETE_SELF ", event->name);
+        printf("IN_DELETE_SELF ");
         break;
       case IN_MODIFY:
-        printf("IN_MODIFY ", event->name);
+        printf("IN_MODIFY ");
         break;
       case IN_MOVE_SELF:
-        printf("IN_MOVE_SELF ", event->name);
+        printf("IN_MOVE_SELF ");
         break;
       case IN_MOVED_FROM:
-        printf("IN_MOVED_FROM ", event->name);
+        printf("IN_MOVED_FROM ");
         break;
       case IN_MOVED_TO:
-        printf("IN_MOVED_TO ", event->name);
+        printf("IN_MOVED_TO ");
         break;
       case IN_Q_OVERFLOW:
-        printf("IN_Q_OVERFLOW ", event->name);
+        printf("IN_Q_OVERFLOW ");
         // TODO: rebuild tree
         break;
       }
@@ -100,7 +100,7 @@ static bool _simple_file_watcher_process_events(struct Simple_File_Watcher* watc
         printf("name: %s\n", event->name);
         c_file_modified = c_file_modified || watcher->filter(event->name);
       }else
-        printf("\n", event->name);
+        printf("\n");
 
       i += sizeof(struct inotify_event) + event->len;
     }
