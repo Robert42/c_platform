@@ -53,10 +53,24 @@ static enum Set_Int_Change_Detection_Dismissing_Old_Change setintcddo_insert(str
   for(usize i=0; i<set->len_new; ++i)
     if(set->xs[i] == value)
       return SETINTCDDOC_ALREADY_INSERTED;
-  
-  debug_assert_usize_eq(set->len_old, 0); // UNIMPLEMENTED
 
+  const usize begin = set->len_new;
+  const usize end = begin + set->len_old;
+  for(usize i=begin; i<end; ++i)
+    if(set->xs[i] == value)
+    {
+      // swap `set->xs[set->len_new]` with `set->xs[i]` (which is `value`)
+      set->xs[i] = set->xs[set->len_new];
+      set->xs[set->len_new] = value;
+
+      set->len_new++;
+      set->len_old--;
+      return SETINTCDDOC_OLD;
+    }
+
+  debug_assert_usize_lt(end, ARRAY_LEN(set->xs)); // buffer too small!
+  // make space for new value
+  set->xs[end] = set->xs[set->len_new];
   set->xs[set->len_new++] = value;
-  
   return SETINTCDDOC_NEW;
 }
