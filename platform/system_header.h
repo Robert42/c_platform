@@ -36,6 +36,18 @@ int pipe(int pipefd[2]);
 
 int strcmp(const char* x, const char* y);
 const char* dirname(const char* path);
+const char* realpath(const char* path);
+
+// source:` man getdents(2)`
+struct linux_dirent64
+{
+  int64_t d_ino;
+  int64_t d_off;
+  unsigned short d_reclen;
+  unsigned char d_type;
+  char d_name[];
+};
+ssize_t getdents64(int fd, void* dirp, size_t count);
 
 #endif // __linux__
 
