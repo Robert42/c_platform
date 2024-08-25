@@ -3,26 +3,30 @@
 #include "c_script.h"
 #include "script/simple_file_watcher.c"
 
-#include "platform/test.c"
-#include "utils/test.c"
+void run_tests()
+{
+  // TODO: get the absolute path insteaed of depending on the current dir
+  char test_path[] = "unit_test.c";
+
+  // TODO: allow choosing different compilers.
+  // If choosing libtcc, then simply fork and compile via the libtcc.
+  // char* const args[] = {"tcc", " -Wall", "-Werror", "-run", test_path};
+  char* const args[] = {"tcc", "-Wall", "-Werror", "-run", test_path, NULL};
+  struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, (struct Proc_Exec_Blocking_Settings){});
+}
 
 int main(int argc, const char** argv)
 {
   c_script_init();
 
-  term_demo();
-  dev_env_demo();
-
-  platform_test();
-  utils_test();
-
-  printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
+  run_tests();
 
   char path[] = __FILE__;
   struct Simple_File_Watcher watcher = simple_file_watcher_init(dirname(path), path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))
   {
     printf("C FILE CHANGED!\n");
+    run_tests();
   }
 
   simple_file_watcher_deinit(&watcher);
