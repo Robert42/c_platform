@@ -51,6 +51,64 @@ static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher)
   // TODO: create watchers for each directory
 }
 
+static bool _simple_file_watcher_process_events(struct Simple_File_Watcher* watcher)
+{
+  __attribute((alignas(__alignof__(struct inotify_event))))
+  u8 BUFFER[4096];
+
+  bool c_file_modified = false;
+  while(true)
+  {
+    const ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
+    if(num_bytes_read == -1 && errno==EAGAIN)
+      break;
+    
+    for(ssize i=0; i<num_bytes_read;)
+    {
+      const struct inotify_event* event = (const struct inotify_event*)&BUFFER[i];
+
+      switch(event->mask)
+      {
+      case IN_CREATE:
+        printf("IN_CREATE ", event->name);
+        break;
+      case IN_DELETE:
+        printf("IN_DELETE ", event->name);
+        break;
+      case IN_DELETE_SELF:
+        printf("IN_DELETE_SELF ", event->name);
+        break;
+      case IN_MODIFY:
+        printf("IN_MODIFY ", event->name);
+        break;
+      case IN_MOVE_SELF:
+        printf("IN_MOVE_SELF ", event->name);
+        break;
+      case IN_MOVED_FROM:
+        printf("IN_MOVED_FROM ", event->name);
+        break;
+      case IN_MOVED_TO:
+        printf("IN_MOVED_TO ", event->name);
+        break;
+      case IN_Q_OVERFLOW:
+        printf("IN_Q_OVERFLOW ", event->name);
+        // TODO: rebuild tree
+        break;
+      }
+      if(event->len != 0)
+      {
+        printf("name: %s\n", event->name);
+        c_file_modified = c_file_modified || watcher->filter(event->name);
+      }else
+        printf("\n", event->name);
+
+      i += sizeof(struct inotify_event) + event->len;
+    }
+  }
+
+  return c_file_modified;
+}
+
 bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 {
   while(true)
@@ -80,64 +138,8 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
       debug_assert_bool_eq(fds[0].events & POLLIN, true);
     }
 
-    bool c_file_modified = false;
-    while(1)
-    {
-      __attribute((alignas(__alignof__(struct inotify_event))))
-      u8 BUFFER[4096];
-
-      const ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
-      if(num_bytes_read == -1 && errno==EAGAIN)
-      {
-        if(c_file_modified)
-          return true;
-        else
-          break;
-      }
-
-      
-      for(ssize i=0; i<num_bytes_read;)
-      {
-        const struct inotify_event* event = (const struct inotify_event*)&BUFFER[i];
-
-        switch(event->mask)
-        {
-        case IN_CREATE:
-          printf("IN_CREATE ", event->name);
-          break;
-        case IN_DELETE:
-          printf("IN_DELETE ", event->name);
-          break;
-        case IN_DELETE_SELF:
-          printf("IN_DELETE_SELF ", event->name);
-          break;
-        case IN_MODIFY:
-          printf("IN_MODIFY ", event->name);
-          break;
-        case IN_MOVE_SELF:
-          printf("IN_MOVE_SELF ", event->name);
-          break;
-        case IN_MOVED_FROM:
-          printf("IN_MOVED_FROM ", event->name);
-          break;
-        case IN_MOVED_TO:
-          printf("IN_MOVED_TO ", event->name);
-          break;
-        case IN_Q_OVERFLOW:
-          printf("IN_Q_OVERFLOW ", event->name);
-          // TODO: rebuild tree
-          break;
-        }
-        if(event->len != 0)
-        {
-          printf("name: %s\n", event->name);
-          c_file_modified = c_file_modified || watcher->filter(event->name);
-        }else
-          printf("\n", event->name);
-
-        i += sizeof(struct inotify_event) + event->len;
-      }
-    }
+    if(_simple_file_watcher_process_events(watcher))
+      return true;
   }
 }
 #endif // __linux__
