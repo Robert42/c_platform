@@ -45,6 +45,8 @@ static enum Set_Int_Change_Detection_Dismissing_Old_Change setintcddo_insert(str
 
 static void setintcddo_reset(struct Set_Int_Change_Detection_Dismissing_Old* set)
 {
+  set->len_old = set->len_new;
+  set->len_new = 0;
 }
 static enum Set_Int_Change_Detection_Dismissing_Old_Change setintcddo_insert(struct Set_Int_Change_Detection_Dismissing_Old* set, int value)
 {
