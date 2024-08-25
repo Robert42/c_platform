@@ -23,7 +23,7 @@ struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_Fi
   watcher.root_path = malloc(strlen(root_path)+1);
   strcpy(watcher.root_path, root_path);
 
-  watcher.fd = -1; // prevent _simple_file_watcher_reinit from closing the fd
+  watcher.dirs_fd = -1; // prevent _simple_file_watcher_reinit from closing the fd
   _simple_file_watcher_reinit(&watcher);
   register_graceful_exit_via_sigint();
 #endif // __linux__
@@ -34,7 +34,7 @@ void simple_file_watcher_deinit(struct Simple_File_Watcher* watcher)
 {
 #ifdef __linux__
   free(watcher->root_path);
-  close(watcher->fd);
+  close(watcher->dirs_fd);
 #endif
 }
 
@@ -76,7 +76,7 @@ static void _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_Wa
         const usize new_len = path_join(path, entry->d_name, path_len); // modify path to point to the current dir
         // printf("dir: %s\n", path);
 
-        const int subdir_wd = inotify_add_watch(watcher->fd, path, IN_MODIFY|IN_MOVE|IN_DELETE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CREATE);
+        const int subdir_wd = inotify_add_watch(watcher->dirs_fd, path, IN_MODIFY|IN_MOVE|IN_DELETE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CREATE);
         LINUX_ASSERT_NE(subdir_wd, -1);
 
         const int subdir_fd = openat(dir_fd, entry->d_name, O_DIRECTORY | O_RDONLY, 0);
@@ -94,13 +94,13 @@ static void _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_Wa
 
 static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher)
 {
-  if(watcher->fd != -1)
-    close(watcher->fd);
+  if(watcher->dirs_fd != -1)
+    close(watcher->dirs_fd);
 
-  watcher->fd = inotify_init1(IN_NONBLOCK);
-  LINUX_ASSERT_NE(watcher->fd, -1);
+  watcher->dirs_fd = inotify_init1(IN_NONBLOCK);
+  LINUX_ASSERT_NE(watcher->dirs_fd, -1);
 
-  const int root_wd = inotify_add_watch(watcher->fd, watcher->root_path, IN_MODIFY|IN_MOVE|IN_DELETE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CREATE);
+  const int root_wd = inotify_add_watch(watcher->dirs_fd, watcher->root_path, IN_MODIFY|IN_MOVE|IN_DELETE|IN_DELETE_SELF|IN_MOVE_SELF|IN_CREATE);
   LINUX_ASSERT_NE(root_wd, -1);
 
   // recursively visit directories to watch those, too
@@ -124,7 +124,7 @@ static bool _simple_file_watcher_process_events(struct Simple_File_Watcher* watc
   bool c_file_modified = false;
   while(true)
   {
-    const ssize num_bytes_read = read(watcher->fd, BUFFER, sizeof(BUFFER));
+    const ssize num_bytes_read = read(watcher->dirs_fd, BUFFER, sizeof(BUFFER));
     const bool nothing_mode_to_read = num_bytes_read == -1 && errno==EAGAIN;
     if(nothing_mode_to_read)
       break;
@@ -182,7 +182,7 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
     {
       struct pollfd fds[1] = {
         (struct pollfd){
-          .fd = watcher->fd,
+          .fd = watcher->dirs_fd,
           .events = POLLIN,
         },
       };

@@ -7,7 +7,7 @@ struct Simple_File_Watcher
   Fn_File_Filter *filter;
 
 #ifdef __linux__
-  int fd;
+  int dirs_fd;
   char* root_path; // needed to rebuild
 #endif
 };
