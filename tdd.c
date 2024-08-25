@@ -3,8 +3,12 @@
 #include "c_script.h"
 #include "script/simple_file_watcher.c"
 
+#define PRINT_ITER_STATS 1
+
 void run_tests()
 {
+  // TODO clear
+
   // TODO: get the absolute path insteaed of depending on the current dir
   char test_path[] = "unit_test.c";
 
@@ -13,6 +17,12 @@ void run_tests()
   // char* const args[] = {"tcc", " -Wall", "-Werror", "-run", test_path};
   char* const args[] = {"tcc", "-Wall", "-Werror", "-run", test_path, NULL};
   struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, (struct Proc_Exec_Blocking_Settings){});
+
+#if PRINT_ITER_STATS
+  static usize iter_count = 0;
+  // TODO print test iteration duration
+  printf("%stest iteration: %zu%s\n", TERM_CYAN, iter_count++, TERM_NORMAL);
+#endif
 }
 
 int main(int argc, const char** argv)
@@ -25,9 +35,7 @@ int main(int argc, const char** argv)
   struct Simple_File_Watcher watcher = simple_file_watcher_init(dirname(path), path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))
   {
-    // TODO clear
     run_tests();
-    // TODO print time
   }
 
   simple_file_watcher_deinit(&watcher);
