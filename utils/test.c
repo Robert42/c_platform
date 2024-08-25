@@ -2,8 +2,10 @@
 #pragma once
 
 #include "path.test.c"
+#include "collections/set/setintcddo.test.c"
 
 void utils_test()
 {
   path_test();
+  setintcddo_test();
 }
