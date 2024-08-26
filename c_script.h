@@ -1,18 +1,10 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #pragma once
 
-#include "platform/system_header.h"
-#include "platform/mem/mem.h"
-#include "platform/dev/dev.h"
+#include "platform/prelude.h"
 
 #include "platform/platform.c"
-#include "platform/io/terminal.c"
-#include "platform/mem/mem.c"
-#include "platform/dev/dev.c"
-#ifdef __linux__
-#include "platform/io/file.linux.c"
-#include "platform/proc/proc.linux.c"
-#endif
+#include "utils/utils.c"
 
 Mem_Region SCRATCH = {};
 

@@ -15,6 +15,7 @@ const char* TERM_CYAN = "";
 const char* TERM_CYAN_BOLD = "";
 
 const char* TERM_NORMAL = "";
+const char* TERM_CLEAR = "";
 
 void term_init()
 {
@@ -47,6 +48,7 @@ void term_init()
     TERM_CYAN = "\e[" NORMAL ";" CYAN_FG "m";
     TERM_CYAN_BOLD = "\e[" BOLD ";" CYAN_FG "m";
     TERM_NORMAL = "\e[" NORMAL "m";
+    TERM_CLEAR = "\e[3J";
 #undef BOLD
 #undef NORMAL
 #undef RED_FG
