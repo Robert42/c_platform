@@ -12,6 +12,7 @@ typedef struct
 } Mem_Region;
 
 extern Mem_Region SCRATCH;
+void _swap_scratch(Mem_Region scratch_1, Mem_Region scratch_2);
 
 Mem_Region _mem_region_from(void* begin, usize len);
 #define MEM_REGION_FROM_ARRAY(XS) _mem_region_from(XS, sizeof XS)

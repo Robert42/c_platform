@@ -23,4 +23,28 @@ void mem_test()
   EXPECT_DEBUG_ASSERT(
   mem_region_alloc_bytes_unaligned(&region, 4);
   );
+
+  // swap scratch
+  const Mem_Region prev_scratch = SCRATCH;
+  {
+    u8 TEST_SCRATCH_1[256];
+    u8 TEST_SCRATCH_2[128];
+
+    SCRATCH = MEM_REGION_FROM_ARRAY(TEST_SCRATCH_1);
+    assert_ptr_eq(SCRATCH.begin, TEST_SCRATCH_1);
+    assert_ptr_eq(SCRATCH.end, TEST_SCRATCH_1 + ARRAY_LEN(TEST_SCRATCH_1));
+
+    mem_region_alloc_bytes_unaligned(&SCRATCH, 3);
+    assert_ptr_eq(SCRATCH.begin, TEST_SCRATCH_1+3);
+    assert_ptr_eq(SCRATCH.end, TEST_SCRATCH_1 + ARRAY_LEN(TEST_SCRATCH_1));
+
+    _swap_scratch(MEM_REGION_FROM_ARRAY(TEST_SCRATCH_1), MEM_REGION_FROM_ARRAY(TEST_SCRATCH_2));
+    assert_ptr_eq(SCRATCH.begin, TEST_SCRATCH_2);
+    assert_ptr_eq(SCRATCH.end, TEST_SCRATCH_2 + ARRAY_LEN(TEST_SCRATCH_2));
+
+    _swap_scratch(MEM_REGION_FROM_ARRAY(TEST_SCRATCH_1), MEM_REGION_FROM_ARRAY(TEST_SCRATCH_2));
+    assert_ptr_eq(SCRATCH.begin, TEST_SCRATCH_1);
+    assert_ptr_eq(SCRATCH.end, TEST_SCRATCH_1 + ARRAY_LEN(TEST_SCRATCH_1));
+  }
+  SCRATCH = prev_scratch;
 }

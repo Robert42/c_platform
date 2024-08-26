@@ -9,6 +9,11 @@
 Mem_Region SCRATCH = {};
 
 static u8 _SCRATCH_BUFFER_1[1024*1024] = {};
+static u8 _SCRATCH_BUFFER_2[1024*1024] = {};
+// void scratch_swap()
+// {
+//   _scratch_swap();
+// }
 
 void c_script_init()
 {
