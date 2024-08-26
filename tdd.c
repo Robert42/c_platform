@@ -42,7 +42,7 @@ void run_tests()
   {
     char* const args_compile[] = {"gcc", "-Wall", "-Werror", test_path, "-o", bin_path, NULL};
     char* const args_test[] = {bin_path, NULL};
-    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){}).exit_code == 0)
+    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){}).exit_code == EXIT_SUCCESS)
       proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){});
     break;
   }
@@ -66,14 +66,14 @@ int main(int argc, const char** argv)
   {
     if(strcmp(argv[i], "--cc") == 0)
     {
-      if(++i >= argc) {fprintf(stderr, "%s: Missing compiler after `--cc`\n", argv[0]); exit(1);}
+      if(++i >= argc) {fprintf(stderr, "%s: Missing compiler after `--cc`\n", argv[0]); exit(EXIT_FAILURE);}
 
       if(strcmp(argv[i], "tcc") == 0)
         C_COMPILER = CC_TCC;
       else if(strcmp(argv[i], "gcc") == 0)
         C_COMPILER = CC_GCC;
       else
-        {fprintf(stderr, "%s: Unknown compiler `%s`\n", argv[0], argv[i]); exit(1);}
+        {fprintf(stderr, "%s: Unknown compiler `%s`\n", argv[0], argv[i]); exit(EXIT_FAILURE);}
     }
   }
 
@@ -90,5 +90,5 @@ int main(int argc, const char** argv)
 
   simple_file_watcher_deinit(&watcher);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

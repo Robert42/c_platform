@@ -25,5 +25,5 @@ int main(int argc, const char** argv)
 
   printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -23,6 +23,9 @@ void abort();
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
 
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
+
 int isatty(int fd);
 int close(int fd);
 pid_t fork(void);
