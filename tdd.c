@@ -21,7 +21,6 @@ void run_tests()
 
   // TODO: allow choosing different compilers.
   // If choosing libtcc, then simply fork and compile via the libtcc.
-  // char* const args[] = {"tcc", " -Wall", "-Werror", "-run", test_path};
   char* const args[] = {"tcc", "-Wall", "-Werror", "-run", test_path, NULL};
   proc_exec_blocking(args, (struct Proc_Exec_Blocking_Settings){});
 
