@@ -2,7 +2,7 @@
 
 #include "mem.h"
 
-void _swap_scratch(Mem_Region scratch_1, Mem_Region scratch_2)
+void _mem_swap_scratch(Mem_Region scratch_1, Mem_Region scratch_2)
 {
   if(SCRATCH.end == scratch_1.end)
   {
