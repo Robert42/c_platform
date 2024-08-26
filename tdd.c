@@ -23,7 +23,7 @@ void run_tests()
   // If choosing libtcc, then simply fork and compile via the libtcc.
   // char* const args[] = {"tcc", " -Wall", "-Werror", "-run", test_path};
   char* const args[] = {"tcc", "-Wall", "-Werror", "-run", test_path, NULL};
-  struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, (struct Proc_Exec_Blocking_Settings){});
+  proc_exec_blocking(args, (struct Proc_Exec_Blocking_Settings){});
 
 #if PRINT_ITER_STATS
   static usize iter_count = 0;
