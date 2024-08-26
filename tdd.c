@@ -1,7 +1,9 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
 #include "c_script.h"
-#include "script/simple_file_watcher.c"
+
+#include "utils/collections/set/setintcddo.c"
+#include "script/simple_file_watcher.c" // depends on setintcddo.c
 
 #define PRINT_ITER_STATS 1
 #define CLEAR 1

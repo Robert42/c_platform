@@ -15,5 +15,5 @@ void platform_init()
 
 #ifdef __linux__
 #include "io/file.linux.c"
-#include "proc/proc.linux.c"
+#include "proc/proc.linux.c" // depends on "io/file.linux.c"
 #endif

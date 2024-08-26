@@ -1,7 +1,5 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "proc.h"
-// TODO: this probably confuses tcc's #pragma once system
-#include "../io/file.linux.h"
 
 #define READ_END 0
 #define WRITE_END 1

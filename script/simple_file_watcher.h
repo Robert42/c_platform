@@ -2,9 +2,6 @@
 
 typedef bool Fn_File_Filter(const char* filepath);
 
-// TODO: this probably confuses tcc's #pragma once system
-#include "../utils/collections/set/setintcddo.c"
-
 struct Simple_File_Watcher
 {
   Fn_File_Filter *filter; // Determines for a given filename, whether a file is relevant
