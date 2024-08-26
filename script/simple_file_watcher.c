@@ -108,7 +108,7 @@ static usize _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_W
       case DT_REG:
         if(watcher->filter(entry->d_name))
         {
-          const usize new_len = path_join(path, entry->d_name, path_len); // modify path to point to the current dir
+          path_join(path, entry->d_name, path_len); // modify path to point to the current dir
           // printf("regular file: %s\n", path);
 
           const int file_wd = inotify_add_watch(watcher->file_fd, path, IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
