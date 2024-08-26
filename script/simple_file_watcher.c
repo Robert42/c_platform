@@ -264,7 +264,9 @@ void _simple_file_watcher_process_file_events(struct Simple_File_Watcher* watche
     {
       const struct inotify_event* event = (const struct inotify_event*)&BUFFER[i];
 
-      // TODO print the event
+#if DBG_EVENTS
+      _print_inotify_event(event);
+#endif
 
       i += sizeof(struct inotify_event) + event->len;
     }
