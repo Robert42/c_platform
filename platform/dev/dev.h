@@ -20,6 +20,7 @@ extern usize __assert_caught__;
   DECLARE_BIN(NAME ## _gt, TY); \
   DECLARE_BIN(NAME ## _gte, TY);
 #define RNG_ASSERT_NUM_CMP(NAME, TY) \
+  DECLARE_TRIPLE(NAME ## _lte_lte, TY); \
   DECLARE_TRIPLE(NAME ## _lte_lt, TY);
 #define BIN_ASSERT_CUSTOM(NAME, TY, CHECK, FMT) DECLARE_BIN(NAME, TY)
 #include "assertions.h"

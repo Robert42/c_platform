@@ -55,6 +55,7 @@ static const char* fmt_bool(bool x)
   DEFINE_NUM_BIN(NAME ## _gt, TY, >) \
   DEFINE_NUM_BIN(NAME ## _gte, TY, >=)
 #define RNG_ASSERT_NUM_CMP(NAME, TY) \
+  DEFINE_NUM_RNG(NAME ## _lte_lte, TY, <=, <=) \
   DEFINE_NUM_RNG(NAME ## _lte_lt, TY, <=, <)
 #define BIN_ASSERT_CUSTOM(NAME, TY, CHECK, FMT) void assert_ ## NAME(TY x, TY y){if(CHECK)return;else __bin_assert_failed__(FMT(x), FMT(y)); } DEBUG_VERSION_BIN(NAME, TY)
 #include "assertions.h"

@@ -49,6 +49,14 @@ void dev_test()
   assert_usize_lte_lt(37, 42, 43);
   EXPECT_ASSERT( assert_usize_lte_lt(37, 42, 41); );
 
+  EXPECT_ASSERT( assert_usize_lte_lte(42, 37, 137); );
+  assert_usize_lte_lte(37, 42, 137);
+  assert_usize_lte_lte(42, 42, 137);
+  EXPECT_ASSERT( assert_usize_lte_lte(43, 42, 137); );
+  assert_usize_lte_lte(37, 42, 42);
+  assert_usize_lte_lte(37, 42, 43);
+  EXPECT_ASSERT( assert_usize_lte_lte(37, 42, 41); );
+
   assert_ptr_eq(&xs[0], &xs[0]);
   EXPECT_ASSERT( assert_ptr_eq(&xs[0], &xs[1]); );
   EXPECT_ASSERT( assert_ptr_eq(&xs[1], &xs[0]); );
