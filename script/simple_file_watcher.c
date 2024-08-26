@@ -7,7 +7,6 @@
 #include <sys/inotify.h>
 #include <sys/poll.h>
 #include <errno.h>
-#include <fcntl.h>
 #include <dirent.h>
 
 #define DBG_EVENTS 0

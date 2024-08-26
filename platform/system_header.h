@@ -39,12 +39,17 @@ char* realpath(const char* path, char* buffer);
 
 #else // ENV_COMPILER == COMPILER_TCC
 
+#if ENV_COMPILER == COMPILER_GCC
+#define _GNU_SOURCE
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <libgen.h>
+#include <fcntl.h>
 #include <sys/wait.h> // waitpid
 
 #include <string.h>
