@@ -4,11 +4,14 @@
 #include "script/simple_file_watcher.c"
 
 #define PRINT_ITER_STATS 1
+#define CLEAR 0
 
 void run_tests()
 {
+#if CLEAR
   printf(TERM_CLEAR);
   fflush(stdout);
+#endif
 
   // TODO: get the absolute path insteaed of depending on the current dir
   char test_path[] = "unit_test.c";
