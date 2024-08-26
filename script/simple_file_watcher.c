@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 
-#define DBG_EVENTS 1
+#define DBG_EVENTS 0
 
 static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher);
 #endif

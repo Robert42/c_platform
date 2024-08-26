@@ -4,7 +4,7 @@
 #include "script/simple_file_watcher.c"
 
 #define PRINT_ITER_STATS 1
-#define CLEAR 0
+#define CLEAR 1
 
 void run_tests()
 {
@@ -38,9 +38,7 @@ int main(int argc, const char** argv)
   char path[] = __FILE__;
   struct Simple_File_Watcher watcher = simple_file_watcher_init(dirname(path), path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))
-  {
     run_tests();
-  }
 
   simple_file_watcher_deinit(&watcher);
 
