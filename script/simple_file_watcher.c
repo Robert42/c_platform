@@ -232,17 +232,10 @@ static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher*
       _print_inotify_event(event);
 #endif
 
-      switch(event->mask)
-      {
-      case IN_CREATE:
-      case IN_MOVED_TO:
-      case IN_MOVE_SELF:
+      if(event->mask & (IN_CREATE|IN_MOVED_TO|IN_MOVE_SELF))
         rebuild_tree = true;
-        break;
-      case IN_Q_OVERFLOW:
+      if(event->mask & IN_Q_OVERFLOW)
         reinit = true;
-        break;
-      }
 
       i += sizeof(struct inotify_event) + event->len;
     }
