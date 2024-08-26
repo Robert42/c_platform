@@ -160,7 +160,7 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
   // recursively visit directories to watch them and their content, too
   setintcddo_reset(watcher->watched_files);
   {
-    u8 PATH_BUFFER[PATH_BUFFER_CAPACITY];
+    char PATH_BUFFER[PATH_BUFFER_CAPACITY];
     strcpy(PATH_BUFFER, realpath(watcher->root_path));
     
     const int root_dir_fd = open(watcher->root_path, O_DIRECTORY | O_RDONLY, 0);
