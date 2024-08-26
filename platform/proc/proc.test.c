@@ -9,8 +9,9 @@ void proc_test()
   const struct Proc_Exec_Blocking_Settings capture_stdout = {.capture_stdout=true, .region_stdout=&region};
   const struct Proc_Exec_Blocking_Settings capture_stderr = {.capture_stderr=true, .region_stderr=&region};
 
-  // TODO: Create own programs to test instead!
-  // these tests are fragile. They only work on linux and may change when the software gets updated!
+  // If I ever run these tests outside linux, it may be a good idea to create
+  // own programs to test instead of using linux commands.
+  // Alternatively start different processes depending on the OS
 
   {
     char msg[] = "Hello, World!";
