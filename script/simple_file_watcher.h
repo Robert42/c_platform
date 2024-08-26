@@ -22,7 +22,6 @@ struct Simple_File_Watcher
   // TODO: decide, whether go back to one inotify file descriptor again?
   char* root_path;
 
-  // TODO: cache the blake3 hashsum of the last modified file? If an modify event is recevied for the same file, check, whether it realy changed?
   struct Set_Int_Change_Detection_Dismissing_Old* watched_files;
 #endif
 };
