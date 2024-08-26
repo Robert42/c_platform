@@ -9,14 +9,6 @@
 #define PRINT_ITER_STATS 1
 #define CLEAR 1
 
-enum C_Compiler
-{
-  CC_TCC,
-  CC_GCC,
-  CC_CLANG,
-};
-enum C_Compiler C_COMPILER = CC_TCC;
-
 void run_tests()
 {
 #if CLEAR
@@ -30,32 +22,7 @@ void run_tests()
 
   const u64 time_begin = timer_now();
 
-  switch(C_COMPILER)
-  {
-  // If choosing libtcc, then simply fork and compile via the libtcc.
-  case CC_TCC:
-  {
-    char* const args_compile[] = {"tcc", "-Wall", "-Werror", "-run", test_path, NULL};
-    proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){});
-    break;
-  }
-  case CC_GCC:
-  {
-    char* const args_compile[] = {"gcc", "-Wall", "-Werror", test_path, "-o", bin_path, NULL};
-    char* const args_test[] = {bin_path, NULL};
-    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){}).exit_code == EXIT_SUCCESS)
-      proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){});
-    break;
-  }
-  case CC_CLANG:
-  {
-    char* const args_compile[] = {"clang", "-Wall", "-Werror", test_path, "-o", bin_path, NULL};
-    char* const args_test[] = {bin_path, NULL};
-    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){}).exit_code == EXIT_SUCCESS)
-      proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){});
-    break;
-  }
-  }
+  cc_compile_and_run(test_path, bin_path);
 
   const u64 time_end = timer_now();
 
@@ -77,14 +44,7 @@ int main(int argc, const char** argv)
     {
       if(++i >= argc) errx(EXIT_FAILURE, "Missing compiler after `--cc`\n");
 
-      if(strcmp(argv[i], "tcc") == 0)
-        C_COMPILER = CC_TCC;
-      else if(strcmp(argv[i], "gcc") == 0)
-        C_COMPILER = CC_GCC;
-      else if(strcmp(argv[i], "clang") == 0)
-        C_COMPILER = CC_CLANG;
-      else
-        errx(EXIT_FAILURE, "Unknown compiler `%s`\n", argv[i]);
+      C_COMPILER = cc_compiler_for_name(argv[i]);
     }
   }
 
