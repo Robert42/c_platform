@@ -39,6 +39,9 @@ int strcmp(const char* x, const char* y);
 const char* dirname(const char* path);
 char* realpath(const char* path, char* buffer);
 
+// TODO: Add NORETURN macro
+void errx(int eval, const char* fmt, ...);
+
 #endif // __linux__
 
 #else // ENV_COMPILER == COMPILER_TCC
@@ -54,6 +57,7 @@ char* realpath(const char* path, char* buffer);
 #include <unistd.h>
 #include <libgen.h>
 #include <fcntl.h>
+#include <err.h>
 #include <sys/wait.h> // waitpid
 
 #include <string.h>

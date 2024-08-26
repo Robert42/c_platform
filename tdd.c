@@ -66,14 +66,14 @@ int main(int argc, const char** argv)
   {
     if(strcmp(argv[i], "--cc") == 0)
     {
-      if(++i >= argc) {fprintf(stderr, "%s: Missing compiler after `--cc`\n", argv[0]); exit(EXIT_FAILURE);}
+      if(++i >= argc) errx(EXIT_FAILURE, "Missing compiler after `--cc`\n");
 
       if(strcmp(argv[i], "tcc") == 0)
         C_COMPILER = CC_TCC;
       else if(strcmp(argv[i], "gcc") == 0)
         C_COMPILER = CC_GCC;
       else
-        {fprintf(stderr, "%s: Unknown compiler `%s`\n", argv[0], argv[i]); exit(EXIT_FAILURE);}
+        errx(EXIT_FAILURE, "Unknown compiler `%s`\n", argv[i]);
     }
   }
 
