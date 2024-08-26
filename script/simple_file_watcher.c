@@ -158,6 +158,7 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
   LINUX_ASSERT_NE(root_wd, -1);
 
   // recursively visit directories to watch them and their content, too
+  setintcddo_reset(watcher->watched_files);
   {
     u8 PATH_BUFFER[PATH_BUFFER_CAPACITY];
     strcpy(PATH_BUFFER, realpath(watcher->root_path));
@@ -167,6 +168,7 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
     number_relevant_files_added = _simple_file_watcher_watch_subdirs(root_dir_fd, watcher, PATH_BUFFER, strlen(PATH_BUFFER));
     close(root_dir_fd);
   }
+  number_relevant_files_added += watcher->watched_files->len_old != 0; // some relevant files were removed
 
   return number_relevant_files_added;
 }
