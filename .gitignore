@@ -1,9 +1,13 @@
+# ==== compiled binaries ====
+a.out
+/tdd
+/unit_test
+
 # ==== C ====
 
-a.out
 *.o
-/tdd
 
 # ==== rr ====
 
 /*.rr/
+

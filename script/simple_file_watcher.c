@@ -7,7 +7,6 @@
 #include <sys/inotify.h>
 #include <sys/poll.h>
 #include <errno.h>
-#include <fcntl.h>
 #include <dirent.h>
 
 #define DBG_EVENTS 0
@@ -22,7 +21,7 @@ struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_Fi
   };
 
 #ifdef __linux__
-  watcher.root_path = malloc(strlen(root_path)+1);
+  watcher.root_path = realpath(root_path, NULL); // the result was allocated with malloc
   watcher.watched_files = calloc(sizeof(*watcher.watched_files), 1);
   strcpy(watcher.root_path, root_path);
 
@@ -108,7 +107,7 @@ static usize _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_W
       case DT_REG:
         if(watcher->filter(entry->d_name))
         {
-          const usize new_len = path_join(path, entry->d_name, path_len); // modify path to point to the current dir
+          path_join(path, entry->d_name, path_len); // modify path to point to the current dir
           // printf("regular file: %s\n", path);
 
           const int file_wd = inotify_add_watch(watcher->file_fd, path, IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
@@ -160,8 +159,8 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
   // recursively visit directories to watch them and their content, too
   setintcddo_reset(watcher->watched_files);
   {
-    u8 PATH_BUFFER[PATH_BUFFER_CAPACITY];
-    strcpy(PATH_BUFFER, realpath(watcher->root_path));
+    char PATH_BUFFER[PATH_BUFFER_CAPACITY];
+    strcpy(PATH_BUFFER, watcher->root_path);
     
     const int root_dir_fd = open(watcher->root_path, O_DIRECTORY | O_RDONLY, 0);
     LINUX_ASSERT_NE(root_dir_fd, -1);
@@ -337,9 +336,9 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
   }
 }
 
-#undef RELEVANT_FILE_CHANGED 1
-#undef NEED_TO_REBUILD_TREE 2
-#undef NEED_TO_REINIT_EVERYTHING 4
+#undef RELEVANT_FILE_CHANGED
+#undef NEED_TO_REBUILD_TREE
+#undef NEED_TO_REINIT_EVERYTHING
 
 #undef DBG_EVENTS
 #endif // __linux__

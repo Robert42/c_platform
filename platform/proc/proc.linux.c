@@ -38,10 +38,13 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
     LINUX_ASSERT_EQ(close(pipefd_stdout[WRITE_END]), 0);
   if(settings.capture_stderr)
     LINUX_ASSERT_EQ(close(pipefd_stderr[WRITE_END]), 0);
-  
-  LINUX_ASSERT_NE(waitpid(child_pid, NULL, 0), -1);
 
-  struct Proc_Exec_Blocking_Result result = {};
+  int wstatus;
+  LINUX_ASSERT_NE(waitpid(child_pid, &wstatus, 0), -1);
+
+  struct Proc_Exec_Blocking_Result result = {
+    .exit_code = WEXITSTATUS(wstatus),
+  };
 
   if(settings.capture_stdout)
   {

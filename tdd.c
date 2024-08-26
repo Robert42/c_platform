@@ -9,6 +9,13 @@
 #define PRINT_ITER_STATS 1
 #define CLEAR 1
 
+enum C_Compiler
+{
+  CC_TCC,
+  CC_GCC,
+};
+enum C_Compiler C_COMPILER = CC_TCC;
+
 void run_tests()
 {
 #if CLEAR
@@ -18,12 +25,27 @@ void run_tests()
 
   // TODO: get the absolute path insteaed of depending on the current dir
   char test_path[] = "unit_test.c";
+  char bin_path[] = "./unit_test";
 
-  // TODO: allow choosing different compilers.
+  switch(C_COMPILER)
+  {
+  // TODO: allow choosing from more compilers.
   // If choosing libtcc, then simply fork and compile via the libtcc.
-  // char* const args[] = {"tcc", " -Wall", "-Werror", "-run", test_path};
-  char* const args[] = {"tcc", "-Wall", "-Werror", "-run", test_path, NULL};
-  struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, (struct Proc_Exec_Blocking_Settings){});
+  case CC_TCC:
+  {
+    char* const args_compile[] = {"tcc", "-Wall", "-Werror", "-run", test_path, NULL};
+    proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){});
+    break;
+  }
+  case CC_GCC:
+  {
+    char* const args_compile[] = {"gcc", "-Wall", "-Werror", test_path, "-o", bin_path, NULL};
+    char* const args_test[] = {bin_path, NULL};
+    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){}).exit_code == 0)
+      proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){});
+    break;
+  }
+  }
 
 #if PRINT_ITER_STATS
   static usize iter_count = 0;
