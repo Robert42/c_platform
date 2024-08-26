@@ -10,6 +10,8 @@
 #include <fcntl.h>
 #include <dirent.h>
 
+#define DBG_EVENTS 1
+
 static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher);
 #endif
 
@@ -164,6 +166,42 @@ static void _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watche
 }
 #undef PATH_BUFFER_CAPACITY
 
+#if DBG_EVENTS
+// TODO: move to new header `x_macros.h`
+#define X_CASE_RETURN_CSTR(X) case X: return #X;
+static const char* _inotify_event_mask_flag_to_cstr(u32 mask)
+{
+#define X_MACRO_INOTIFY_MASK(X) X(IN_ACCESS) X(IN_ATTRIB) X(IN_CLOSE_WRITE)\
+  X(IN_CLOSE_NOWRITE) X(IN_CREATE) X(IN_DELETE) X(IN_DELETE_SELF) X(IN_MODIFY)\
+  X(IN_MOVE_SELF) X(IN_MOVED_FROM) X(IN_MOVED_TO) X(IN_OPEN) X(IN_MOVE)\
+  X(IN_CLOSE) X(IN_DONT_FOLLOW) X(IN_EXCL_UNLINK) X(IN_MASK_ADD) X(IN_ONESHOT)\
+  X(IN_ONLYDIR) X(IN_MASK_CREATE) X(IN_IGNORED) X(IN_ISDIR) X(IN_Q_OVERFLOW)\
+  X(IN_UNMOUNT)
+
+  switch(mask)
+  {
+  X_MACRO_INOTIFY_MASK(X_CASE_RETURN_CSTR)
+  }
+  return "?";
+#undef X_MACRO_INOTIFY_MASK
+}
+static void _print_inotify_event(const struct inotify_event* event)
+{
+  printf("(struct inotify_event){\n  .wd = %i,\n  .mask = ", event->wd);
+
+  u32 mask = event->mask;
+  for(int i=0; mask!=0; ++i)
+  {
+    if(i!=0)
+      printf("|");
+    const u32 flag = mask & (mask ^ (mask-1));
+    mask &= ~flag;
+    printf("%s", _inotify_event_mask_flag_to_cstr(flag));
+  }
+  printf(",\n  .cookie = %u,\n  .name=`%s`\n}\n", event->cookie, event->len ? event->name : "");
+}
+#endif
+
 static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher* watcher)
 {
   usize number_relevant_files_added = 0;
@@ -190,6 +228,10 @@ static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher*
     {
       const struct inotify_event* event = (const struct inotify_event*)&BUFFER[i];
 
+#if DBG_EVENTS
+      _print_inotify_event(event);
+#endif
+
       switch(event->mask)
       {
       case IN_CREATE:
@@ -201,13 +243,6 @@ static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher*
         reinit = true;
         break;
       }
-
-      // TODO: write a helper printing inotify events
-      // if(event->len != 0)
-      // {
-      //   printf("name: %s\n", event->name);
-      // }else
-      //   printf("\n");
 
       i += sizeof(struct inotify_event) + event->len;
     }
@@ -286,5 +321,7 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
       return true;
   }
 }
+
+#undef DBG_EVENTS
 #endif // __linux__
 
