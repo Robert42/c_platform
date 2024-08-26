@@ -114,7 +114,10 @@ static usize _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_W
           const int file_wd = inotify_add_watch(watcher->file_fd, path, IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
           LINUX_ASSERT_NE(file_wd, -1);
 
-          number_relevant_files_added += setintcddo_insert(watcher->watched_files, file_wd) == SETINTCDDOC_NEW;
+          const bool is_new = setintcddo_insert(watcher->watched_files, file_wd) == SETINTCDDOC_NEW;
+          // if(is_new)
+          //   printf("new relevant file found: %s\n", path);
+          number_relevant_files_added += is_new;
 
           path[path_len] = 0; // modify path to point to the parent dir, again
         }
@@ -128,7 +131,7 @@ static usize _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_W
   return number_relevant_files_added;
 }
 
-static void _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watcher);
+static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watcher);
 static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher)
 {
   if(watcher->file_fd != -1)
@@ -141,8 +144,9 @@ static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher)
   _simple_file_watcher_rebuild_tree(watcher);
 }
 
-static void _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watcher)
+static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watcher)
 {
+  usize number_relevant_files_added = 0;
   if(watcher->dirs_fd != -1)
     close(watcher->dirs_fd);
 
@@ -160,9 +164,11 @@ static void _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watche
     
     const int root_dir_fd = open(watcher->root_path, O_DIRECTORY | O_RDONLY, 0);
     LINUX_ASSERT_NE(root_dir_fd, -1);
-    _simple_file_watcher_watch_subdirs(root_dir_fd, watcher, PATH_BUFFER, strlen(PATH_BUFFER));
+    number_relevant_files_added = _simple_file_watcher_watch_subdirs(root_dir_fd, watcher, PATH_BUFFER, strlen(PATH_BUFFER));
     close(root_dir_fd);
   }
+
+  return number_relevant_files_added;
 }
 #undef PATH_BUFFER_CAPACITY
 
@@ -204,8 +210,6 @@ static void _print_inotify_event(const struct inotify_event* event)
 
 static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher* watcher)
 {
-  usize number_relevant_files_added = 0;
-
   u8 BUFFER[4096]
     __attribute((aligned(__alignof__(struct inotify_event))));
 
@@ -218,10 +222,13 @@ static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher*
     if(nothing_mode_to_read)
     {
       if(reinit)
+      {
         _simple_file_watcher_reinit(watcher);
-      else if(rebuild_tree)
-        _simple_file_watcher_rebuild_tree(watcher);
-      return number_relevant_files_added;
+        return 1;
+      }else if(rebuild_tree)
+        return _simple_file_watcher_rebuild_tree(watcher);
+      else
+        return 0;
     }
     
     for(ssize i=0; i<num_bytes_read;)
@@ -242,16 +249,17 @@ static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher*
   }
 }
 
-void _simple_file_watcher_process_file_events(struct Simple_File_Watcher* watcher)
+usize _simple_file_watcher_process_file_events(struct Simple_File_Watcher* watcher)
 {
   u8 BUFFER[4096]
     __attribute((aligned(__alignof__(struct inotify_event))));
+  usize num_changes = 0;
   while(true)
   {
     const ssize num_bytes_read = read(watcher->file_fd, BUFFER, sizeof(BUFFER));
     const bool nothing_mode_to_read = num_bytes_read == -1 && errno==EAGAIN;
     if(nothing_mode_to_read)
-      return;
+      return num_changes;
       
     for(ssize i=0; i<num_bytes_read;)
     {
@@ -260,6 +268,7 @@ void _simple_file_watcher_process_file_events(struct Simple_File_Watcher* watche
 #if DBG_EVENTS
       _print_inotify_event(event);
 #endif
+      num_changes += (event->mask & (IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF))!=0;
 
       i += sizeof(struct inotify_event) + event->len;
     }
@@ -299,17 +308,11 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 
       // handle dir events
       if(fds[0].events & POLLIN)
-      {
-        usize number_relevant_files_added = _simple_file_watcher_process_dir_events(watcher);
-        relevant_files_changed = number_relevant_files_added != 0;
-      }
+        relevant_files_changed += _simple_file_watcher_process_dir_events(watcher);
 
       // handle file events
       if(fds[1].events & POLLIN)
-      {
-        _simple_file_watcher_process_file_events(watcher);
-        relevant_files_changed = true;
-      }
+        relevant_files_changed += _simple_file_watcher_process_file_events(watcher);
     }
 
     if(relevant_files_changed)
