@@ -41,6 +41,7 @@ struct Set_Int_Change_Detection_Dismissing_Old
 };
 static void setintcddo_reset(struct Set_Int_Change_Detection_Dismissing_Old* set);
 static enum Set_Int_Change_Detection_Dismissing_Old_Change setintcddo_insert(struct Set_Int_Change_Detection_Dismissing_Old* set, int value);
+static bool setintcddo_remove(struct Set_Int_Change_Detection_Dismissing_Old* set, int value);
 
 
 static void setintcddo_reset(struct Set_Int_Change_Detection_Dismissing_Old* set)
@@ -73,4 +74,19 @@ static enum Set_Int_Change_Detection_Dismissing_Old_Change setintcddo_insert(str
   set->xs[end] = set->xs[set->len_new];
   set->xs[set->len_new++] = value;
   return SETINTCDDOC_NEW;
+}
+
+static bool setintcddo_remove(struct Set_Int_Change_Detection_Dismissing_Old* set, int value)
+{
+  for(usize i=0; i<set->len_new; ++i)
+    if(set->xs[i] == value)
+    {
+      set->xs[i] = set->xs[set->len_new-1];
+      set->xs[set->len_new-1] = value;
+      
+      set->len_new--;
+      set->len_old++;
+      return true;
+    }
+  return false;
 }
