@@ -31,7 +31,6 @@ void run_tests()
 
   switch(C_COMPILER)
   {
-  // TODO: allow choosing from more compilers.
   // If choosing libtcc, then simply fork and compile via the libtcc.
   case CC_TCC:
   {
@@ -63,6 +62,22 @@ int main(int argc, const char** argv)
 {
   c_script_init();
 
+  for(int i=1; i<argc; ++i)
+  {
+    if(strcmp(argv[i], "--cc") == 0)
+    {
+      if(++i >= argc) {fprintf(stderr, "%s: Missing compiler after `--cc`\n", argv[0]); exit(1);}
+
+      if(strcmp(argv[i], "tcc") == 0)
+        C_COMPILER = CC_TCC;
+      else if(strcmp(argv[i], "gcc") == 0)
+        C_COMPILER = CC_GCC;
+      else
+        {fprintf(stderr, "%s: Unknown compiler `%s`\n", argv[0], argv[i]); exit(1);}
+    }
+  }
+
+  // Actual test loop
   run_tests();
 
   char path[] = __FILE__;
