@@ -43,7 +43,7 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
   LINUX_ASSERT_NE(waitpid(child_pid, &wstatus, 0), -1);
 
   struct Proc_Exec_Blocking_Result result = {
-    .result = WEXITSTATUS(wstatus),
+    .exit_code = WEXITSTATUS(wstatus),
   };
 
   if(settings.capture_stdout)
