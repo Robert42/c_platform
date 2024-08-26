@@ -21,9 +21,7 @@ void run_tests()
   char bin_path[] = "./unit_test";
 
   const u64 time_begin = timer_now();
-
   cc_compile_and_run(test_path, bin_path);
-
   const u64 time_end = timer_now();
 
 #if PRINT_ITER_STATS
