@@ -19,7 +19,6 @@ struct Simple_File_Watcher
   // or removed.
   int dirs_fd; // inode fd for directory changes
   int file_fd; // inode fd for directory changes
-  // TODO: decide, whether go back to one inotify file descriptor again?
   char* root_path;
 
   struct Set_Int_Change_Detection_Dismissing_Old* watched_files;
