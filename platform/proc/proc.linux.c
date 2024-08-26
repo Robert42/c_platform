@@ -6,6 +6,8 @@
 #define READ_END 0
 #define WRITE_END 1
 
+#define pipe(PIPES) pipe2(PIPES, 0)
+
 struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct Proc_Exec_Blocking_Settings settings)
 {
   int pipefd_stdout[2];
@@ -62,3 +64,4 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
 #undef READ_END
 #undef WRITE_END
 
+#undef pipe

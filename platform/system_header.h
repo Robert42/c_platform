@@ -29,10 +29,7 @@ int execvpe(const char* file, char* const argv[], char* const env[]);
 int waitpid(pid_t pid, int* status, int options);
 int dup2(int oldfd, int newfd);
 ssize_t read(int fd, void* buffer, size_t num_bytes);
-
-// NOT portable! Works on x86 and and aarch64
-// TODO: replace with portable `pipe2`
-int pipe(int pipefd[2]);
+int pipe2(int pipefd[2], int flags);
 
 int strcmp(const char* x, const char* y);
 const char* dirname(const char* path);
