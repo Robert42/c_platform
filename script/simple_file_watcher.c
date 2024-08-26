@@ -271,7 +271,10 @@ usize _simple_file_watcher_process_file_events(struct Simple_File_Watcher* watch
       _print_inotify_event(event);
 #endif
       num_changes += (event->mask & (IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF))!=0;
-      // TODO: remove from watched_files if moved or deleted?
+      if(event->mask & IN_DELETE_SELF)
+        setintcddo_remove(watcher->watched_files, event->wd);
+      if(event->mask & IN_MOVE_SELF)
+        setintcddo_remove(watcher->watched_files, event->wd);
 
       i += sizeof(struct inotify_event) + event->len;
     }
