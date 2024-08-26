@@ -24,7 +24,7 @@ void timer_init()
   // I do not get the resolution, because _linux_timespect_to_nsec doesn't need
   // the resolution to translate `struct timespec` values to seconds.
 
-  timer_freq = 1000000000;
+  timer_freq = _linux_timespect_to_nsec((struct timespec){.tv_sec=1});
 }
 
 #undef CLOCK
