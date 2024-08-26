@@ -3,10 +3,12 @@
 #include "prelude.h"
 
 void term_init();
+void timer_init();
 
 void platform_init()
 {
   term_init();
+  timer_init();
 }
 
 #include "io/terminal.c"
@@ -17,4 +19,5 @@ void platform_init()
 #ifdef __linux__
 #include "io/file.linux.c"
 #include "proc/proc.linux.c" // depends on "io/file.linux.c"
+#include "time/timer.linux.c"
 #endif
