@@ -175,8 +175,6 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
 #undef PATH_BUFFER_CAPACITY
 
 #if DBG_EVENTS
-// TODO: move to new header `x_macros.h`
-#define X_CASE_RETURN_CSTR(X) case X: return #X;
 static const char* _inotify_event_mask_flag_to_cstr(u32 mask)
 {
 #define X_MACRO_INOTIFY_MASK(X) X(IN_ACCESS) X(IN_ATTRIB) X(IN_CLOSE_WRITE)\
@@ -188,7 +186,7 @@ static const char* _inotify_event_mask_flag_to_cstr(u32 mask)
 
   switch(mask)
   {
-  X_MACRO_INOTIFY_MASK(X_CASE_RETURN_CSTR)
+  X_MACRO_INOTIFY_MASK(X_CASE_RETURN_AS_CSTR)
   }
   return "?";
 #undef X_MACRO_INOTIFY_MASK
