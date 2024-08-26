@@ -22,6 +22,7 @@ const char* time_format_short_duration(u64 time, Mem_Region* region)
     fmt = "%.0f us";
   }else
   {
+    seconds *= 1000 * 1000 * 1000;
     fmt = "%.0f ns";
   }
 
