@@ -52,7 +52,6 @@ void run_tests()
   const u64 time_end = timer_now();
 
 #if PRINT_ITER_STATS
-  //TODO: fix memory leak!
   const char* duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
   
   static usize iter_count = 0;
@@ -69,7 +68,10 @@ int main(int argc, const char** argv)
   char path[] = __FILE__;
   struct Simple_File_Watcher watcher = simple_file_watcher_init(dirname(path), path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))
+  {
     run_tests();
+    scratch_swap();
+  }
 
   simple_file_watcher_deinit(&watcher);
 
