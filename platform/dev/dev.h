@@ -9,6 +9,9 @@ extern usize __assert_caught__;
 #define DECLARE_BIN(NAME, TY) \
   void assert_ ## NAME(TY x, TY y); \
   void debug_assert_ ## NAME(TY x, TY y);
+#define DECLARE_TRIPLE(NAME, TY) \
+  void assert_ ## NAME(TY x, TY y, TY z); \
+  void debug_assert_ ## NAME(TY x, TY y, TY z);
 #define BIN_ASSERT_NUM_CMP(NAME, TY) \
   DECLARE_BIN(NAME ## _eq, TY); \
   DECLARE_BIN(NAME ## _ne, TY); \
@@ -16,11 +19,15 @@ extern usize __assert_caught__;
   DECLARE_BIN(NAME ## _lte, TY); \
   DECLARE_BIN(NAME ## _gt, TY); \
   DECLARE_BIN(NAME ## _gte, TY);
+#define RNG_ASSERT_NUM_CMP(NAME, TY) \
+  DECLARE_TRIPLE(NAME ## _lte_lt, TY);
 #define BIN_ASSERT_CUSTOM(NAME, TY, CHECK) DECLARE_BIN(NAME, TY)
 #include "assertions.h"
 #undef BIN_ASSERT_NUM_CMP
+#undef RNG_ASSERT_NUM_CMP
 #undef BIN_ASSERT_CUSTOM
 #undef DECLARE_BIN
+#undef DECLARE_TRIPLE
 
 #define EXPECT_ASSERT(...) { \
   const usize __prev__ = __assert_caught__; \
