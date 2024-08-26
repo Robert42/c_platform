@@ -56,7 +56,6 @@ void run_tests()
   const char* duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
   
   static usize iter_count = 0;
-  // TODO print test iteration duration
   printf("%stest iteration: %zu duration: %s%s\n", TERM_CYAN, iter_count++, duration, TERM_NORMAL);
 #endif
 }
