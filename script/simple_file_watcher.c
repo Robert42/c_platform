@@ -210,28 +210,22 @@ static void _print_inotify_event(const struct inotify_event* event)
 }
 #endif
 
-static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher* watcher)
+#define RELEVANT_FILE_CHANGED 1
+#define NEED_TO_REBUILD_TREE 2
+#define NEED_TO_REINIT_EVERYTHING 4
+typedef u32 _Simple_File_Watcher_Update;
+static _Simple_File_Watcher_Update _simple_file_watcher_process_dir_events(struct Simple_File_Watcher* watcher)
 {
   u8 BUFFER[4096]
     __attribute((aligned(__alignof__(struct inotify_event))));
 
-  bool rebuild_tree = false;
-  bool reinit = false;
+  _Simple_File_Watcher_Update update = 0;
   while(true)
   {
     const ssize num_bytes_read = read(watcher->dirs_fd, BUFFER, sizeof(BUFFER));
     const bool nothing_mode_to_read = num_bytes_read == -1 && errno==EAGAIN;
     if(nothing_mode_to_read)
-    {
-      if(reinit)
-      {
-        _simple_file_watcher_reinit(watcher);
-        return 1;
-      }else if(rebuild_tree)
-        return _simple_file_watcher_rebuild_tree(watcher);
-      else
-        return 0;
-    }
+      return update;
     
     for(ssize i=0; i<num_bytes_read;)
     {
@@ -242,26 +236,26 @@ static usize _simple_file_watcher_process_dir_events(struct Simple_File_Watcher*
 #endif
 
       if(event->mask & (IN_CREATE|IN_MOVED_TO|IN_MOVE_SELF))
-        rebuild_tree = true;
+        update |= NEED_TO_REBUILD_TREE;
       if(event->mask & IN_Q_OVERFLOW)
-        reinit = true;
+        update |= NEED_TO_REINIT_EVERYTHING;
 
       i += sizeof(struct inotify_event) + event->len;
     }
   }
 }
 
-usize _simple_file_watcher_process_file_events(struct Simple_File_Watcher* watcher)
+_Simple_File_Watcher_Update _simple_file_watcher_process_file_events(struct Simple_File_Watcher* watcher)
 {
   u8 BUFFER[4096]
     __attribute((aligned(__alignof__(struct inotify_event))));
-  usize num_changes = 0;
+  _Simple_File_Watcher_Update update = 0;
   while(true)
   {
     const ssize num_bytes_read = read(watcher->file_fd, BUFFER, sizeof(BUFFER));
     const bool nothing_mode_to_read = num_bytes_read == -1 && errno==EAGAIN;
     if(nothing_mode_to_read)
-      return num_changes;
+      return update;
       
     for(ssize i=0; i<num_bytes_read;)
     {
@@ -270,11 +264,18 @@ usize _simple_file_watcher_process_file_events(struct Simple_File_Watcher* watch
 #if DBG_EVENTS
       _print_inotify_event(event);
 #endif
-      num_changes += (event->mask & (IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF))!=0;
+      if(event->mask & (IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF))
+        update |= RELEVANT_FILE_CHANGED;
       if(event->mask & IN_DELETE_SELF)
+      {
         setintcddo_remove(watcher->watched_files, event->wd);
+        update |= RELEVANT_FILE_CHANGED;
+      }
       if(event->mask & IN_MOVE_SELF)
+      {
         setintcddo_remove(watcher->watched_files, event->wd);
+        update |= NEED_TO_REBUILD_TREE;
+      }
 
       i += sizeof(struct inotify_event) + event->len;
     }
@@ -285,7 +286,7 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 {
   while(true)
   {
-    usize relevant_files_changed = 0;
+    _Simple_File_Watcher_Update update = 0;
     {
       struct pollfd fds[2] = {
         (struct pollfd){
@@ -314,17 +315,33 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 
       // handle dir events
       if(fds[0].events & POLLIN)
-        relevant_files_changed += _simple_file_watcher_process_dir_events(watcher);
+        update |= _simple_file_watcher_process_dir_events(watcher);
 
       // handle file events
       if(fds[1].events & POLLIN)
-        relevant_files_changed += _simple_file_watcher_process_file_events(watcher);
+        update |= _simple_file_watcher_process_file_events(watcher);
     }
 
-    if(relevant_files_changed)
+    if(update & NEED_TO_REINIT_EVERYTHING)
+    {
+      _simple_file_watcher_reinit(watcher);
+      return true;
+    }
+    else if(update & NEED_TO_REBUILD_TREE)
+    {
+      const usize num_relevant_files_changed = _simple_file_watcher_rebuild_tree(watcher);
+      if(num_relevant_files_changed != 0)
+        update |= RELEVANT_FILE_CHANGED;
+    }
+
+    if(update & RELEVANT_FILE_CHANGED)
       return true;
   }
 }
+
+#undef RELEVANT_FILE_CHANGED 1
+#undef NEED_TO_REBUILD_TREE 2
+#undef NEED_TO_REINIT_EVERYTHING 4
 
 #undef DBG_EVENTS
 #endif // __linux__
