@@ -13,6 +13,7 @@ enum C_Compiler
 {
   CC_TCC,
   CC_GCC,
+  CC_CLANG,
 };
 enum C_Compiler C_COMPILER = CC_TCC;
 
@@ -46,6 +47,14 @@ void run_tests()
       proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){});
     break;
   }
+  case CC_CLANG:
+  {
+    char* const args_compile[] = {"clang", "-Wall", "-Werror", test_path, "-o", bin_path, NULL};
+    char* const args_test[] = {bin_path, NULL};
+    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){}).exit_code == EXIT_SUCCESS)
+      proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){});
+    break;
+  }
   }
 
   const u64 time_end = timer_now();
@@ -72,6 +81,8 @@ int main(int argc, const char** argv)
         C_COMPILER = CC_TCC;
       else if(strcmp(argv[i], "gcc") == 0)
         C_COMPILER = CC_GCC;
+      else if(strcmp(argv[i], "clang") == 0)
+        C_COMPILER = CC_CLANG;
       else
         errx(EXIT_FAILURE, "Unknown compiler `%s`\n", argv[i]);
     }
