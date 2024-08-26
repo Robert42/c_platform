@@ -337,9 +337,9 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
   }
 }
 
-#undef RELEVANT_FILE_CHANGED 1
-#undef NEED_TO_REBUILD_TREE 2
-#undef NEED_TO_REINIT_EVERYTHING 4
+#undef RELEVANT_FILE_CHANGED
+#undef NEED_TO_REBUILD_TREE
+#undef NEED_TO_REINIT_EVERYTHING
 
 #undef DBG_EVENTS
 #endif // __linux__
