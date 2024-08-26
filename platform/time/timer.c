@@ -12,9 +12,17 @@ const char* time_format_short_duration(u64 time, Mem_Region* region)
   if(seconds >= 1)
   {
     fmt = "%.2f s";
+  }else if(seconds >= 1.e-3)
+  {
+    seconds *= 1000;
+    fmt = "%.0f ms";
+  }else if(seconds >= 1.e-6)
+  {
+    seconds *= 1000 * 1000;
+    fmt = "%.0f us";
   }else
   {
-    fmt = "%u ns";
+    fmt = "%.0f ns";
   }
 
   const usize available = mem_region_available_bytes(region);
