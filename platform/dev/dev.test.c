@@ -67,6 +67,10 @@ void dev_test()
   debug_assert_ptr_lte(&xs[0], &xs[0]);
   EXPECT_DEBUG_ASSERT( debug_assert_ptr_lte(&xs[1], &xs[0]); );
 
+  debug_assert_bool_eq(true, true);
+  debug_assert_bool_eq(false, false);
+  EXPECT_DEBUG_ASSERT( debug_assert_bool_eq(true, false); );
+
   EXPECT_DEBUG_ASSERT(
   EXPECT_DEBUG_ASSERT(
   );
