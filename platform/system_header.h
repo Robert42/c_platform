@@ -68,6 +68,9 @@ typedef  int64_t s64;
 typedef size_t usize;
 typedef ssize_t ssize;
 
+#ifdef __linux__
+#include <time.h>
+
 // source:` man getdents(2)`
 struct linux_dirent64
 {
@@ -78,4 +81,4 @@ struct linux_dirent64
   char d_name[];
 };
 ssize_t getdents64(int fd, void* dirp, size_t count);
-
+#endif

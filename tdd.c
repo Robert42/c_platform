@@ -27,6 +27,8 @@ void run_tests()
   char test_path[] = "unit_test.c";
   char bin_path[] = "./unit_test";
 
+  const u64 time_begin = timer_now();
+
   switch(C_COMPILER)
   {
   // TODO: allow choosing from more compilers.
@@ -47,10 +49,15 @@ void run_tests()
   }
   }
 
+  const u64 time_end = timer_now();
+
 #if PRINT_ITER_STATS
+  //TODO: fix memory leak!
+  const char* duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
+  
   static usize iter_count = 0;
   // TODO print test iteration duration
-  printf("%stest iteration: %zu%s\n", TERM_CYAN, iter_count++, TERM_NORMAL);
+  printf("%stest iteration: %zu duration: %s%s\n", TERM_CYAN, iter_count++, duration, TERM_NORMAL);
 #endif
 }
 

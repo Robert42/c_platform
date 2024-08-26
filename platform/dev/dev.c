@@ -15,27 +15,55 @@ static void __assert_failed__()
   abort();
 }
 
+static void __bin_assert_failed__(const char* lhs, const char* rhs)
+{
+  if(__assert_capture__)
+  {
+    __assert_caught__++;
+    return;
+  }
+
+  printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
+  printf("lhs: %s\n", lhs);
+  printf("rhs: %s\n", rhs);
+  abort();
+}
+
+static const char* fmt_bool(bool x)
+{
+  return x ? "true" : "false";
+}
+
 #if ENV_DEBUG
 #define DEBUG_VERSION_BIN(NAME, TY) void debug_assert_ ## NAME(TY x, TY y){assert_ ## NAME(x, y);}
+#define DEBUG_VERSION_RNG(NAME, TY) void debug_assert_ ## NAME(TY x, TY y, TY z){assert_ ## NAME(x, y, z);}
 #else
 #define DEBUG_VERSION_BIN(NAME, TY) void debug_assert_ ## NAME(TY x, TY y){(void)x;(void)y;}
+#define DEBUG_VERSION_RNG(NAME, TY) void debug_assert_ ## NAME(TY x, TY y, TY z){(void)x;(void)y;(void)z;}
 #endif
-#define DEFINE_NUM(NAME, TY, OP) \
+#define DEFINE_NUM_BIN(NAME, TY, OP) \
   void assert_ ## NAME(TY x, TY y){if(x OP y)return;else __assert_failed__(); } \
   DEBUG_VERSION_BIN(NAME, TY)
+#define DEFINE_NUM_RNG(NAME, TY, OP1, OP2) \
+  void assert_ ## NAME(TY x, TY y, TY z){ if((x OP1 y) && (y OP2 z))return;else __assert_failed__(); } \
+  DEBUG_VERSION_RNG(NAME, TY)
 #define BIN_ASSERT_NUM_CMP(NAME, TY) \
-  DEFINE_NUM(NAME ## _eq, TY, ==) \
-  DEFINE_NUM(NAME ## _ne, TY, !=) \
-  DEFINE_NUM(NAME ## _lt, TY, <) \
-  DEFINE_NUM(NAME ## _lte, TY, <=) \
-  DEFINE_NUM(NAME ## _gt, TY, >) \
-  DEFINE_NUM(NAME ## _gte, TY, >=)
-#define BIN_ASSERT_CUSTOM(NAME, TY, CHECK) void assert_ ## NAME(TY x, TY y){if(CHECK)return;else __assert_failed__(); } DEBUG_VERSION_BIN(NAME, TY)
+  DEFINE_NUM_BIN(NAME ## _eq, TY, ==) \
+  DEFINE_NUM_BIN(NAME ## _ne, TY, !=) \
+  DEFINE_NUM_BIN(NAME ## _lt, TY, <) \
+  DEFINE_NUM_BIN(NAME ## _lte, TY, <=) \
+  DEFINE_NUM_BIN(NAME ## _gt, TY, >) \
+  DEFINE_NUM_BIN(NAME ## _gte, TY, >=)
+#define RNG_ASSERT_NUM_CMP(NAME, TY) \
+  DEFINE_NUM_RNG(NAME ## _lte_lt, TY, <=, <)
+#define BIN_ASSERT_CUSTOM(NAME, TY, CHECK, FMT) void assert_ ## NAME(TY x, TY y){if(CHECK)return;else __bin_assert_failed__(FMT(x), FMT(y)); } DEBUG_VERSION_BIN(NAME, TY)
 #include "assertions.h"
 #undef BIN_ASSERT_NUM_CMP
+#undef RNG_ASSERT_NUM_CMP
 #undef BIN_ASSERT_CUSTOM
 #undef DEBUG_VERSION_BIN
-#undef DEFINE_NUM
+#undef DEFINE_NUM_BIN
+#undef DEFINE_NUM_RNG
 
 // ==== env ====
 
