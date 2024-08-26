@@ -33,7 +33,7 @@ int pipe2(int pipefd[2], int flags);
 
 int strcmp(const char* x, const char* y);
 const char* dirname(const char* path);
-const char* realpath(const char* path);
+char* realpath(const char* path, char* buffer);
 
 // source:` man getdents(2)`
 struct linux_dirent64

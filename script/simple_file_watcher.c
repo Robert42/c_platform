@@ -22,7 +22,7 @@ struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_Fi
   };
 
 #ifdef __linux__
-  watcher.root_path = malloc(strlen(root_path)+1);
+  watcher.root_path = realpath(root_path, NULL); // the result was allocated with malloc
   watcher.watched_files = calloc(sizeof(*watcher.watched_files), 1);
   strcpy(watcher.root_path, root_path);
 
@@ -161,7 +161,7 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
   setintcddo_reset(watcher->watched_files);
   {
     char PATH_BUFFER[PATH_BUFFER_CAPACITY];
-    strcpy(PATH_BUFFER, realpath(watcher->root_path));
+    strcpy(PATH_BUFFER, watcher->root_path);
     
     const int root_dir_fd = open(watcher->root_path, O_DIRECTORY | O_RDONLY, 0);
     LINUX_ASSERT_NE(root_dir_fd, -1);
