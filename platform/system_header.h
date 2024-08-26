@@ -16,6 +16,7 @@ void abort();
 #ifdef __linux__
 
 #include <sys/types.h> // pid_t
+#include <fcntl.h> // openat, O_DIRECTORY
 
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
