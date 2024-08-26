@@ -16,6 +16,7 @@ void abort();
 #ifdef __linux__
 
 #include <sys/types.h> // pid_t
+#include <sys/wait.h> // WIFEXISTED, WEXITSTATUS waitpid
 #include <fcntl.h> // openat, O_DIRECTORY
 
 #define STDIN_FILENO 0
@@ -27,7 +28,6 @@ int close(int fd);
 pid_t fork(void);
 int execvp(const char* file, char* const argv[]);
 int execvpe(const char* file, char* const argv[], char* const env[]);
-int waitpid(pid_t pid, int* status, int options);
 int dup2(int oldfd, int newfd);
 ssize_t read(int fd, void* buffer, size_t num_bytes);
 int pipe2(int pipefd[2], int flags);

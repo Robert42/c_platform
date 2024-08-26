@@ -19,6 +19,7 @@ void proc_test()
     struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, capture_stdout);
 
     assert_cstr_eq(result.captured_stdout, msg);
+    assert_int_eq(result.result, 0);
     debug_assert_ptr_eq(region.begin, BUFFER + ARRAY_LEN(msg));
   }
 
@@ -30,6 +31,7 @@ void proc_test()
     const char* expected = "tcc: error: file '/NOT_EXISTING' not found\n";
     assert_cstr_eq(result.captured_stderr, expected);
     debug_assert_ptr_eq(region.begin, BUFFER + strlen(expected)+1);
+    assert_int_ne(result.result, 0);
   }
 
   // assert when buffer way too small
