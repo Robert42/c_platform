@@ -3,12 +3,15 @@
 
 #include "dev/env.h"
 
+#define NORETURN __attribute__((noreturn))
+
 #if ENV_COMPILER == COMPILER_TCC
 
 typedef _Bool bool;
 #define true ((bool)1)
 #define false ((bool)0)
 
+NORETURN
 void abort();
 
 #include <tcclib.h>
@@ -39,7 +42,7 @@ int strcmp(const char* x, const char* y);
 const char* dirname(const char* path);
 char* realpath(const char* path, char* buffer);
 
-// TODO: Add NORETURN macro
+NORETURN
 void errx(int eval, const char* fmt, ...);
 
 #endif // __linux__
