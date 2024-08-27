@@ -1,4 +1,33 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
+#include "path.h"
+
+Path path_from_cstr(const char* path)
+{
+  bool ok;
+  Path p = _path_from_cstr(path, &ok);
+  debug_assert_bool_eq(ok, true);
+  return p;
+}
+
+Path _path_from_cstr(const char* path, bool* ok)
+{
+  *ok = true;
+
+  Path p;
+  for(p.len=0; *path!=0; ++p.len)
+  {
+    if(p.len == PATH_LEN_MAX)
+    {
+      *ok = false;
+      break;
+    }
+    p.buffer[p.len] = *(path++);
+  }
+  debug_assert_usize_lte(p.len, PATH_LEN_MAX);
+  p.buffer[p.len] = 0;
+
+  return p;
+}
 
 bool path_is_c_file(const char* path)
 {

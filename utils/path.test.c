@@ -5,6 +5,26 @@
 
 void path_test()
 {
+  assert_usize_eq(sizeof(Path), 256);
+
+  // ==== path_from_cstr ====
+  assert_cstr_eq(path_from_cstr("x").buffer, "x");
+  {
+    char too_long[PATH_LEN_MAX + 2] = {};
+    for(usize i=0; i<PATH_LEN_MAX; ++i)
+      too_long[i] = 'x';
+    const Path p_max = path_from_cstr(too_long);
+    assert_cstr_eq(p_max.buffer, too_long);
+    assert_usize_eq(p_max.len, PATH_LEN_MAX);
+
+    too_long[PATH_LEN_MAX] = 'x';
+    bool ok;
+    const Path p_too_small = _path_from_cstr(too_long, &ok);
+    assert_bool_eq(ok, false);
+    assert_usize_eq(p_too_small.len, PATH_LEN_MAX);
+  }
+
+  // ==== path_is_c_file ====
   assert_bool_eq(path_is_c_file(""), false);
   assert_bool_eq(path_is_c_file("main.c"), true);
   assert_bool_eq(path_is_c_file("main.cpp"), false);
