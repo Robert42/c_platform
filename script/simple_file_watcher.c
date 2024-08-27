@@ -49,6 +49,7 @@ bool _dir_to_ignore(const char* x)
 
 // TODO: create dedicated path struct with helper funtions
 #define PATH_BUFFER_CAPACITY 1024
+#define path_join path_join2
 usize path_join(char* path, const char* second, usize path_len)
 {
   debug_assert_usize_lte(path_len+2, PATH_BUFFER_CAPACITY); // '/' and null terminator

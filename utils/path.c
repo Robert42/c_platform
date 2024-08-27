@@ -56,6 +56,24 @@ Path path_parent(Path p)
   return path_from_cstr(".");
 }
 
+// TODO: helper that appends a string to a path (modifying the filepath, not adding a slash)
+
+Path path_join(Path a, Path b)
+{
+  if(a.len == 0)
+    return b;
+  if(b.len == 0)
+    return a;
+
+  debug_assert_usize_lte(a.len+1+b.len, PATH_LEN_MAX);
+  a.cstr[a.len++] = '/';
+
+  for(usize i=0; i<b.len; ++i)
+    a.cstr[a.len++] = b.cstr[i];
+
+  return a;
+}
+
 Path path_realpath(Path p)
 {
   char* maybe_path = realpath(p.cstr, NULL);
