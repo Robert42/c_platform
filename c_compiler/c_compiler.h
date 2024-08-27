@@ -7,7 +7,7 @@ enum C_Compiler
   CC_GCC,
   CC_CLANG,
 };
-void cc_compile_and_run(enum C_Compiler cc, char* c_file, char* output_file);
+void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file);
 enum C_Compiler cc_compiler_for_name(const char* name); // will call errx, if the name is an unknown compiler
 
 enum C_Compiler cc_fastest_available();

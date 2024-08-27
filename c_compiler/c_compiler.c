@@ -1,29 +1,29 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "c_compiler.h"
 
-void cc_compile_and_run(enum C_Compiler cc, char* c_file, char* output_file)
+void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
 {
   switch(cc)
   {
   // If choosing libtcc, then simply fork and compile via the libtcc.
   case CC_TCC:
   {
-    char* const args_compile[] = {"tcc", "-Wall", "-Werror", "-run", c_file, NULL};
+    char* const args_compile[] = {"tcc", "-Wall", "-Werror", "-run", c_file.cstr, NULL};
     proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){});
     break;
   }
   case CC_GCC:
   {
-    char* const args_compile[] = {"gcc", "-Wall", "-Werror", c_file, "-o", output_file, NULL};
-    char* const args_test[] = {output_file, NULL};
+    char* const args_compile[] = {"gcc", "-Wall", "-Werror", c_file.cstr, "-o", output_file.cstr, NULL};
+    char* const args_test[] = {output_file.cstr, NULL};
     if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){}).exit_code == EXIT_SUCCESS)
       proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){});
     break;
   }
   case CC_CLANG:
   {
-    char* const args_compile[] = {"clang", "-Wall", "-Werror", c_file, "-o", output_file, NULL};
-    char* const args_test[] = {output_file, NULL};
+    char* const args_compile[] = {"clang", "-Wall", "-Werror", c_file.cstr, "-o", output_file.cstr, NULL};
+    char* const args_test[] = {output_file.cstr, NULL};
     if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){}).exit_code == EXIT_SUCCESS)
       proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){});
     break;

@@ -9,16 +9,15 @@
 #define PRINT_ITER_STATS 1
 #define CLEAR 1
 
-void run_tests(enum C_Compiler cc)
+void run_tests(enum C_Compiler cc, Path dir)
 {
 #if CLEAR
   printf(TERM_CLEAR);
   fflush(stdout);
 #endif
 
-  // TODO: get the absolute path insteaed of depending on the current dir
-  char test_path[] = "unit_test.c";
-  char bin_path[] = "./unit_test";
+  Path test_path = path_join(dir, path_from_cstr("unit_test.c"));
+  Path bin_path = path_join(dir, path_from_cstr("unit_test"));
 
   const u64 time_begin = timer_now();
   cc_compile_and_run(cc, test_path, bin_path);
@@ -50,12 +49,12 @@ int main(int argc, const char** argv)
   }
 
   // Actual test loop
-  run_tests(cc);
+  run_tests(cc, dir);
 
   struct Simple_File_Watcher watcher = simple_file_watcher_init(dir, path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))
   {
-    run_tests(cc);
+    run_tests(cc, dir);
     scratch_swap();
   }
 
