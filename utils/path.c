@@ -21,10 +21,10 @@ Path _path_from_cstr(const char* path, bool* ok)
       *ok = false;
       break;
     }
-    p.buffer[p.len] = *(path++);
+    p.cstr[p.len] = *(path++);
   }
   debug_assert_usize_lte(p.len, PATH_LEN_MAX);
-  p.buffer[p.len] = 0;
+  p.cstr[p.len] = 0;
 
   return p;
 }
@@ -34,20 +34,20 @@ Path path_truncate(Path p, usize len)
   if(len < p.len)
   {
     p.len = len;
-    p.buffer[len] = 0;
+    p.cstr[len] = 0;
   }
   return p;
 }
 
 Path path_parent(Path p)
 {
-  if(p.len == 1 && p.buffer[0] == '/')
+  if(p.len == 1 && p.cstr[0] == '/')
     return p;
   for(ssize i=p.len-2; i>=0; --i)
   {
-    if(p.buffer[i]=='/')
+    if(p.cstr[i]=='/')
     {
-      p.buffer[i] = 0;
+      p.cstr[i] = 0;
       p.len = i;
       return p;
     }
@@ -58,7 +58,7 @@ Path path_parent(Path p)
 
 Path path_realpath(Path p)
 {
-  char* maybe_path = realpath(p.buffer, NULL);
+  char* maybe_path = realpath(p.cstr, NULL);
   LINUX_ASSERT_NE(maybe_path, NULL);
 
   p = path_from_cstr(maybe_path);

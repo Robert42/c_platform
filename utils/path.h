@@ -5,7 +5,7 @@
 
 typedef struct
 {
-  char buffer[PATH_LEN_MAX+1];
+  char cstr[PATH_LEN_MAX+1];
   u8 len;
 } Path;
 
