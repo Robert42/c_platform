@@ -14,16 +14,15 @@
 static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher);
 #endif
 
-struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_File_Filter *filter)
+struct Simple_File_Watcher simple_file_watcher_init(Path root_dir, Fn_File_Filter *filter)
 {
   struct Simple_File_Watcher watcher = {
     .filter = filter,
   };
 
 #ifdef __linux__
-  watcher.root_path = realpath(root_path, NULL); // the result was allocated with malloc
+  watcher.root_dir = root_dir; // the result was allocated with malloc
   watcher.watched_files = calloc(sizeof(*watcher.watched_files), 1);
-  strcpy(watcher.root_path, root_path);
 
   watcher.dirs_fd = -1; // prevent _simple_file_watcher_reinit from closing the fd
   watcher.file_fd = -1; // prevent _simple_file_watcher_reinit from closing the fd
@@ -36,7 +35,6 @@ struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_Fi
 void simple_file_watcher_deinit(struct Simple_File_Watcher* watcher)
 {
 #ifdef __linux__
-  free(watcher->root_path);
   free(watcher->watched_files);
   close(watcher->dirs_fd);
   close(watcher->file_fd);
@@ -153,16 +151,17 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
   watcher->dirs_fd = inotify_init1(IN_NONBLOCK);
   LINUX_ASSERT_NE(watcher->dirs_fd, -1);
 
-  const int root_wd = inotify_add_watch(watcher->dirs_fd, watcher->root_path, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
+  const int root_wd = inotify_add_watch(watcher->dirs_fd, watcher->root_dir.buffer, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
   LINUX_ASSERT_NE(root_wd, -1);
 
   // recursively visit directories to watch them and their content, too
   setintcddo_reset(watcher->watched_files);
   {
+    // TODO
     char PATH_BUFFER[PATH_BUFFER_CAPACITY];
-    strcpy(PATH_BUFFER, watcher->root_path);
+    strcpy(PATH_BUFFER, watcher->root_dir.buffer);
     
-    const int root_dir_fd = open(watcher->root_path, O_DIRECTORY | O_RDONLY, 0);
+    const int root_dir_fd = open(watcher->root_dir.buffer, O_DIRECTORY | O_RDONLY, 0);
     LINUX_ASSERT_NE(root_dir_fd, -1);
     number_relevant_files_added = _simple_file_watcher_watch_subdirs(root_dir_fd, watcher, PATH_BUFFER, strlen(PATH_BUFFER));
     close(root_dir_fd);

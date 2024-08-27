@@ -16,13 +16,13 @@ struct Simple_File_Watcher
   // or removed.
   int dirs_fd; // inode fd for directory changes
   int file_fd; // inode fd for directory changes
-  char* root_path;
+  Path root_dir;
 
   struct Set_Int_Change_Detection_Dismissing_Old* watched_files;
 #endif
 };
 
-struct Simple_File_Watcher simple_file_watcher_init(const char* root_path, Fn_File_Filter *filter);
+struct Simple_File_Watcher simple_file_watcher_init(Path root_dir, Fn_File_Filter *filter);
 void simple_file_watcher_deinit(struct Simple_File_Watcher* watcher);
 bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher);
 
