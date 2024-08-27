@@ -85,9 +85,6 @@ bool cc_compiler_is_available(enum C_Compiler cc)
   struct Proc_Exec_Blocking_Settings suppress_output = {
     .capture_stdout = true,
     .capture_stderr = true,
-  // TODO: allow passing NULL
-    .region_stdout = &SCRATCH,
-    .region_stderr = &SCRATCH,
   };
 
   char* const * args = args_tcc;
