@@ -39,6 +39,21 @@ Path path_truncate(Path p, usize len)
   return p;
 }
 
+Path path_parent(Path p)
+{
+  for(ssize i=p.len-2; i>=0; --i)
+  {
+    if(p.buffer[i]=='/')
+    {
+      p.buffer[i] = 0;
+      p.len = i;
+      return p;
+    }
+  }
+
+  return path_from_cstr(".");
+}
+
 bool path_is_c_file(const char* path)
 {
   const usize len = strlen(path);
