@@ -46,7 +46,7 @@ void errx(int eval, const char* fmt, ...);
 
 #else // ENV_COMPILER == COMPILER_TCC
 
-#if ENV_COMPILER == COMPILER_GCC
+#if ENV_COMPILER == COMPILER_GCC || ENV_COMPILER == COMPILER_CLANG
 #define _GNU_SOURCE
 #endif
 
