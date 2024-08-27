@@ -1,11 +1,9 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "c_compiler.h"
 
-enum C_Compiler C_COMPILER = CC_TCC;
-
-void cc_compile_and_run(char* c_file, char* output_file)
+void cc_compile_and_run(enum C_Compiler cc, char* c_file, char* output_file)
 {
-  switch(C_COMPILER)
+  switch(cc)
   {
   // If choosing libtcc, then simply fork and compile via the libtcc.
   case CC_TCC:
