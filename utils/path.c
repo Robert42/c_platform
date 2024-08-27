@@ -58,6 +58,20 @@ Path path_parent(Path p)
 
 // TODO: helper that appends a string to a path (modifying the filepath, not adding a slash)
 
+Path path_concat(Path a, Path b)
+{
+  if(a.len == 0)
+    return b;
+  if(b.len == 0)
+    return a;
+
+  debug_assert_usize_lte(a.len + b.len, PATH_LEN_MAX);
+  for(usize i=0; i<b.len; ++i)
+    a.cstr[a.len++] = b.cstr[i];
+
+  return a;
+}
+
 Path path_join(Path a, Path b)
 {
   if(a.len == 0)
