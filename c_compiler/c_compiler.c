@@ -42,3 +42,63 @@ enum C_Compiler cc_compiler_for_name(const char* name)
   else
     errx(EXIT_FAILURE, "Unknown compiler `%s`\n", name);
 }
+
+static enum C_Compiler _cc_find_available(const enum C_Compiler* compilers, int len)
+{
+  for(int i=0; i<len; ++i)
+  {
+    const enum C_Compiler cc = compilers[i];
+    if(cc_compiler_is_available(cc))
+      return cc;
+  }
+  errx(EXIT_FAILURE, "Could not find a c compiler");
+}
+
+enum C_Compiler cc_fastest_available()
+{
+  const enum C_Compiler FASTEST_FIRST[] = {
+    CC_TCC,
+    CC_GCC,
+    CC_CLANG,
+  };
+
+  return _cc_find_available(FASTEST_FIRST, ARRAY_LEN(FASTEST_FIRST));
+}
+
+enum C_Compiler cc_best_optimizer_available()
+{
+  const enum C_Compiler BEST_OPTIMIZER_FIRST[] = {
+    CC_CLANG,
+    CC_GCC,
+    CC_TCC,
+  };
+
+  return _cc_find_available(BEST_OPTIMIZER_FIRST, ARRAY_LEN(BEST_OPTIMIZER_FIRST));
+}
+
+bool cc_compiler_is_available(enum C_Compiler cc)
+{
+  char* const args_tcc[] = {"tcc", "-v", NULL};
+  char* const args_gcc[] = {"gcc", "--version", NULL};
+  char* const args_clang[] = {"clang", "--version", NULL};
+
+  struct Proc_Exec_Blocking_Settings suppress_output = {
+    .capture_stdout = true,
+    .capture_stderr = true,
+  // TODO: allow passing NULL
+    .region_stdout = &SCRATCH,
+    .region_stderr = &SCRATCH,
+  };
+
+  char* const * args = args_tcc;
+
+  switch(cc)
+  {
+  case CC_TCC: args = args_tcc; break;
+  case CC_GCC: args = args_gcc; break;
+  case CC_CLANG: args = args_clang; break;
+  }
+
+  return proc_exec_blocking(args, suppress_output).exit_code == EXIT_SUCCESS;
+}
+

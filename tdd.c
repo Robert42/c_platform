@@ -36,7 +36,7 @@ int main(int argc, const char** argv)
 {
   c_script_init();
 
-  enum C_Compiler cc = CC_TCC;
+  enum C_Compiler cc = cc_fastest_available();
 
   for(int i=1; i<argc; ++i)
   {
