@@ -65,8 +65,11 @@ Path path_join(Path a, Path b)
   if(b.len == 0)
     return a;
 
-  debug_assert_usize_lte(a.len+1+b.len, PATH_LEN_MAX);
-  a.cstr[a.len++] = '/';
+  const bool need_slash = a.cstr[a.len-1] != '/';
+
+  debug_assert_usize_lte(a.len+need_slash+b.len, PATH_LEN_MAX);
+  if(need_slash)
+    a.cstr[a.len++] = '/';
 
   for(usize i=0; i<b.len; ++i)
     a.cstr[a.len++] = b.cstr[i];

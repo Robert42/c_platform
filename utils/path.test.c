@@ -48,6 +48,7 @@ void path_test()
   assert_cstr_eq(path_join(path_from_cstr(""), path_from_cstr("b")).cstr, "b");
   assert_cstr_eq(path_join(path_from_cstr("a"), path_from_cstr("")).cstr, "a");
   assert_cstr_eq(path_join(path_from_cstr("abc"), path_from_cstr("uvw")).cstr, "abc/uvw");
+  assert_cstr_eq(path_join(path_from_cstr("abc/"), path_from_cstr("uvw")).cstr, "abc/uvw");
 
   // ==== path_is_c_file ====
   assert_bool_eq(path_is_c_file(""), false);
