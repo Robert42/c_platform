@@ -37,7 +37,12 @@ void path_test()
   assert_cstr_eq(path_parent(path_from_cstr("abc")).buffer, ".");
   assert_cstr_eq(path_parent(path_from_cstr("ab")).buffer, ".");
   assert_cstr_eq(path_parent(path_from_cstr("a")).buffer, ".");
+  assert_cstr_eq(path_parent(path_from_cstr("../../..")).buffer, "../..");
+  // root has no directory
   assert_cstr_eq(path_parent(path_from_cstr("/")).buffer, "/");
+  // Like with posix `dirname`: Strings cotnaining no slash are always in the current directory
+  assert_cstr_eq(path_parent(path_from_cstr(".")).buffer, ".");
+  assert_cstr_eq(path_parent(path_from_cstr("..")).buffer, ".");
   
 
   // ==== path_is_c_file ====
