@@ -41,6 +41,8 @@ Path path_truncate(Path p, usize len)
 
 Path path_parent(Path p)
 {
+  if(p.len == 1 && p.buffer[0] == '/')
+    return p;
   for(ssize i=p.len-2; i>=0; --i)
   {
     if(p.buffer[i]=='/')

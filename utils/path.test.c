@@ -37,6 +37,7 @@ void path_test()
   assert_cstr_eq(path_parent(path_from_cstr("abc")).buffer, ".");
   assert_cstr_eq(path_parent(path_from_cstr("ab")).buffer, ".");
   assert_cstr_eq(path_parent(path_from_cstr("a")).buffer, ".");
+  assert_cstr_eq(path_parent(path_from_cstr("/")).buffer, "/");
   
 
   // ==== path_is_c_file ====
