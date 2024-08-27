@@ -29,6 +29,16 @@ Path _path_from_cstr(const char* path, bool* ok)
   return p;
 }
 
+Path path_truncate(Path p, usize len)
+{
+  if(len < p.len)
+  {
+    p.len = len;
+    p.buffer[len] = 0;
+  }
+  return p;
+}
+
 bool path_is_c_file(const char* path)
 {
   const usize len = strlen(path);

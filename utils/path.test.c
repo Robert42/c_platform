@@ -24,6 +24,11 @@ void path_test()
     assert_usize_eq(p_too_small.len, PATH_LEN_MAX);
   }
 
+  // ==== path_parent ====
+  assert_cstr_eq(path_truncate(path_from_cstr("/a/b/c"), 1024).buffer, "/a/b/c");
+  assert_cstr_eq(path_truncate(path_from_cstr("/a/b/c"), 3).buffer, "/a/");
+  assert_usize_eq(path_truncate(path_from_cstr("/a/b/c"), 3).len, 3);
+
   // ==== path_is_c_file ====
   assert_bool_eq(path_is_c_file(""), false);
   assert_bool_eq(path_is_c_file("main.c"), true);

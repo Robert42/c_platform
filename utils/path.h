@@ -12,4 +12,6 @@ typedef struct
 Path path_from_cstr(const char* path);
 Path _path_from_cstr(const char* path, bool* ok);
 
+Path path_truncate(Path p, usize len);
+
 bool path_is_c_file(const char* path);
