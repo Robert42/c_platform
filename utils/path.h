@@ -14,5 +14,6 @@ Path _path_from_cstr(const char* path, bool* ok);
 
 Path path_truncate(Path p, usize len);
 Path path_parent(Path p);
+Path path_realpath(Path p);
 
 bool path_is_c_file(const char* path);

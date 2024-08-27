@@ -56,6 +56,17 @@ Path path_parent(Path p)
   return path_from_cstr(".");
 }
 
+Path path_realpath(Path p)
+{
+  char* maybe_path = realpath(p.buffer, NULL);
+  LINUX_ASSERT_NE(maybe_path, NULL);
+
+  p = path_from_cstr(maybe_path);
+  free(maybe_path);
+
+  return p;
+}
+
 bool path_is_c_file(const char* path)
 {
   const usize len = strlen(path);
