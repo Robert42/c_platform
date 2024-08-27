@@ -44,6 +44,10 @@ void path_test()
   assert_cstr_eq(path_parent(path_from_cstr(".")).cstr, ".");
   assert_cstr_eq(path_parent(path_from_cstr("..")).cstr, ".");
   
+  // ==== path_append_char ====
+  assert_cstr_eq(path_append_char(path_from_cstr(""), 'b').cstr, "b");
+  assert_cstr_eq(path_append_char(path_from_cstr("a"), 'b').cstr, "ab");
+  
   // ==== path_concat ====
   assert_cstr_eq(path_concat(path_from_cstr(""), path_from_cstr("b")).cstr, "b");
   assert_cstr_eq(path_concat(path_from_cstr("a"), path_from_cstr("")).cstr, "a");

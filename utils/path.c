@@ -56,18 +56,24 @@ Path path_parent(Path p)
   return path_from_cstr(".");
 }
 
-// TODO: helper that appends a string to a path (modifying the filepath, not adding a slash)
+Path path_append_char(Path a, char c)
+{
+  debug_assert_usize_lt(a.len, PATH_LEN_MAX);
+  a.cstr[a.len++] = c;
+  a.cstr[a.len] = 0;
+
+  return a;
+}
 
 Path path_concat(Path a, Path b)
 {
   if(a.len == 0)
     return b;
-  if(b.len == 0)
-    return a;
 
   debug_assert_usize_lte(a.len + b.len, PATH_LEN_MAX);
   for(usize i=0; i<b.len; ++i)
     a.cstr[a.len++] = b.cstr[i];
+  a.cstr[a.len] = 0;
 
   return a;
 }
@@ -79,11 +85,8 @@ Path path_join(Path a, Path b)
   if(b.len == 0)
     return a;
 
-  const bool need_slash = a.cstr[a.len-1] != '/';
-
-  debug_assert_usize_lte(a.len+need_slash+b.len, PATH_LEN_MAX);
-  if(need_slash)
-    a.cstr[a.len++] = '/';
+  if(a.cstr[a.len-1] != '/')
+    a = path_append_char(a, '/');
 
   return path_concat(a, b);
 }
