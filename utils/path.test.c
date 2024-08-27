@@ -30,7 +30,10 @@ void path_test()
   assert_usize_eq(path_truncate(path_from_cstr("/a/b/c"), 3).len, 3);
 
   // ==== path_parent ====
+  assert_cstr_eq(path_parent(path_from_cstr("/abc/uvw/xyz/")).buffer, "/abc/uvw");
   assert_cstr_eq(path_parent(path_from_cstr("/abc/uvw/xyz")).buffer, "/abc/uvw");
+  assert_cstr_eq(path_parent(path_from_cstr("/abc/uvw/xy")).buffer, "/abc/uvw");
+  assert_cstr_eq(path_parent(path_from_cstr("/abc/uvw/x")).buffer, "/abc/uvw");
   assert_cstr_eq(path_parent(path_from_cstr("abc")).buffer, ".");
   
 
