@@ -9,14 +9,7 @@
 #define PRINT_ITER_STATS 1
 #define CLEAR 1
 
-enum C_Compiler
-{
-  CC_TCC,
-  CC_GCC,
-};
-enum C_Compiler C_COMPILER = CC_TCC;
-
-void run_tests()
+void run_tests(enum C_Compiler cc)
 {
 #if CLEAR
   printf(TERM_CLEAR);
@@ -28,27 +21,7 @@ void run_tests()
   char bin_path[] = "./unit_test";
 
   const u64 time_begin = timer_now();
-
-  switch(C_COMPILER)
-  {
-  // TODO: allow choosing from more compilers.
-  // If choosing libtcc, then simply fork and compile via the libtcc.
-  case CC_TCC:
-  {
-    char* const args_compile[] = {"tcc", "-Wall", "-Werror", "-run", test_path, NULL};
-    proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){});
-    break;
-  }
-  case CC_GCC:
-  {
-    char* const args_compile[] = {"gcc", "-Wall", "-Werror", test_path, "-o", bin_path, NULL};
-    char* const args_test[] = {bin_path, NULL};
-    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){}).exit_code == 0)
-      proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){});
-    break;
-  }
-  }
-
+  cc_compile_and_run(cc, test_path, bin_path);
   const u64 time_end = timer_now();
 
 #if PRINT_ITER_STATS
@@ -63,17 +36,30 @@ int main(int argc, const char** argv)
 {
   c_script_init();
 
-  run_tests();
+  enum C_Compiler cc = cc_fastest_available();
+
+  for(int i=1; i<argc; ++i)
+  {
+    if(strcmp(argv[i], "--cc") == 0)
+    {
+      if(++i >= argc) errx(EXIT_FAILURE, "Missing compiler after `--cc`\n");
+
+      cc = cc_compiler_for_name(argv[i]);
+    }
+  }
+
+  // Actual test loop
+  run_tests(cc);
 
   char path[] = __FILE__;
   struct Simple_File_Watcher watcher = simple_file_watcher_init(dirname(path), path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))
   {
-    run_tests();
+    run_tests(cc);
     scratch_swap();
   }
 
   simple_file_watcher_deinit(&watcher);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
