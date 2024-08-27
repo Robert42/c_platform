@@ -35,6 +35,7 @@ void run_tests(enum C_Compiler cc)
 int main(int argc, const char** argv)
 {
   c_script_init();
+  const Path dir = path_parent(path_from_cstr(__FILE__));
 
   enum C_Compiler cc = cc_fastest_available();
 
@@ -51,8 +52,7 @@ int main(int argc, const char** argv)
   // Actual test loop
   run_tests(cc);
 
-  char path[] = __FILE__;
-  struct Simple_File_Watcher watcher = simple_file_watcher_init(dirname(path), path_is_c_file);
+  struct Simple_File_Watcher watcher = simple_file_watcher_init(dir.buffer, path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))
   {
     run_tests(cc);
