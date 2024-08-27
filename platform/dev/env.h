@@ -11,7 +11,6 @@
 #define COMPILER_GCC 2
 #define COMPILER_CLANG 3
 
-// TODO: recognize clang
 #if defined(__TINYC__)
 #define ENV_COMPILER COMPILER_TCC
 #elif defined(__clang__)
