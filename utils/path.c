@@ -85,10 +85,7 @@ Path path_join(Path a, Path b)
   if(need_slash)
     a.cstr[a.len++] = '/';
 
-  for(usize i=0; i<b.len; ++i)
-    a.cstr[a.len++] = b.cstr[i];
-
-  return a;
+  return path_concat(a, b);
 }
 
 Path path_realpath(Path p)
