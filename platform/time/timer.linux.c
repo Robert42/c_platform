@@ -9,7 +9,7 @@ static u64 _linux_timespect_to_nsec(struct timespec t)
   return (u64)t.tv_nsec + sec_in_nsec * (u64)t.tv_sec;
 }
 
-#define CLOCK CLOCK_MONOTONIC_RAW
+#define CLOCK CLOCK_MONOTONIC
 
 u64 timer_now()
 {
