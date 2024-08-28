@@ -64,7 +64,9 @@ int main(int argc, const char** argv)
       if(++i >= argc) errx(EXIT_FAILURE, "Missing compiler after `--cc`\n");
 
       cfg.cc = cc_compiler_for_name(argv[i]);
-    }else
+    }else if(strcmp(argv[i], "--unit_test") == 0)
+      cfg.action |= ACTION_UNIT_TEST;
+    else
       errx(EXIT_FAILURE, "Unexpected argument `%s`\n", argv[i]);
   }
 
