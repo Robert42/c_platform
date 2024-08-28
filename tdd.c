@@ -9,9 +9,15 @@
 #define PRINT_ITER_STATS 1
 #define CLEAR 1
 
+enum Action
+{
+  ACTION_UNIT_TEST = 1,
+};
+
 struct Config
 {
   enum C_Compiler cc;
+  u32 actions; // bit flag combination of `enum Action`
 };
 
 struct Config cfg_default()
@@ -32,7 +38,8 @@ void run_tests(struct Config cfg, Path dir)
   Path bin_path = path_join(dir, path_from_cstr("unit_test"));
 
   const u64 time_begin = timer_now();
-  cc_compile_and_run(cfg.cc, test_path, bin_path);
+  if(cfg.actions & ACTION_UNIT_TEST)
+    cc_compile_and_run(cfg.cc, test_path, bin_path);
   const u64 time_end = timer_now();
 
 #if PRINT_ITER_STATS
@@ -60,6 +67,9 @@ int main(int argc, const char** argv)
     }else
       errx(EXIT_FAILURE, "Unexpected argument `%s`\n", argv[i]);
   }
+
+  if(cfg.actions == 0)
+    cfg.actions = ACTION_UNIT_TEST;
 
   // Actual test loop
   run_tests(cfg, dir);
