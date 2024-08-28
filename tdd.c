@@ -9,7 +9,19 @@
 #define PRINT_ITER_STATS 1
 #define CLEAR 1
 
-void run_tests(enum C_Compiler cc, Path dir)
+struct Config
+{
+  enum C_Compiler cc;
+};
+
+struct Config cfg_default()
+{
+  return (struct Config){
+    .cc = cc_fastest_available(),
+  };
+}
+
+void run_tests(struct Config cfg, Path dir)
 {
 #if CLEAR
   printf(TERM_CLEAR);
@@ -20,7 +32,7 @@ void run_tests(enum C_Compiler cc, Path dir)
   Path bin_path = path_join(dir, path_from_cstr("unit_test"));
 
   const u64 time_begin = timer_now();
-  cc_compile_and_run(cc, test_path, bin_path);
+  cc_compile_and_run(cfg.cc, test_path, bin_path);
   const u64 time_end = timer_now();
 
 #if PRINT_ITER_STATS
@@ -36,7 +48,7 @@ int main(int argc, const char** argv)
   c_script_init();
   const Path dir = path_parent(path_realpath(path_from_cstr(__FILE__)));
 
-  enum C_Compiler cc = cc_fastest_available();
+  struct Config cfg = cfg_default();
 
   for(int i=1; i<argc; ++i)
   {
@@ -44,18 +56,18 @@ int main(int argc, const char** argv)
     {
       if(++i >= argc) errx(EXIT_FAILURE, "Missing compiler after `--cc`\n");
 
-      cc = cc_compiler_for_name(argv[i]);
+      cfg.cc = cc_compiler_for_name(argv[i]);
     }else
       errx(EXIT_FAILURE, "Unexpected argument `%s`\n", argv[i]);
   }
 
   // Actual test loop
-  run_tests(cc, dir);
+  run_tests(cfg, dir);
 
   struct Simple_File_Watcher watcher = simple_file_watcher_init(dir, path_is_c_file);
   while(simple_file_watcher_wait_for_change(&watcher))
   {
-    run_tests(cc, dir);
+    run_tests(cfg, dir);
     scratch_swap();
   }
 
