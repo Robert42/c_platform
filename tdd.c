@@ -45,7 +45,8 @@ int main(int argc, const char** argv)
       if(++i >= argc) errx(EXIT_FAILURE, "Missing compiler after `--cc`\n");
 
       cc = cc_compiler_for_name(argv[i]);
-    }
+    }else
+      errx(EXIT_FAILURE, "Unexpected argument `%s`\n", argv[i]);
   }
 
   // Actual test loop
