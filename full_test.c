@@ -56,7 +56,8 @@ int main(int argc, const char** argv)
 
 static void print_result(const char* style_name, const char* name, const char* style_result, const char* result, const char* duration)
 {
-  printf("%s%s%s%s %s%s", TERM_CLEAR_LINE, style_name, name, style_result, result, TERM_NORMAL);
+  printf("%s%s%s%s %s%s (%s)%s\n", TERM_CLEAR_LINE, style_name, name, style_result, result, style_name, duration, TERM_NORMAL);
+  fflush(stdout);
 }
 
 static void cmd_exec(struct Cmd cmd)
@@ -86,17 +87,12 @@ static void cmd_exec(struct Cmd cmd)
   else
     ok = true;
 
-  const char* duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
+  const char* const duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
   if(ok)
-  {
     print_result(TERM_GREEN, cmd.name, TERM_GREEN_BOLD, "OK", duration);
-    printf(" (%s)\n", duration);
-    fflush(stdout);
-  }else
-  {
+  else
     print_result(TERM_RED, cmd.name, TERM_RED_BOLD, "FAILED", duration);
-    printf(" (after %s)\n", duration);
-    fflush(stdout);
+
+  if(!ok)
     exit(EXIT_FAILURE);
-  }
 }
