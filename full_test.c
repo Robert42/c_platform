@@ -20,13 +20,18 @@ struct Cmd
 };
 static void cmd_exec(struct Cmd cmd);
 
+Path LOG_DIR;
+
 int main(int argc, const char** argv)
 {
   platform_init();
   
-  const Path full_test_file = path_from_cstr(__FILE__);
+  const Path full_test_file = path_realpath(path_from_cstr(__FILE__));
 
   SCRATCH = MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1);
+
+  LOG_DIR = path_join(path_parent(full_test_file), path_from_cstr("full_test.log"));
+  LINUX_ASSERT_NE(mkdir(LOG_DIR.cstr, 0777), -1);
 
   printf(TERM_CLEAR);
   fflush(stdout);
