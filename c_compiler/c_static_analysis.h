@@ -3,7 +3,7 @@
 
 enum C_Static_Analyzer
 {
-  CSA_FRAMA_C,
+  CSA_FRAMA_C_EVA,
 };
 #define C_STATIC_ANALYZER_COUNT 1
 

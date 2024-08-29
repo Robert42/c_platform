@@ -2,16 +2,16 @@
 #include "c_static_analysis.h"
 
 const char* C_STATIC_ANALYZER_NAMES[C_STATIC_ANALYZER_COUNT] = {
-  [CSA_FRAMA_C] = "frama_c",
+  [CSA_FRAMA_C_EVA] = "frama_c.eva",
 };
 
 void c_static_analysis(enum C_Static_Analyzer csa, Path c_file)
 {
   switch(csa)
   {
-  case CSA_FRAMA_C:
+  case CSA_FRAMA_C_EVA:
   {
-    char* const args_compile[] = {"frama-c", c_file.cstr, NULL};
+    char* const args_compile[] = {"frama-c", "-eva-precision", "3", "-eva", c_file.cstr, NULL};
     proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){});
     break;
   }
