@@ -27,6 +27,8 @@ void term_init()
   
   if(is_terminal)
   {
+#define ESCAPE "\e"
+
 #define NORMAL "0"
 #define BOLD "1"
 #define RED_FG "31"
@@ -35,20 +37,21 @@ void term_init()
 #define BLUE_FG "34"
 #define MAGENTA_FG "35"
 #define CYAN_FG "36"
-    TERM_RED = "\e[" NORMAL ";" RED_FG "m";
-    TERM_RED_BOLD = "\e[" BOLD ";" RED_FG "m";
-    TERM_GREEN = "\e[" NORMAL ";" GREEN_FG "m";
-    TERM_GREEN_BOLD = "\e[" BOLD ";" GREEN_FG "m";
-    TERM_YELLOW = "\e[" NORMAL ";" YELLOW_FG "m";
-    TERM_YELLOW_BOLD = "\e[" BOLD ";" YELLOW_FG "m";
-    TERM_BLUE = "\e[" NORMAL ";" BLUE_FG "m";
-    TERM_BLUE_BOLD = "\e[" BOLD ";" BLUE_FG "m";
-    TERM_MAGENTA = "\e[" NORMAL ";" MAGENTA_FG "m";
-    TERM_MAGENTA_BOLD = "\e[" BOLD ";" MAGENTA_FG "m";
-    TERM_CYAN = "\e[" NORMAL ";" CYAN_FG "m";
-    TERM_CYAN_BOLD = "\e[" BOLD ";" CYAN_FG "m";
-    TERM_NORMAL = "\e[" NORMAL "m";
-    TERM_CLEAR = "\e[3J";
+    TERM_RED = ESCAPE "[" NORMAL ";" RED_FG "m";
+    TERM_RED_BOLD = ESCAPE "[" BOLD ";" RED_FG "m";
+    TERM_GREEN = ESCAPE "[" NORMAL ";" GREEN_FG "m";
+    TERM_GREEN_BOLD = ESCAPE "[" BOLD ";" GREEN_FG "m";
+    TERM_YELLOW = ESCAPE "[" NORMAL ";" YELLOW_FG "m";
+    TERM_YELLOW_BOLD = ESCAPE "[" BOLD ";" YELLOW_FG "m";
+    TERM_BLUE = ESCAPE "[" NORMAL ";" BLUE_FG "m";
+    TERM_BLUE_BOLD = ESCAPE "[" BOLD ";" BLUE_FG "m";
+    TERM_MAGENTA = ESCAPE "[" NORMAL ";" MAGENTA_FG "m";
+    TERM_MAGENTA_BOLD = ESCAPE "[" BOLD ";" MAGENTA_FG "m";
+    TERM_CYAN = ESCAPE "[" NORMAL ";" CYAN_FG "m";
+    TERM_CYAN_BOLD = ESCAPE "[" BOLD ";" CYAN_FG "m";
+    TERM_NORMAL = ESCAPE "[" NORMAL "m";
+    TERM_CLEAR = ESCAPE "[3J";
+#undef ESCAPE
 #undef BOLD
 #undef NORMAL
 #undef RED_FG
