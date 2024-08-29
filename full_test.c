@@ -50,7 +50,9 @@ int main(int argc, const char** argv)
 
 static void print_running(const char* name)
 {
-  printf("%s ...", name);
+  // if te result is printed in a terminal, show what we are running while we are running
+  if(TERM_CLEAR_LINE[0])
+    printf("%s ...", name);
   fflush(stdout);
 }
 
