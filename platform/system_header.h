@@ -36,6 +36,7 @@ int execvp(const char* file, char* const argv[]);
 int execvpe(const char* file, char* const argv[], char* const env[]);
 int dup2(int oldfd, int newfd);
 ssize_t read(int fd, void* buffer, size_t num_bytes);
+ssize_t write(int fd, const void* buffer, size_t num_bytes);
 int mkdir(const char* path, mode_t mode);
 
 #if ENV_ARCH==ARCH_AARCH64 || ENV_ARCH==ARCH_X86_64 || ENV_ARCH==ARCH_X86_32 || ENV_ARCH==ARCH_X86_16
