@@ -27,7 +27,7 @@ void term_init()
   
   if(is_terminal)
   {
-#define ESCAPE "\e"
+#define ESCAPE "\x1B"
 
 #define NORMAL "0"
 #define BOLD "1"
