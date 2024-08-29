@@ -50,7 +50,7 @@ int main(int argc, const char** argv)
 
 static void print_running(const char* name)
 {
-  printf("%s running...", name);
+  printf("%s running ...", name);
   fflush(stdout);
 }
 
