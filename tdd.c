@@ -30,7 +30,7 @@ struct Config cfg_default()
 void run_tests(struct Config cfg, Path dir)
 {
 #if CLEAR
-  printf(TERM_CLEAR);
+  printf("%s", TERM_CLEAR);
   fflush(stdout);
 #endif
 

@@ -34,9 +34,8 @@ int main(int argc, const char** argv)
   LOG_DIR = path_join(path_parent(full_test_file), path_from_cstr("full_test.log"));
   LINUX_ASSERT_NE(mkdir(LOG_DIR.cstr, 0777), -1);
 
-  printf(TERM_CLEAR);
+  printf("%s", TERM_CLEAR);
   fflush(stdout);
-
 
   printf("%s==== static analysis ====%s\n", TERM_HEADER, TERM_NORMAL);
 
