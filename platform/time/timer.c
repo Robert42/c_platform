@@ -30,7 +30,9 @@ const char* time_format_short_duration(u64 time, Mem_Region* region)
 
   const usize available = mem_region_available_bytes(region);
 
-  const int formatted_len = two_digits ? snprintf(region->begin, available, "%.2f %s", (double)seconds, unit) : snprintf(region->begin, available, "%.0f %s", (double)seconds, unit);
+  const int formatted_len = two_digits
+                            ? snprintf(region->begin, available, "%.2f %s", (double)seconds, unit)
+                            : snprintf(region->begin, available, "%.0f %s", (double)seconds, unit);
   assert_usize_lte_lt(0, formatted_len, available); // out of memory?
 
   char* text = region->begin;
