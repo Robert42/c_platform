@@ -36,7 +36,10 @@ int execvp(const char* file, char* const argv[]);
 int execvpe(const char* file, char* const argv[], char* const env[]);
 int dup2(int oldfd, int newfd);
 ssize_t read(int fd, void* buffer, size_t num_bytes);
-int pipe2(int pipefd[2], int flags);
+
+#if ENV_ARCH==ARCH_AARCH64 || ENV_ARCH==ARCH_X86_64 || ENV_ARCH==ARCH_X86_32 || ENV_ARCH==ARCH_X86_16
+int pipe(int pipefd[2]);
+#endif
 
 int strcmp(const char* x, const char* y);
 char* strtok(char* restrict str, const char* restrict delim);
