@@ -69,6 +69,7 @@ void errx(int eval, const char* fmt, ...);
 #include <fcntl.h>
 #include <err.h>
 #include <sys/wait.h> // waitpid
+#include <sys/stat.h> // mkdir
 
 #include <string.h>
 
