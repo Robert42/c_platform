@@ -41,11 +41,11 @@ int main(int argc, const char** argv)
 
   const Path frama_c_ast = path_join(LOG_DIR, path_from_cstr("frama_c_parse.sav"));
   {
-    char* const cmd_eva[] = {"frama-c", full_test_file.cstr, "-save", frama_c_ast.cstr, NULL};
+    char* const cmd_parse[] = {"frama-c", full_test_file.cstr, "-save", frama_c_ast.cstr, NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.parse",
-      .cmd = cmd_eva,
+      .cmd = cmd_parse,
       .warning_text = "Warning:",
     };
     cmd_exec(cmd);
