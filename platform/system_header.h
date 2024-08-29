@@ -39,6 +39,7 @@ ssize_t read(int fd, void* buffer, size_t num_bytes);
 int pipe2(int pipefd[2], int flags);
 
 int strcmp(const char* x, const char* y);
+char* strtok(char* restrict str, const char* restrict delim);
 const char* dirname(const char* path);
 char* realpath(const char* path, char* buffer);
 

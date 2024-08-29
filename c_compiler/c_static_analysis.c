@@ -1,0 +1,30 @@
+// Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
+#include "c_static_analysis.h"
+
+const char* C_STATIC_ANALYZER_NAMES[C_STATIC_ANALYZER_COUNT] = {
+  [CSA_FRAMA_C] = "frama_c",
+};
+
+void c_static_analysis(enum C_Static_Analyzer csa, Path c_file)
+{
+  char frama_c_arch[] = "gcc_x86_64";
+
+  switch(csa)
+  {
+  case CSA_FRAMA_C:
+  {
+    char* const args_compile[] = {"frama-c", "-machdep", frama_c_arch, c_file.cstr, NULL};
+    proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){});
+    break;
+  }
+  }
+}
+
+enum C_Static_Analyzer c_static_analyzer_for_name(const char* name)
+{
+  for(u32 i=0; i<C_STATIC_ANALYZER_COUNT; ++i)
+    if(strcmp(C_STATIC_ANALYZER_NAMES[i], name) == 0)
+      return i;
+
+  errx(EXIT_FAILURE, "Unknown static analyzer `%s`", name);
+}
