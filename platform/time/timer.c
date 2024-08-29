@@ -12,11 +12,11 @@ const char* time_format_short_duration(u64 time, Mem_Region* region)
   if(seconds >= 1)
   {
     fmt = "%.2f s";
-  }else if(seconds >= 1.e-3)
+  }else if(seconds*1000 >= 1)
   {
     seconds *= 1000;
     fmt = "%.0f ms";
-  }else if(seconds >= 1.e-6)
+  }else if(seconds*1000*1000 >= 1)
   {
     seconds *= 1000 * 1000;
     fmt = "%.0f us";
