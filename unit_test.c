@@ -6,8 +6,8 @@
 #include "platform/test.c"
 #include "utils/test.c"
 
-static u8 _SCRATCH_BUFFER_1[1024*1024] = {};
-Mem_Region SCRATCH = {};
+static u8 _SCRATCH_BUFFER_1[1024*1024] = {0};
+Mem_Region SCRATCH = {0};
 
 int main(int argc, const char** argv)
 {
