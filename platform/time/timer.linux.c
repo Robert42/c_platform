@@ -28,3 +28,18 @@ void timer_init()
 }
 
 #undef CLOCK
+
+const char* time_format_date_time_now(Mem_Region* region)
+{
+  char* const args[] = {"date", "+%Y-%m-%d_%H-%M-%S", NULL};
+  struct Proc_Exec_Blocking_Settings settings = {
+    .capture_stdout = true,
+    .capture_stderr = true,
+    .region_stdout = region,
+  };
+  struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, settings);
+  LINUX_ASSERT_EQ(result.exit_code, EXIT_SUCCESS);
+
+  return result.captured_stdout;
+}
+
