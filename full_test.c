@@ -47,6 +47,7 @@ int main(int argc, const char** argv)
       .name = "frama_c.parse",
       .cmd = cmd_parse,
       .warning_text = "Warning:",
+      .err_text = "error",
     };
     cmd_exec(cmd);
   }
