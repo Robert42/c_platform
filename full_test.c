@@ -13,8 +13,12 @@ Mem_Region SCRATCH = {0};
 
 #define TERM_HEADER TERM_NORMAL
 
-static void print_running(const char* name);
-static void handle_result(const char* name, bool ok);
+struct Step
+{
+  const char* name;
+};
+static void step_start(struct Step* step);
+static void step_done(struct Step* step, bool ok);
 
 int main(int argc, const char** argv)
 {
@@ -32,10 +36,12 @@ int main(int argc, const char** argv)
 
   for(u32 i=0; i<C_STATIC_ANALYZER_COUNT; ++i)
   {
-    const char* name = C_STATIC_ANALYZER_NAMES[i];
-    print_running(name);
+    struct Step step = {
+      .name = C_STATIC_ANALYZER_NAMES[i],
+    };
+    step_start(&step);
     const bool ok = c_static_analysis(i, full_test_file);
-    handle_result(name, ok);
+    step_done(&step, ok);
   }
 
   printf("%s==== run tests ====%s\n", TERM_HEADER, TERM_NORMAL);
@@ -48,12 +54,14 @@ int main(int argc, const char** argv)
 }
 
 
-static void print_running(const char* name)
+static void step_start(struct Step* step)
 {
   // if te result is printed in a terminal, show what we are running while we are running
   if(TERM_CLEAR_LINE[0])
-    printf("%s ...", name);
-  fflush(stdout);
+  {
+    printf("%s ...", step->name);
+    fflush(stdout);
+  }
 }
 
 static void print_result(const char* style_name, const char* name, const char* style_result, const char* result)
@@ -62,13 +70,13 @@ static void print_result(const char* style_name, const char* name, const char* s
   fflush(stdout);
 }
 
-static void handle_result(const char* name, bool ok)
+static void step_done(struct Step* step, bool ok)
 {
   if(ok)
-    print_result(TERM_GREEN, name, TERM_GREEN_BOLD, "OK");
+    print_result(TERM_GREEN, step->name, TERM_GREEN_BOLD, "OK");
   else
   {
-    print_result(TERM_RED, name, TERM_RED_BOLD, "FAILED");
+    print_result(TERM_RED, step->name, TERM_RED_BOLD, "FAILED");
     exit(EXIT_FAILURE);
   }
 }
