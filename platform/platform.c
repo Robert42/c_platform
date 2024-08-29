@@ -2,8 +2,8 @@
 
 #include "prelude.h"
 
-void term_init();
-void timer_init();
+void term_init(void);
+void timer_init(void);
 
 void platform_init()
 {
