@@ -13,6 +13,17 @@ Mem_Region SCRATCH = {0};
 
 #define TERM_HEADER TERM_NORMAL
 
+void print_running(const char* name)
+{
+  printf("%s running...", name);
+  fflush(stdout);
+}
+void print_result(const char* style_name, const char* name, const char* style_result, const char* result)
+{
+  printf("%s%s%s%s %s%s\n", TERM_CLEAR_LINE, style_name, name, style_result, result, TERM_NORMAL);
+  fflush(stdout);
+}
+
 int main(int argc, const char** argv)
 {
   platform_init();
@@ -30,13 +41,12 @@ int main(int argc, const char** argv)
   for(u32 i=0; i<C_STATIC_ANALYZER_COUNT; ++i)
   {
     const char* name = C_STATIC_ANALYZER_NAMES[i];
-    printf("%s running...", name);
-    fflush(stdout);
+    print_running(name);
     if(c_static_analysis(i, full_test_file))
-      printf("%s%s%s%s OK%s\n", TERM_CLEAR_LINE, TERM_GREEN, name, TERM_GREEN_BOLD, TERM_NORMAL);
+      print_result(TERM_GREEN, name, TERM_GREEN_BOLD, "OK");
     else
     {
-      printf("%s%s%s%s FAILURE%s\n", TERM_CLEAR_LINE, TERM_RED, name, TERM_RED_BOLD, TERM_NORMAL);
+      print_result(TERM_RED, name, TERM_RED_BOLD, "FAILED");
       return EXIT_FAILURE;
     }
   }
