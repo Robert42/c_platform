@@ -17,6 +17,7 @@ struct Cmd
   char* const * cmd;
 
   const char* err_text;
+  const char* warning_text;
 };
 static void cmd_exec(struct Cmd cmd);
 
@@ -39,8 +40,19 @@ int main(int argc, const char** argv)
 
   printf("%s==== static analysis ====%s\n", TERM_HEADER, TERM_NORMAL);
 
+  const Path frama_c_ast = path_join(LOG_DIR, path_from_cstr("frama_c_parse.sav"));
   {
-    char* const cmd_eva[] = {"frama-c", "-eva-precision", "3", "-eva", full_test_file.cstr, NULL};
+    char* const cmd_eva[] = {"frama-c", full_test_file.cstr, "-save", frama_c_ast.cstr, NULL};
+
+    struct Cmd cmd = {
+      .name = "frama_c.parse",
+      .cmd = cmd_eva,
+      .warning_text = "Warning:",
+    };
+    cmd_exec(cmd);
+  }
+  {
+    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-precision", "3", "-eva", NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.eva",
@@ -85,6 +97,7 @@ static void cmd_exec(struct Cmd cmd)
   struct Proc_Exec_Blocking_Result result = proc_exec_blocking(cmd.cmd, capture_everything);
   const u64 time_end = timer_now();
   bool ok;
+  bool warning = cmd.warning_text != NULL && strstr(result.captured_stdout, cmd.warning_text);
   if(result.exit_code != EXIT_SUCCESS)
     ok = false;
   else if(cmd.err_text != NULL)
@@ -93,7 +106,9 @@ static void cmd_exec(struct Cmd cmd)
     ok = true;
 
   const char* const duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
-  if(ok)
+  if(ok && warning)
+    print_result(TERM_YELLOW, cmd.name, TERM_YELLOW_BOLD, "WARNING", duration);
+  else if(ok)
     print_result(TERM_GREEN, cmd.name, TERM_GREEN_BOLD, "OK", duration);
   else
     print_result(TERM_RED, cmd.name, TERM_RED_BOLD, "FAILED", duration);
