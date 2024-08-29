@@ -29,12 +29,14 @@ int main(int argc, const char** argv)
 
   for(u32 i=0; i<C_STATIC_ANALYZER_COUNT; ++i)
   {
-    printf("%s ", C_STATIC_ANALYZER_NAMES[i]);
+    const char* name = C_STATIC_ANALYZER_NAMES[i];
+    printf("%s running...", name);
+    fflush(stdout);
     if(c_static_analysis(i, full_test_file))
-      printf("%sOK%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
+      printf("%s%s%s%s OK%s\n", TERM_CLEAR_LINE, TERM_GREEN, name, TERM_GREEN_BOLD, TERM_NORMAL);
     else
     {
-      printf("%sFAILURE%s\n", TERM_RED_BOLD, TERM_NORMAL);
+      printf("%s%s%s%s FAILURE%s\n", TERM_CLEAR_LINE, TERM_RED, name, TERM_RED_BOLD, TERM_NORMAL);
       return EXIT_FAILURE;
     }
   }

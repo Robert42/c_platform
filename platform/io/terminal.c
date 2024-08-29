@@ -16,6 +16,7 @@ const char* TERM_CYAN_BOLD = "";
 
 const char* TERM_NORMAL = "";
 const char* TERM_CLEAR = "";
+const char* TERM_CLEAR_LINE = "";
 
 void term_init()
 {
@@ -51,6 +52,7 @@ void term_init()
     TERM_CYAN_BOLD = ESCAPE "[" BOLD ";" CYAN_FG "m";
     TERM_NORMAL = ESCAPE "[" NORMAL "m";
     TERM_CLEAR = ESCAPE "[3J";
+    TERM_CLEAR_LINE = ESCAPE "[0G" ESCAPE "[2K";
 #undef ESCAPE
 #undef BOLD
 #undef NORMAL
