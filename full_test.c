@@ -54,10 +54,9 @@ int main(int argc, const char** argv)
   return EXIT_SUCCESS;
 }
 
-static void print_result(const char* style_name, const char* name, const char* style_result, const char* result)
+static void print_result(const char* style_name, const char* name, const char* style_result, const char* result, const char* duration)
 {
-  printf("%s%s%s%s %s%s\n", TERM_CLEAR_LINE, style_name, name, style_result, result, TERM_NORMAL);
-  fflush(stdout);
+  printf("%s%s%s%s %s%s", TERM_CLEAR_LINE, style_name, name, style_result, result, TERM_NORMAL);
 }
 
 static void cmd_exec(struct Cmd cmd)
@@ -76,7 +75,9 @@ static void cmd_exec(struct Cmd cmd)
     fflush(stdout);
   }
 
+  const u64 time_begin = timer_now();
   struct Proc_Exec_Blocking_Result result = proc_exec_blocking(cmd.cmd, capture_everything);
+  const u64 time_end = timer_now();
   bool ok;
   if(result.exit_code != EXIT_SUCCESS)
     ok = false;
@@ -85,11 +86,17 @@ static void cmd_exec(struct Cmd cmd)
   else
     ok = true;
 
+  const char* duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
   if(ok)
-    print_result(TERM_GREEN, cmd.name, TERM_GREEN_BOLD, "OK");
-  else
   {
-    print_result(TERM_RED, cmd.name, TERM_RED_BOLD, "FAILED");
+    print_result(TERM_GREEN, cmd.name, TERM_GREEN_BOLD, "OK", duration);
+    printf(" (%s)\n", duration);
+    fflush(stdout);
+  }else
+  {
+    print_result(TERM_RED, cmd.name, TERM_RED_BOLD, "FAILED", duration);
+    printf(" (after %s)\n", duration);
+    fflush(stdout);
     exit(EXIT_FAILURE);
   }
 }
