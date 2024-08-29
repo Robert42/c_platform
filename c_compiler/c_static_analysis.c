@@ -7,13 +7,11 @@ const char* C_STATIC_ANALYZER_NAMES[C_STATIC_ANALYZER_COUNT] = {
 
 void c_static_analysis(enum C_Static_Analyzer csa, Path c_file)
 {
-  char frama_c_arch[] = "gcc_x86_64";
-
   switch(csa)
   {
   case CSA_FRAMA_C:
   {
-    char* const args_compile[] = {"frama-c", "-machdep", frama_c_arch, c_file.cstr, NULL};
+    char* const args_compile[] = {"frama-c", c_file.cstr, NULL};
     proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){});
     break;
   }
