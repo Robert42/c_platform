@@ -6,19 +6,19 @@
 #include "platform/test.c"
 #include "utils/test.c"
 
-#include "c_compiler/c_static_analysis.c"
-
 static u8 _SCRATCH_BUFFER_1[1024*1024] = {0};
 Mem_Region SCRATCH = {0};
 
 #define TERM_HEADER TERM_NORMAL
 
-struct Step
+struct Cmd
 {
   const char* name;
+  char* const * cmd;
+
+  const char* err_text;
 };
-static void step_start(struct Step* step);
-static void step_done(struct Step* step, bool ok);
+static void cmd_exec(struct Cmd cmd);
 
 int main(int argc, const char** argv)
 {
@@ -34,14 +34,15 @@ int main(int argc, const char** argv)
 
   printf("%s==== static analysis ====%s\n", TERM_HEADER, TERM_NORMAL);
 
-  for(u32 i=0; i<C_STATIC_ANALYZER_COUNT; ++i)
   {
-    struct Step step = {
-      .name = C_STATIC_ANALYZER_NAMES[i],
+    char* const cmd_eva[] = {"frama-c", "-eva-precision", "3", "-eva", full_test_file.cstr, NULL};
+
+    struct Cmd cmd = {
+      .name = "frama_c.eva",
+      .cmd = cmd_eva,
+      .err_text = "Some errors and warnings have been raised during the analysis",
     };
-    step_start(&step);
-    const bool ok = c_static_analysis(i, full_test_file);
-    step_done(&step, ok);
+    cmd_exec(cmd);
   }
 
   printf("%s==== run tests ====%s\n", TERM_HEADER, TERM_NORMAL);
@@ -53,30 +54,42 @@ int main(int argc, const char** argv)
   return EXIT_SUCCESS;
 }
 
-
-static void step_start(struct Step* step)
-{
-  // if te result is printed in a terminal, show what we are running while we are running
-  if(TERM_CLEAR_LINE[0])
-  {
-    printf("%s ...", step->name);
-    fflush(stdout);
-  }
-}
-
 static void print_result(const char* style_name, const char* name, const char* style_result, const char* result)
 {
   printf("%s%s%s%s %s%s\n", TERM_CLEAR_LINE, style_name, name, style_result, result, TERM_NORMAL);
   fflush(stdout);
 }
 
-static void step_done(struct Step* step, bool ok)
+static void cmd_exec(struct Cmd cmd)
 {
+  struct Proc_Exec_Blocking_Settings capture_everything = {
+    .capture_stdout = true,
+    .capture_stderr = true,
+    .region_stdout = &SCRATCH,
+    .region_stderr = &SCRATCH,
+  };
+
+  // if te result is printed in a terminal, show what we are running while we are running
+  if(TERM_CLEAR_LINE[0])
+  {
+    printf("%s ...", cmd.name);
+    fflush(stdout);
+  }
+
+  struct Proc_Exec_Blocking_Result result = proc_exec_blocking(cmd.cmd, capture_everything);
+  bool ok;
+  if(result.exit_code != EXIT_SUCCESS)
+    ok = false;
+  else if(cmd.err_text != NULL)
+    ok = !strstr(result.captured_stdout, cmd.err_text);
+  else
+    ok = true;
+
   if(ok)
-    print_result(TERM_GREEN, step->name, TERM_GREEN_BOLD, "OK");
+    print_result(TERM_GREEN, cmd.name, TERM_GREEN_BOLD, "OK");
   else
   {
-    print_result(TERM_RED, step->name, TERM_RED_BOLD, "FAILED");
+    print_result(TERM_RED, cmd.name, TERM_RED_BOLD, "FAILED");
     exit(EXIT_FAILURE);
   }
 }
