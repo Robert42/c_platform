@@ -13,17 +13,8 @@ Mem_Region SCRATCH = {0};
 
 #define TERM_HEADER TERM_NORMAL
 
-void print_running(const char* name)
-{
-  printf("%s running...", name);
-  fflush(stdout);
-}
-void print_result(const char* style_name, const char* name, const char* style_result, const char* result)
-{
-  printf("%s%s%s%s %s%s\n", TERM_CLEAR_LINE, style_name, name, style_result, result, TERM_NORMAL);
-  fflush(stdout);
-}
-void handle_result(const char* name, bool ok);
+static void print_running(const char* name);
+static void handle_result(const char* name, bool ok);
 
 int main(int argc, const char** argv)
 {
@@ -56,7 +47,20 @@ int main(int argc, const char** argv)
   return EXIT_SUCCESS;
 }
 
-void handle_result(const char* name, bool ok)
+
+static void print_running(const char* name)
+{
+  printf("%s running...", name);
+  fflush(stdout);
+}
+
+static void print_result(const char* style_name, const char* name, const char* style_result, const char* result)
+{
+  printf("%s%s%s%s %s%s\n", TERM_CLEAR_LINE, style_name, name, style_result, result, TERM_NORMAL);
+  fflush(stdout);
+}
+
+static void handle_result(const char* name, bool ok)
 {
   if(ok)
     print_result(TERM_GREEN, name, TERM_GREEN_BOLD, "OK");
