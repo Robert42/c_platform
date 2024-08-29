@@ -31,7 +31,7 @@ int main(int argc, const char** argv)
 
   SCRATCH = MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1);
 
-  LOG_DIR = path_join(path_parent(full_test_file), path_append_cstr(path_append_cstr(path_from_cstr("full_test_"), time_format_date_time_now(&SCRATCH)), ".log"));
+  LOG_DIR = path_join(path_parent(full_test_file), path_append_cstr(path_from_cstr(time_format_date_time_now(&SCRATCH)), ".log"));
   LINUX_ASSERT_NE(mkdir(LOG_DIR.cstr, 0777), -1);
 
   printf("%s", TERM_CLEAR);
