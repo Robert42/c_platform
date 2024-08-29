@@ -12,7 +12,7 @@ void c_static_analysis(enum C_Static_Analyzer csa, Path c_file)
   case CSA_FRAMA_C_EVA:
   {
     char* const args_compile[] = {"frama-c", "-eva-precision", "3", "-eva", c_file.cstr, NULL};
-    proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){});
+    proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0});
     break;
   }
   }
