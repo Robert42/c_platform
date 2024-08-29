@@ -21,7 +21,7 @@ Mem_Region _mem_region_from(void* begin, usize len)
 {
   return (Mem_Region){
     .begin = begin,
-    .end = begin+len,
+    .end = (unsigned char*)begin+len,
   };
 }
 

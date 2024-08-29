@@ -7,8 +7,8 @@
 
 typedef struct
 {
-  void* begin;
-  void* end;
+  unsigned char* begin;
+  unsigned char* end;
 } Mem_Region;
 
 extern Mem_Region SCRATCH;
