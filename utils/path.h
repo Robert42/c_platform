@@ -15,6 +15,7 @@ Path _path_from_cstr(const char* path, bool* ok);
 Path path_truncate(Path p, usize len);
 Path path_parent(Path p);
 Path path_append_char(Path a, char b);
+Path path_append_cstr(Path a, const char* b);
 Path path_concat(Path a, Path b);
 Path path_join(Path a, Path b);
 Path path_realpath(Path p);

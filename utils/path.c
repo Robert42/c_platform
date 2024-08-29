@@ -65,6 +65,11 @@ Path path_append_char(Path a, char c)
   return a;
 }
 
+Path path_append_cstr(Path a, const char* b)
+{
+  return path_concat(a, path_from_cstr(b));
+}
+
 Path path_concat(Path a, Path b)
 {
   if(a.len == 0)
