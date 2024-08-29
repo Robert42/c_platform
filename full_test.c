@@ -23,6 +23,7 @@ void print_result(const char* style_name, const char* name, const char* style_re
   printf("%s%s%s%s %s%s\n", TERM_CLEAR_LINE, style_name, name, style_result, result, TERM_NORMAL);
   fflush(stdout);
 }
+void handle_result(const char* name, bool ok);
 
 int main(int argc, const char** argv)
 {
@@ -42,13 +43,8 @@ int main(int argc, const char** argv)
   {
     const char* name = C_STATIC_ANALYZER_NAMES[i];
     print_running(name);
-    if(c_static_analysis(i, full_test_file))
-      print_result(TERM_GREEN, name, TERM_GREEN_BOLD, "OK");
-    else
-    {
-      print_result(TERM_RED, name, TERM_RED_BOLD, "FAILED");
-      return EXIT_FAILURE;
-    }
+    const bool ok = c_static_analysis(i, full_test_file);
+    handle_result(name, ok);
   }
 
   printf("%s==== run tests ====%s\n", TERM_HEADER, TERM_NORMAL);
@@ -58,4 +54,15 @@ int main(int argc, const char** argv)
   printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
 
   return EXIT_SUCCESS;
+}
+
+void handle_result(const char* name, bool ok)
+{
+  if(ok)
+    print_result(TERM_GREEN, name, TERM_GREEN_BOLD, "OK");
+  else
+  {
+    print_result(TERM_RED, name, TERM_RED_BOLD, "FAILED");
+    exit(EXIT_FAILURE);
+  }
 }
