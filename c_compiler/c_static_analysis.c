@@ -5,15 +5,24 @@ const char* C_STATIC_ANALYZER_NAMES[C_STATIC_ANALYZER_COUNT] = {
   [CSA_FRAMA_C_EVA] = "frama_c.eva",
 };
 
-void c_static_analysis(enum C_Static_Analyzer csa, Path c_file)
+bool c_static_analysis(enum C_Static_Analyzer csa, Path c_file)
 {
+  struct Proc_Exec_Blocking_Settings capture_everything = {
+    .capture_stdout = true,
+    .capture_stderr = true,
+    .region_stdout = &SCRATCH,
+    .region_stderr = &SCRATCH,
+  };
+
   switch(csa)
   {
   case CSA_FRAMA_C_EVA:
   {
     char* const args_compile[] = {"frama-c", "-eva-precision", "3", "-eva", c_file.cstr, NULL};
-    proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0});
-    break;
+    struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args_compile, capture_everything);
+    if(result.exit_code != EXIT_SUCCESS)
+      return false;
+    return !strstr(result.captured_stdout, "Some errors and warnings have been raised during the analysis");
   }
   }
 }

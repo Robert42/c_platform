@@ -7,7 +7,7 @@ enum C_Static_Analyzer
 };
 #define C_STATIC_ANALYZER_COUNT 1
 
-void c_static_analysis(enum C_Static_Analyzer csa, Path c_file);
+bool c_static_analysis(enum C_Static_Analyzer csa, Path c_file);
 
 extern const char* C_STATIC_ANALYZER_NAMES[C_STATIC_ANALYZER_COUNT];
 enum C_Static_Analyzer c_static_analyzer_for_name(const char* name);

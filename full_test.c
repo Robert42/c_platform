@@ -29,8 +29,14 @@ int main(int argc, const char** argv)
 
   for(u32 i=0; i<C_STATIC_ANALYZER_COUNT; ++i)
   {
-    printf("%s", C_STATIC_ANALYZER_NAMES[i]);
-    c_static_analysis(i, full_test_file);
+    printf("%s ", C_STATIC_ANALYZER_NAMES[i]);
+    if(c_static_analysis(i, full_test_file))
+      printf("%sOK%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
+    else
+    {
+      printf("%sFAILURE%s\n", TERM_RED_BOLD, TERM_NORMAL);
+      return EXIT_FAILURE;
+    }
   }
 
   printf("%s==== run tests ====%s\n", TERM_HEADER, TERM_NORMAL);

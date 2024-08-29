@@ -42,6 +42,7 @@ int pipe(int pipefd[2]);
 #endif
 
 int strcmp(const char* x, const char* y);
+const char* strstr(const char* haystack, const char* needle);
 char* strtok(char* restrict str, const char* restrict delim);
 const char* dirname(const char* path);
 char* realpath(const char* path, char* buffer);
