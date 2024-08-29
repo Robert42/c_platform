@@ -21,7 +21,7 @@ void* _linux_read_all_bytes_from_fd(int fd, Mem_Region* region)
 
 void _create_file_from_bytes(const char* path, const void* bytes, usize num_bytes)
 {
-  const int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC);
+  const int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0666);
   LINUX_ASSERT_NE(fd, -1);
 
   LINUX_ASSERT_NE(write(fd, bytes, num_bytes), -1);
