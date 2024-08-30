@@ -1,16 +1,6 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
-#include "platform/platform.c"
-#include "utils/utils.c"
-
-#include "platform/test.c"
-#include "utils/test.c"
-
-static u8 _SCRATCH_BUFFER_1[1024*1024] = {0};
-Mem_Region SCRATCH = {0};
-
-static u8 _PERSISTENT_BUFFER_1[1024*1024] = {0};
-Mem_Region PERSISTENT = {0};
+#include "c_script.h"
 
 #define TERM_HEADER TERM_NORMAL
 
@@ -36,12 +26,9 @@ char* frama_c_log_file(const char* plugin_name, const char* suffix)
 
 int main(int argc, const char** argv)
 {
-  platform_init();
+  c_script_init();
   
   const Path full_test_file = path_realpath(path_from_cstr(__FILE__));
-
-  SCRATCH = MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1);
-  PERSISTENT = MEM_REGION_FROM_ARRAY(_PERSISTENT_BUFFER_1);
 
   LOG_DIR = path_join(path_parent(full_test_file), path_append_cstr(path_from_cstr(time_format_date_time_now(&SCRATCH)), ".log"));
   LINUX_ASSERT_NE(mkdir(LOG_DIR.cstr, 0777), -1);
@@ -79,9 +66,6 @@ int main(int argc, const char** argv)
     cmd_exec(cmd);
   }
 
-  printf("%s==== run tests ====%s\n", TERM_HEADER, TERM_NORMAL);
-  platform_test();
-  utils_test();
 
   printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
 

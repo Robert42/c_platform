@@ -16,9 +16,14 @@ void scratch_swap()
   _mem_swap_scratch(MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1), MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_2));
 }
 
+
+static u8 _PERSISTENT_BUFFER[1024*1024] = {0};
+Mem_Region PERSISTENT = {0};
+
 void c_script_init()
 {
   platform_init();
 
   SCRATCH = MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1);
+  PERSISTENT = MEM_REGION_FROM_ARRAY(_PERSISTENT_BUFFER);
 }
