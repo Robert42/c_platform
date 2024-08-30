@@ -2,18 +2,18 @@
 
 #include "mem.h"
 
-void _mem_swap_scratch(Mem_Region scratch_1, Mem_Region scratch_2)
+void _mem_swap_scratch(Mem_Region* scratch_var, Mem_Region region_1, Mem_Region region_2)
 {
-  if(SCRATCH.end == scratch_1.end)
+  if(scratch_var->end == region_1.end)
   {
-    debug_assert_ptr_lte_lte(scratch_1.begin, SCRATCH.begin, scratch_1.end);
-    SCRATCH = scratch_2;
+    debug_assert_ptr_lte_lte(region_1.begin, scratch_var->begin, region_1.end);
+    *scratch_var = region_2;
   }
   else
   {
-    debug_assert_ptr_eq(SCRATCH.end, scratch_2.end);
-    debug_assert_ptr_lte_lte(scratch_2.begin, SCRATCH.begin, scratch_2.end);
-    SCRATCH = scratch_1;
+    debug_assert_ptr_eq(scratch_var->end, region_2.end);
+    debug_assert_ptr_lte_lte(region_2.begin, scratch_var->begin, region_2.end);
+    *scratch_var = region_1;
   }
 }
 
