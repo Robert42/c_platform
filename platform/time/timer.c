@@ -3,6 +3,7 @@
 
 u64 timer_freq;
 
+// TODO: move to utils?
 char* str_fmt(Mem_Region* region, const char* fmt, ...);
 char* time_format_short_duration(u64 time, Mem_Region* region)
 {
