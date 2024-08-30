@@ -3,7 +3,6 @@
 usize __assert_capture__ = 0;
 usize __assert_caught__ = 0;
 
-NORETURN
 static void __assert_failed__()
 {
   if(__assert_capture__)
@@ -16,7 +15,6 @@ static void __assert_failed__()
   abort();
 }
 
-NORETURN
 static void __bin_assert_failed__(const char* lhs, const char* rhs)
 {
   if(__assert_capture__)
@@ -90,7 +88,6 @@ void dev_env_demo()
 
 
 #ifdef __linux__
-NORETURN
 void __linux_call_failed__(const char* call, const char* file, int line)
 {
   if(__assert_capture__)
