@@ -72,8 +72,8 @@ int main(int argc, const char** argv)
     cmd_exec(cmd);
   }
   {
-    const char* const log_err = frama_c_log_file("kernel", ".err");
-    const char* const log_warn = frama_c_log_file("kernel", ".warn");
+    const char* const log_err = frama_c_log_file("eva", ".err");
+    const char* const log_warn = frama_c_log_file("eva", ".warn");
     char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-eva-precision", "3", "-eva", NULL};
 
     struct Cmd cmd = {
