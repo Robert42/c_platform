@@ -28,10 +28,13 @@ int main(int argc, const char** argv)
 {
   c_script_init();
   
-  const Path full_test_file = path_realpath(path_from_cstr(__FILE__));
+  const Path dir = path_parent(path_realpath(path_from_cstr(__FILE__)));
+  const Path all_tests_bin_path = path_join(dir, path_from_cstr("all_tests"));
+  const Path all_tests_src_path = path_append_cstr(all_tests_bin_path, ".c");
 
-  LOG_DIR = path_join(path_parent(full_test_file), path_append_cstr(path_from_cstr(time_format_date_time_now(&SCRATCH)), ".log"));
+  LOG_DIR = path_join(dir, path_append_cstr(path_from_cstr(time_format_date_time_now(&SCRATCH)), ".log"));
   LINUX_ASSERT_NE(mkdir(LOG_DIR.cstr, 0777), -1);
+
 
   printf("%s", TERM_CLEAR);
   fflush(stdout);
@@ -42,7 +45,7 @@ int main(int argc, const char** argv)
   {
     const char* const log_err = frama_c_log_file("kernel", ".err");
     const char* const log_warn = frama_c_log_file("kernel", ".warn");
-    char* const cmd_parse[] = {"frama-c", full_test_file.cstr, "-kernel-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-save", frama_c_ast.cstr, NULL};
+    char* const cmd_parse[] = {"frama-c", all_tests_src_path.cstr, "-kernel-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-save", frama_c_ast.cstr, NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.parse",
