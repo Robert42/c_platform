@@ -2,6 +2,11 @@
 
 #include "mem.h"
 
+/*@ requires \valid(scratch_var) && valid_region(*scratch_var);
+    requires valid_region(region_1);
+    requires valid_region(region_2);
+    ensures valid_region(*scratch_var);
+*/
 void _mem_swap_scratch(Mem_Region* scratch_var, Mem_Region region_1, Mem_Region region_2)
 {
   if(scratch_var->end == region_1.end)
@@ -17,6 +22,9 @@ void _mem_swap_scratch(Mem_Region* scratch_var, Mem_Region region_1, Mem_Region 
   }
 }
 
+/*@ requires \valid((char*)begin) && \offset((char*)begin)+len <= \block_length((char*)begin);
+    ensures valid_region(\result);
+*/
 Mem_Region _mem_region_from(void* begin, usize len)
 {
   return (Mem_Region){
@@ -25,6 +33,9 @@ Mem_Region _mem_region_from(void* begin, usize len)
   };
 }
 
+/*@ requires \valid(region) && valid_region(*region);
+    ensures valid_region(*region);
+*/
 void* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_bytes)
 {
   void* bytes = region->begin;
