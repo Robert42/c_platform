@@ -62,6 +62,7 @@ void errx(int eval, const char* fmt, ...);
 #define _GNU_SOURCE
 #endif
 
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
