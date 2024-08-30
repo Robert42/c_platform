@@ -27,3 +27,14 @@ void _create_file_from_bytes(const char* path, const void* bytes, usize num_byte
   LINUX_ASSERT_NE(write(fd, bytes, num_bytes), -1);
   LINUX_ASSERT_NE(close(fd), -1);
 }
+
+ssize _file_size(const char* path)
+{
+  struct stat s;
+  int result = stat(path, &s);
+  if(result == -1 && errno==ENOENT)
+    return -1; // -1, if the file does not exist
+  LINUX_ASSERT_NE(result, -1);
+
+  return s.st_size;
+}

@@ -20,7 +20,10 @@ void abort();
 
 #include <sys/types.h> // pid_t
 #include <sys/wait.h> // WIFEXISTED, WEXITSTATUS waitpid
+#include <sys/stat.h>
 #include <fcntl.h> // openat, O_DIRECTORY
+#include <errno.h>
+// TODO: don't name header twice
 
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
