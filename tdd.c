@@ -13,6 +13,7 @@ enum Action
 {
   ACTION_UNIT_TEST = 1<<0,
   ACTION_FULL_TEST = 1<<1,
+  ACTION_ALL_TESTS = 1<<2,
 };
 
 struct Config
@@ -36,6 +37,12 @@ void run_tests(struct Config cfg, Path dir)
 #endif
 
   const u64 time_begin = timer_now();
+  if(cfg.actions & ACTION_ALL_TESTS)
+  {
+    Path bin_path = path_join(dir, path_from_cstr("all_tests"));
+    Path test_path = path_append_cstr(bin_path, ".c");
+    cc_compile_and_run(cfg.cc, test_path, bin_path);
+  }
   if(cfg.actions & ACTION_UNIT_TEST)
   {
     Path bin_path = path_join(dir, path_from_cstr("unit_test"));
@@ -76,6 +83,8 @@ int main(int argc, char** argv)
       cfg.actions |= ACTION_UNIT_TEST;
     else if(strcmp(argv[i], "--full_test") == 0)
       cfg.actions |= ACTION_FULL_TEST;
+    else if(strcmp(argv[i], "--all_tests") == 0)
+      cfg.actions |= ACTION_ALL_TESTS;
     else
       errx(EXIT_FAILURE, "Unexpected argument `%s`\n", argv[i]);
   }
