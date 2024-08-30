@@ -7,10 +7,10 @@
 #include "utils/utils.c"
 #include "c_compiler/c_compiler.c"
 
-Mem_Region SCRATCH = {};
+Mem_Region SCRATCH = {0};
 
-static u8 _SCRATCH_BUFFER_1[1024*1024] = {};
-static u8 _SCRATCH_BUFFER_2[ARRAY_LEN(_SCRATCH_BUFFER_1)] = {};
+static u8 _SCRATCH_BUFFER_1[1024*1024] = {0};
+static u8 _SCRATCH_BUFFER_2[ARRAY_LEN(_SCRATCH_BUFFER_1)] = {0};
 void scratch_swap()
 {
   _mem_swap_scratch(MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1), MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_2));
