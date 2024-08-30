@@ -19,6 +19,7 @@ static void cmd_exec(struct Cmd cmd);
 
 Path DIR;
 Path LOG_DIR;
+bool HAD_WARNING = false;
 
 char* frama_c_log_file(const char* plugin_name, const char* suffix)
 {
@@ -73,7 +74,7 @@ int main(int argc, const char** argv)
   {
     const char* const log_err = frama_c_log_file("kernel", ".err");
     const char* const log_warn = frama_c_log_file("kernel", ".warn");
-    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s%s", log_err, log_warn), "-eva-precision", "3", "-eva", NULL};
+    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-eva-precision", "3", "-eva", NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.eva",
@@ -84,8 +85,55 @@ int main(int argc, const char** argv)
     cmd_exec(cmd);
   }
 
+  printf("%s==== compilers ====%s\n", TERM_HEADER, TERM_NORMAL);
+  for(int cc_idx=0; cc_idx<CC_COUNT; ++cc_idx)
+  {
+    enum C_Compiler cc = (enum C_Compiler)cc_idx;
+    const char* const compiler_name = cc_compiler_name(cc);
+    if(!cc_compiler_is_available(cc))
+      continue;
 
-  printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
+    printf("%s== %s%s\n", TERM_HEADER, compiler_name, TERM_NORMAL);
+    
+    for(int src_idx=0; src_idx<SRC_COUNT; ++src_idx)
+    {
+      const Path output_file = src_bin_path(src_idx);
+      const Path c_file = src_c_path(src_idx);
+      
+      {
+        char* const cmd_compile_tcc[] = {"tcc", "-Wall", c_file.cstr, "-o", output_file.cstr, NULL};
+        char* const cmd_compile_gcc[] = {"gcc", "-std=c99", "-Wall", "-pedantic", c_file.cstr, "-o", output_file.cstr, NULL};
+        char* const cmd_compile_clang[] = {"clang", "-std=c99", "-Wall", "-pedantic", c_file.cstr, "-o", output_file.cstr, NULL};
+
+        char* const * cmd_compile[] = {
+          [CC_TCC] = cmd_compile_tcc,
+          [CC_GCC] = cmd_compile_gcc,
+          [CC_CLANG] = cmd_compile_clang,
+        };
+
+        struct Cmd cmd = {
+          .name = str_fmt(&SCRATCH, "%s (compile)", SRC_BASENAME[src_idx]),
+          .cmd = cmd_compile[cc],
+          .err_text = "error:",
+        };
+        cmd_exec(cmd);
+      }
+
+      {
+        char* const cmd_test[] = {output_file.cstr, NULL};
+        struct Cmd cmd = {
+          .name = SRC_BASENAME[src_idx],
+          .cmd = cmd_test,
+        };
+        cmd_exec(cmd);
+      }
+    }
+  }
+
+  if(HAD_WARNING)
+    printf("%s==== DONE (with %sWARNING%ss) ====%s\n", TERM_YELLOW, TERM_YELLOW_BOLD, TERM_YELLOW, TERM_NORMAL);
+  else
+    printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
 
   return EXIT_SUCCESS;
 }
@@ -136,6 +184,8 @@ static void cmd_exec(struct Cmd cmd)
     create_text_file_cstr(path_append_cstr(log_path, ".stdout.log"), result.captured_stdout);
   if(result.captured_stderr[0] != 0)
     create_text_file_cstr(path_append_cstr(log_path, ".stderr.log"), result.captured_stderr);
+
+  HAD_WARNING = HAD_WARNING || warning;
 
   if(!ok)
     exit(EXIT_FAILURE);
