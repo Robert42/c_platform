@@ -22,7 +22,6 @@ void abort();
 #include <sys/wait.h> // WIFEXISTED, WEXITSTATUS waitpid
 #include <sys/stat.h>
 #include <fcntl.h> // openat, O_DIRECTORY
-#include <errno.h>
 // TODO: don't name header twice
 
 #define STDIN_FILENO 0
@@ -91,6 +90,7 @@ typedef ssize_t ssize;
 
 #ifdef __linux__
 #include <time.h>
+#include <errno.h>
 
 // source:` man getdents(2)`
 struct linux_dirent64
