@@ -115,6 +115,7 @@ int main(int argc, const char** argv)
           .name = str_fmt(&SCRATCH, "%s (compile)", SRC_BASENAME[src_idx]),
           .cmd = cmd_compile[cc],
           .err_text = "error:",
+          .warning_text = "warning:",
         };
         cmd_exec(cmd);
       }
