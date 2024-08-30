@@ -47,7 +47,7 @@ int main(int argc, const char** argv)
       .name = "frama_c.parse",
       .cmd = cmd_parse,
       .warning_text = "Warning:",
-      .err_text = "error",
+      .err_text = "error:",
     };
     cmd_exec(cmd);
   }
@@ -57,7 +57,8 @@ int main(int argc, const char** argv)
     struct Cmd cmd = {
       .name = "frama_c.eva",
       .cmd = cmd_eva,
-      .err_text = "Some errors and warnings have been raised during the analysis",
+      .warning_text = "Warning:",
+      .err_text = "error:",
     };
     cmd_exec(cmd);
   }
