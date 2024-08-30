@@ -2,6 +2,6 @@
 #pragma once
 
 // TODO: tell the compilers & analyzers, that this is using printf formatting
-const char* str_fmt(Mem_Region* region, const char* fmt, ...);
-const char* str_fmt_va(Mem_Region* region, const char* fmt, va_list args);
+char* str_fmt(Mem_Region* region, const char* fmt, ...);
+char* str_fmt_va(Mem_Region* region, const char* fmt, va_list args);
 

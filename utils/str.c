@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "str.h"
 
-const char* str_fmt(Mem_Region* region, const char* fmt, ...)
+char* str_fmt(Mem_Region* region, const char* fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
@@ -9,7 +9,7 @@ const char* str_fmt(Mem_Region* region, const char* fmt, ...)
   va_end(args);
 }
 
-const char* str_fmt_va(Mem_Region* region, const char* fmt, va_list args)
+char* str_fmt_va(Mem_Region* region, const char* fmt, va_list args)
 {
   char* const begin = region->begin;
   const usize available_bytes = mem_region_available_bytes(region);

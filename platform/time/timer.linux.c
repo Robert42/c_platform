@@ -29,7 +29,7 @@ void timer_init()
 
 #undef CLOCK
 
-const char* time_format_date_time_now(Mem_Region* region)
+char* time_format_date_time_now(Mem_Region* region)
 {
   char* const args[] = {"date", "+%Y-%m-%d_%H-%M-%S", NULL};
   struct Proc_Exec_Blocking_Settings settings = {
