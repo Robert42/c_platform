@@ -9,6 +9,9 @@
 static u8 _SCRATCH_BUFFER_1[1024*1024] = {0};
 Mem_Region SCRATCH = {0};
 
+static u8 _PERSISTENT_BUFFER_1[1024*1024] = {0};
+Mem_Region PERSISTENT = {0};
+
 #define TERM_HEADER TERM_NORMAL
 
 struct Cmd
@@ -18,14 +21,17 @@ struct Cmd
 
   const char* err_text;
   const char* warning_text;
+
+  const char* log_err;
+  const char* log_warn;
 };
 static void cmd_exec(struct Cmd cmd);
 
 Path LOG_DIR;
 
-char* frama_c_opt_log(const char* plugin_name)
+char* frama_c_log_file(const char* plugin_name, const char* suffix)
 {
-  return str_fmt(&SCRATCH, "e:%s/frama_c.%s.err.log,w:%s/frama_c.%s.warn.log", LOG_DIR.cstr, plugin_name, LOG_DIR.cstr, plugin_name);
+  return str_fmt(&PERSISTENT, "%s/frama_c.%s%s.log", LOG_DIR.cstr, plugin_name, suffix);
 }
 
 int main(int argc, const char** argv)
@@ -35,6 +41,7 @@ int main(int argc, const char** argv)
   const Path full_test_file = path_realpath(path_from_cstr(__FILE__));
 
   SCRATCH = MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1);
+  PERSISTENT = MEM_REGION_FROM_ARRAY(_PERSISTENT_BUFFER_1);
 
   LOG_DIR = path_join(path_parent(full_test_file), path_append_cstr(path_from_cstr(time_format_date_time_now(&SCRATCH)), ".log"));
   LINUX_ASSERT_NE(mkdir(LOG_DIR.cstr, 0777), -1);
@@ -46,24 +53,28 @@ int main(int argc, const char** argv)
 
   const Path frama_c_ast = path_join(LOG_DIR, path_from_cstr("frama_c_parse.sav"));
   {
-    char* const cmd_parse[] = {"frama-c", full_test_file.cstr, "-kernel-log", frama_c_opt_log("kernel"), "-save", frama_c_ast.cstr, NULL};
+    const char* const log_err = frama_c_log_file("kernel", ".err");
+    const char* const log_warn = frama_c_log_file("kernel", ".warn");
+    char* const cmd_parse[] = {"frama-c", full_test_file.cstr, "-kernel-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-save", frama_c_ast.cstr, NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.parse",
       .cmd = cmd_parse,
-      .warning_text = "Warning:",
-      .err_text = "error:",
+      .log_err = log_err,
+      .log_warn = log_warn,
     };
     cmd_exec(cmd);
   }
   {
-    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", frama_c_opt_log("eva"), "-eva-precision", "3", "-eva", NULL};
+    const char* const log_err = frama_c_log_file("kernel", ".err");
+    const char* const log_warn = frama_c_log_file("kernel", ".warn");
+    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s%s", log_err, log_warn), "-eva-precision", "3", "-eva", NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.eva",
       .cmd = cmd_eva,
-      .warning_text = "Warning:",
-      .err_text = "error:",
+      .log_err = log_err,
+      .log_warn = log_warn,
     };
     cmd_exec(cmd);
   }
@@ -102,14 +113,13 @@ static void cmd_exec(struct Cmd cmd)
   const u64 time_begin = timer_now();
   struct Proc_Exec_Blocking_Result result = proc_exec_blocking(cmd.cmd, capture_everything);
   const u64 time_end = timer_now();
-  bool ok;
-  bool warning = cmd.warning_text != NULL && strstr(result.captured_stdout, cmd.warning_text);
-  if(result.exit_code != EXIT_SUCCESS)
-    ok = false;
-  else if(cmd.err_text != NULL)
-    ok = !strstr(result.captured_stdout, cmd.err_text);
-  else
-    ok = true;
+  const bool ok =
+    result.exit_code == EXIT_SUCCESS
+    && (cmd.log_err == NULL || _file_size(cmd.log_err)<=0)
+    && (cmd.err_text == NULL || !strstr(result.captured_stdout, cmd.err_text));
+  const bool warning =
+       (cmd.log_warn != NULL && _file_size(cmd.log_warn)>0)
+    || (cmd.warning_text != NULL && strstr(result.captured_stdout, cmd.warning_text));
 
   const char* const duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
   if(ok && warning)
