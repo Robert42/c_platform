@@ -23,6 +23,11 @@ static void cmd_exec(struct Cmd cmd);
 
 Path LOG_DIR;
 
+char* frama_c_opt_log(const char* plugin_name)
+{
+  return str_fmt(&SCRATCH, "e:%s/frama_c.%s.err.log,w:%s/frama_c.%s.warn.log", LOG_DIR.cstr, plugin_name, LOG_DIR.cstr, plugin_name);
+}
+
 int main(int argc, const char** argv)
 {
   platform_init();
@@ -41,7 +46,7 @@ int main(int argc, const char** argv)
 
   const Path frama_c_ast = path_join(LOG_DIR, path_from_cstr("frama_c_parse.sav"));
   {
-    char* const cmd_parse[] = {"frama-c", full_test_file.cstr, "-save", frama_c_ast.cstr, NULL};
+    char* const cmd_parse[] = {"frama-c", full_test_file.cstr, "-kernel-log", frama_c_opt_log("kernel"), "-save", frama_c_ast.cstr, NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.parse",
@@ -52,8 +57,7 @@ int main(int argc, const char** argv)
     cmd_exec(cmd);
   }
   {
-    const char* log = str_fmt(&SCRATCH, "e:%s/%s,w:%s/%s", LOG_DIR.cstr, "frama_c.eva.err.log", LOG_DIR.cstr, "frama_c.eva.warn.log");
-    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", log, "-eva-precision", "3", "-eva", NULL};
+    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", frama_c_opt_log("eva"), "-eva-precision", "3", "-eva", NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.eva",
