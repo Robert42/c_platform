@@ -2,4 +2,5 @@
 
 #include "path.c"
 #include "file.c"
+#include "str.c"
 
