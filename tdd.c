@@ -11,7 +11,8 @@
 
 enum Action
 {
-  ACTION_UNIT_TEST = 1,
+  ACTION_UNIT_TEST = 1<<0,
+  ACTION_FULL_TEST = 1<<1,
 };
 
 struct Config
@@ -34,12 +35,19 @@ void run_tests(struct Config cfg, Path dir)
   fflush(stdout);
 #endif
 
-  Path test_path = path_join(dir, path_from_cstr("unit_test.c"));
-  Path bin_path = path_join(dir, path_from_cstr("unit_test"));
-
   const u64 time_begin = timer_now();
   if(cfg.actions & ACTION_UNIT_TEST)
+  {
+    Path bin_path = path_join(dir, path_from_cstr("unit_test"));
+    Path test_path = path_append_cstr(bin_path, ".c");
     cc_compile_and_run(cfg.cc, test_path, bin_path);
+  }
+  if(cfg.actions & ACTION_FULL_TEST)
+  {
+    Path bin_path = path_join(dir, path_from_cstr("full_test"));
+    Path test_path = path_append_cstr(bin_path, ".c");
+    cc_compile_and_run(cfg.cc, test_path, bin_path);
+  }
   const u64 time_end = timer_now();
 
 #if PRINT_ITER_STATS
@@ -66,6 +74,8 @@ int main(int argc, char** argv)
       cfg.cc = cc_compiler_for_name(argv[i]);
     }else if(strcmp(argv[i], "--unit_test") == 0)
       cfg.actions |= ACTION_UNIT_TEST;
+    else if(strcmp(argv[i], "--full_test") == 0)
+      cfg.actions |= ACTION_FULL_TEST;
     else
       errx(EXIT_FAILURE, "Unexpected argument `%s`\n", argv[i]);
   }
