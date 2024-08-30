@@ -52,7 +52,12 @@ int main(int argc, const char** argv)
     cmd_exec(cmd);
   }
   {
-    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-precision", "3", "-eva", NULL};
+    // TODO: add util formatting a string to the scratch!
+    char log[PATH_LEN_MAX+32];
+    ssize_t len = snprintf(log, sizeof(log), "e:%s/%s,w:%s/%s", LOG_DIR.cstr, "frama_c.eva.err.log", LOG_DIR.cstr, "frama_c.eva.warn.log");
+    assert_ssize_lte_lt(0, len, sizeof(log));
+
+    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", log, "-eva-precision", "3", "-eva", NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.eva",
