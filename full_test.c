@@ -17,6 +17,7 @@ struct Cmd
 };
 static void cmd_exec(struct Cmd cmd);
 
+Path DIR;
 Path LOG_DIR;
 
 char* frama_c_log_file(const char* plugin_name, const char* suffix)
@@ -24,15 +25,29 @@ char* frama_c_log_file(const char* plugin_name, const char* suffix)
   return str_fmt(&PERSISTENT, "%s/frama_c.%s%s.log", LOG_DIR.cstr, plugin_name, suffix);
 }
 
+enum Src_File
+{
+  SRC_ALL_TEST,
+};
+const char* SRC_BASENAME[] = {
+  [SRC_ALL_TEST] = "all_tests",
+};
+#define SRC_COUNT (ARRAY_LEN(SRC_BASENAME))
+Path src_bin_path(enum Src_File s)
+{
+  return path_join(DIR, path_from_cstr(SRC_BASENAME[s]));
+}
+Path src_c_path(enum Src_File s)
+{
+  return path_append_cstr(src_bin_path(s), ".c");
+}
+
 int main(int argc, const char** argv)
 {
   c_script_init();
-  
-  const Path dir = path_parent(path_realpath(path_from_cstr(__FILE__)));
-  const Path all_tests_bin_path = path_join(dir, path_from_cstr("all_tests"));
-  const Path all_tests_src_path = path_append_cstr(all_tests_bin_path, ".c");
 
-  LOG_DIR = path_join(dir, path_append_cstr(path_from_cstr(time_format_date_time_now(&SCRATCH)), ".log"));
+  DIR = path_parent(path_realpath(path_from_cstr(__FILE__)));
+  LOG_DIR = path_join(DIR, path_append_cstr(path_from_cstr(time_format_date_time_now(&SCRATCH)), ".log"));
   LINUX_ASSERT_NE(mkdir(LOG_DIR.cstr, 0777), -1);
 
 
@@ -45,7 +60,7 @@ int main(int argc, const char** argv)
   {
     const char* const log_err = frama_c_log_file("kernel", ".err");
     const char* const log_warn = frama_c_log_file("kernel", ".warn");
-    char* const cmd_parse[] = {"frama-c", all_tests_src_path.cstr, "-kernel-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-save", frama_c_ast.cstr, NULL};
+    char* const cmd_parse[] = {"frama-c", src_c_path(SRC_ALL_TEST).cstr, "-kernel-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-save", frama_c_ast.cstr, NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.parse",
