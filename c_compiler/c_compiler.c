@@ -31,16 +31,22 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
   }
 }
 
+static const char* _CC_NAMES[CC_COUNT] = {
+  [CC_TCC] = "tcc",
+  [CC_GCC] = "gcc",
+  [CC_CLANG] = "clang",
+};
 enum C_Compiler cc_compiler_for_name(const char* name)
 {
-  if(strcmp(name, "tcc") == 0)
-    return CC_TCC;
-  else if(strcmp(name, "gcc") == 0)
-    return CC_GCC;
-  else if(strcmp(name, "clang") == 0)
-    return CC_CLANG;
-  else
-    errx(EXIT_FAILURE, "Unknown compiler `%s`\n", name);
+  for(int i=0; i<CC_COUNT; ++i)
+    if(strcmp(name, _CC_NAMES[i]) == 0)
+      return (enum C_Compiler)i;
+  errx(EXIT_FAILURE, "Unknown compiler `%s`\n", name);
+}
+
+const char* cc_compiler_name(enum C_Compiler cc)
+{
+  return _CC_NAMES[cc];
 }
 
 static enum C_Compiler _cc_find_available(const enum C_Compiler* compilers, int len)
@@ -56,7 +62,7 @@ static enum C_Compiler _cc_find_available(const enum C_Compiler* compilers, int 
 
 enum C_Compiler cc_fastest_available()
 {
-  const enum C_Compiler FASTEST_FIRST[] = {
+  const enum C_Compiler FASTEST_FIRST[CC_COUNT] = {
     CC_TCC,
     CC_GCC,
     CC_CLANG,
@@ -67,7 +73,7 @@ enum C_Compiler cc_fastest_available()
 
 enum C_Compiler cc_best_optimizer_available()
 {
-  const enum C_Compiler BEST_OPTIMIZER_FIRST[] = {
+  const enum C_Compiler BEST_OPTIMIZER_FIRST[CC_COUNT] = {
     CC_CLANG,
     CC_GCC,
     CC_TCC,
