@@ -83,7 +83,7 @@ int main(int argc, char** argv)
       cfg.actions |= ACTION_UNIT_TEST;
     else if(strcmp(argv[i], "--verify") == 0)
       cfg.actions |= ACTION_VERIFY;
-    else if(strcmp(argv[i], "--verify") == 0)
+    else if(strcmp(argv[i], "--all_tests") == 0)
       cfg.actions |= ACTION_ALL_TESTS;
     else
       errx(EXIT_FAILURE, "Unexpected argument `%s`\n", argv[i]);
