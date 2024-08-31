@@ -40,6 +40,10 @@ void* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_bytes)
 {
   void* bytes = region->begin;
   region->begin += num_bytes;
-  debug_assert_ptr_lte(region->begin, region->end);
+  /* TODO: my owna ssert function should be sufficient
+  assert_ptr_lte(region->begin, region->end);
+  */
+  if(region->begin >= region->end)
+    abort();
   return bytes;
 }
