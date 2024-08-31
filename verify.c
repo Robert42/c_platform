@@ -72,9 +72,10 @@ int main(int argc, const char** argv)
     cmd_exec(cmd);
   }
   {
+    const Path frama_c_eva_sav = path_join(LOG_DIR, path_from_cstr("frama_c.eva.sav"));
     const char* const log_err = frama_c_log_file("eva", ".err");
     const char* const log_warn = frama_c_log_file("eva", ".warn");
-    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-eva-precision", "3", "-eva", NULL};
+    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-eva-precision", "3", "-eva", "-save", frama_c_eva_sav.cstr, NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.eva",
