@@ -8,5 +8,9 @@ void fmt_test()
     Fmt f = fmt_new(BUFFER, sizeof(BUFFER));
 
     assert_cstr_eq(f.begin, "");
+
+    fmt(&f, "player");
+    fmt(&f, ".pos");
+    assert_cstr_eq(f.begin, "player.pos");
   }
 }
