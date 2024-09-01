@@ -5,13 +5,13 @@
 /*@ predicate mem_region_separated(Mem_Region a, Mem_Region b) = \separated(a.full_range_begin + (0 .. a.full_range_len), b.full_range_begin + (0 .. b.full_range_len));
 */
 
-/*@ requires \valid(scratch_var);
-    requires mem_region_valid(*scratch_var);
-    requires mem_region_valid(region_1);
-    requires mem_region_valid(region_2);
-    requires mem_region_separated(region_1, region_1);
-    requires !mem_region_separated(region_1, *scratch_var) || !mem_region_separated(region_2, *scratch_var);
-    requires region_1.end == scratch_var->end || region_2.end == scratch_var->end;
+/*@ requires valid_ptr: \valid(scratch_var);
+    requires valid_ptr_region: mem_region_valid(*scratch_var);
+    requires valid_region_1: mem_region_valid(region_1);
+    requires valid_region_1: mem_region_valid(region_2);
+    requires separate_regions: mem_region_separated(region_1, region_1);
+    requires var_not_sep: !mem_region_separated(region_1, *scratch_var) || !mem_region_separated(region_2, *scratch_var);
+    requires var_identical_end: region_1.end == scratch_var->end || region_2.end == scratch_var->end;
     assigns \nothing;
     ensures mem_region_valid(*scratch_var);
     ensures mem_region_separated(region_1, \old(*scratch_var)) ==> !mem_region_separated(region_2, *scratch_var);
