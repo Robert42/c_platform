@@ -44,3 +44,8 @@ static void platform_codegen_assertions()
   file_text_create_from_cstr(assert_h, gen_h);
   file_text_create_from_cstr(assert_c, gen_c);
 }
+
+#undef X_MACRO_ASSERT_NUM_CMP_BIN
+#undef X_MACRO_ASSERT_CUSTOM
+#undef X_MACRO_ASSERT_NUM_CMP_RNG
+
