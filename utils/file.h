@@ -3,4 +3,4 @@
 
 #include "path.h"
 
-void create_text_file_cstr(Path p, const char* str);
+void file_text_create_from_cstr(Path p, const char* str);

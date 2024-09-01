@@ -1,19 +1,26 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
+#define X_MACRO_ASSERT_NUM_CMP_BIN(X) \
+  X(usize, usize, "%zu", /*no cast*/) \
+  X(ssize, ssize, "%zs", /*no cast*/) \
+  X(int, int, "%i", /*no cast*/) \
+  X(ptr, const void*, "%p", /*cast*/(usize) ) \
+
+#define X_MACRO_ASSERT_CUSTOM(X) \
+  X(cstr_eq, const char*, (strcmp(x,y)==0), ) \
+  X(bool_eq, bool, x==y, fmt_bool) \
+
+#define X_MACRO_ASSERT_NUM_CMP_RNG(X) \
+  X(usize, usize, "%zu", /*no cast*/) \
+  X(ssize, ssize, "%zs", /*no cast*/) \
+  X(ptr, const void*, "%p", /*cast*/(usize) ) \
+
 static void platform_codegen_assertions();
 
 void platform_codegen()
 {
   platform_codegen_assertions();
 }
-
-struct _Platform_Codegen_Assert_Fn
-{
-  const char* arg_ty[3];
-  const char* arg_name[3];
-  const char* condition;
-  const char* cast;
-};
 
 static void platform_codegen_assertions()
 {
@@ -34,6 +41,6 @@ static void platform_codegen_assertions()
   gen_c_end += snprintf(gen_c_end, sizeof(gen_c)-(gen_c_end-gen_c), "%s", BANNER);
   assert_ptr_lt(gen_c_end, gen_c+sizeof(gen_c));
 
-  create_text_file_cstr(assert_h, gen_h);
-  create_text_file_cstr(assert_c, gen_c);
+  file_text_create_from_cstr(assert_h, gen_h);
+  file_text_create_from_cstr(assert_c, gen_c);
 }

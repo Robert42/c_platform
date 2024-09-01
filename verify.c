@@ -183,9 +183,9 @@ static void cmd_exec(struct Cmd cmd)
 
   const Path log_path = path_join(LOG_DIR, path_from_cstr(cmd.name));
   if(result.captured_stdout[0] != 0)
-    create_text_file_cstr(path_append_cstr(log_path, ".stdout.log"), result.captured_stdout);
+    file_text_create_from_cstr(path_append_cstr(log_path, ".stdout.log"), result.captured_stdout);
   if(result.captured_stderr[0] != 0)
-    create_text_file_cstr(path_append_cstr(log_path, ".stderr.log"), result.captured_stderr);
+    file_text_create_from_cstr(path_append_cstr(log_path, ".stderr.log"), result.captured_stderr);
 
   HAD_WARNING = HAD_WARNING || warning;
 
