@@ -10,7 +10,9 @@ typedef struct _utils_Fmt
 /*@ predicate fmt_valid(Fmt f) =
   \valid(f.begin + (0 .. f.buffer_capacity-1))
   && \offset(f.begin)+f.buffer_capacity <= \block_length(f.begin)
-  && f.begin <= f.end <= f.begin+f.buffer_capacity
+  && f.begin <= f.end < f.begin+f.buffer_capacity
+  && f.buffer_capacity > 0
+  && f.end[0] == 0 // So f.begin is always a valid nullterminated cstr
 ;
 */
 

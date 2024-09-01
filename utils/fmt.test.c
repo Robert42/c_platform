@@ -2,4 +2,11 @@
 
 void fmt_test()
 {
+  {
+    char BUFFER[1024] = {42};
+
+    Fmt f = fmt_new(BUFFER, sizeof(BUFFER));
+
+    assert_cstr_eq(f.begin, "");
+  }
 }

@@ -4,6 +4,7 @@
 
 /*@ requires valid_buffer: \valid(buffer + (0 .. capacity-1));
     requires \offset(buffer)+capacity <= \block_length(buffer);
+    requires capacity > 0;
     ensures valid: fmt_valid(\result);
     ensures all_bytes_available:\result.begin == \result.end;
 */
@@ -14,6 +15,8 @@ Fmt fmt_new(char* buffer, usize capacity)
     .buffer_capacity = capacity,
     .end = buffer,
   };
+
+  f.end[0] = 0;
 
   return f;
 }
