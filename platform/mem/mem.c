@@ -68,7 +68,7 @@ unsigned char* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_by
   if(num_bytes > mem_region_available_bytes(*region))
     abort();
 #else
-  assert_usize_gt(num_bytes, mem_region_available_bytes(*region));
+  assert_usize_lte(num_bytes, mem_region_available_bytes(*region));
 #endif
 
   unsigned char* const bytes = region->begin;
