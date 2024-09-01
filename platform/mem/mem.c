@@ -74,7 +74,7 @@ unsigned char* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_by
   unsigned char* const bytes = region->begin;
 
   region->begin += num_bytes;
-#if GHOST // pseudoghost
+#if GHOST
   region->bytes_available -= num_bytes;
 #endif
 
