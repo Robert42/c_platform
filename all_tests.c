@@ -5,6 +5,8 @@
 
 #include "platform/prelude.h"
 #include "platform/mem/mem.c"
-// #include "platform/mem/mem.test.c"
+#include "utils/fmt.c"
 
+// #include "platform/mem/mem.test.c"
+// #include "utils/fmt.test.c"
 
