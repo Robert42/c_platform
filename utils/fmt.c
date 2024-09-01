@@ -2,9 +2,19 @@
 
 #include "fmt.h"
 
+/*@ requires fmt_valid(f);
+    assigns \nothing;
+    ensures \result == _logic_fmt_availalbe_chars(f);
+*/
+static inline usize _fmt_available_chars(Fmt f)
+{
+  return f.buffer_capacity - (f.end - f.begin);
+}
+
 /*@ requires valid_buffer: \valid(buffer + (0 .. capacity-1));
     requires \offset(buffer)+capacity <= \block_length(buffer);
     requires capacity > 0;
+    requires (ssize)capacity == capacity;
     assigns buffer[0];
     ensures valid: fmt_valid(\result);
     ensures all_bytes_available:\result.begin == \result.end;
@@ -15,6 +25,9 @@ Fmt fmt_new(char* buffer, usize capacity)
     .begin = buffer,
     .buffer_capacity = capacity,
     .end = buffer,
+#if GHOST
+    .available_bytes = capacity,
+#endif
   };
 
   f.end[0] = 0;
@@ -26,7 +39,7 @@ Fmt fmt_new(char* buffer, usize capacity)
 */
 void fmt(Fmt* f, const char* text, ...)
 {
-  usize avail = f->buffer_capacity - (f->begin - f->end);
+  usize avail = _fmt_available_chars(*f);
   va_list args;
   va_start(args, text);
   ssize bytes_written = vsnprintf(f->end, avail, text, args);
@@ -35,3 +48,4 @@ void fmt(Fmt* f, const char* text, ...)
 
   f->end += bytes_written;
 }
+
