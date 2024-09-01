@@ -23,7 +23,6 @@ Fmt fmt_new(char* buffer, usize capacity)
 }
 
 /*@ requires valid_fmt: \valid(f) && fmt_valid(*f);
-    // exits format_len(text) <= ;
 */
 void fmt(Fmt* f, const char* text, ...)
 {

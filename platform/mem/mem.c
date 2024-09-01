@@ -54,7 +54,6 @@ Mem_Region _mem_region_from(unsigned char* begin, usize len)
 /*@ requires \valid(region) && mem_region_valid(*region);
     assigns *region;
     assigns \result \from region->begin;
-    exits num_bytes > region->bytes_available;
     ensures region_still_valid: mem_region_valid(*region);
     ensures returned_valid: \valid(\result + (0 .. num_bytes-1));
     ensures separated: \separated(\result + (0 .. num_bytes-1), region->begin + (0.. region->bytes_available));

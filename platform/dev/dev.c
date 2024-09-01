@@ -40,6 +40,7 @@ static const char* fmt_bool(bool x)
   return x ? "true" : "false";
 }
 
+#if !ENV_STATIC_ANALYSIS // assert functions are opaque to the static analyzers
 #if ENV_DEBUG
 #define DEBUG_VERSION_BIN(NAME, TY) void debug_assert_ ## NAME(TY x, TY y){assert_ ## NAME(x, y);}
 #define DEBUG_VERSION_RNG(NAME, TY) void debug_assert_ ## NAME(TY x, TY y, TY z){assert_ ## NAME(x, y, z);}
@@ -71,6 +72,7 @@ static const char* fmt_bool(bool x)
 #undef DEBUG_VERSION_BIN
 #undef DEFINE_NUM_BIN
 #undef DEFINE_NUM_RNG
+#endif
 
 // ==== env ====
 
