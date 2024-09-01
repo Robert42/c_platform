@@ -9,24 +9,41 @@ typedef struct _platform_mem_Region
 {
   unsigned char* begin;
   unsigned char* end;
+
+#if GHOST
+  unsigned char* full_range_begin;
+  usize full_range_len;
+
+  ssize bytes_available;
+#endif
 } Mem_Region;
-/*@
-predicate valid_region{L}(Mem_Region region) =
-  \valid(region.begin) &&
-  \offset(region.end) <= \block_length(region.end) &&
-  \base_addr{L}(region.begin) == \base_addr{L}(region.end) &&
-  region.begin <= region.end;
+
+/*@ predicate mem_region_valid(Mem_Region region) =
+  \valid(region.full_range_begin + (0 .. region.full_range_len-1))
+  && \offset(region.full_range_begin)+region.full_range_len <= \block_length(region.full_range_begin)
+  && region.full_range_begin <= region.begin <= region.end == region.full_range_begin+region.full_range_len
+  && region.begin + region.bytes_available == region.end
+  && region.bytes_available >= 0
+;
 */
 
 extern Mem_Region SCRATCH;
 
 void _mem_swap_scratch(Mem_Region* scratch_var, Mem_Region region_1, Mem_Region region_2);
 
-Mem_Region _mem_region_from(void* begin, usize len);
+Mem_Region _mem_region_from(unsigned char* begin, usize len);
 #define MEM_REGION_FROM_ARRAY(XS) _mem_region_from(XS, sizeof XS)
 
-/*@ requires \valid(r) && valid_region(*r);
+/*@ requires mem_region_valid(r);
+    assigns \nothing;
+    ensures \result == r.bytes_available;
 */
-static inline usize mem_region_available_bytes(const Mem_Region* r){return r->end - r->begin;}
+static inline usize mem_region_available_bytes(const Mem_Region r)
+{
+  const ssize diff = r.end - r.begin;
+  //@ assert CorrectDiff: r.bytes_available == diff;
+  //@ assert NonNegative: r.bytes_available >= 0;
+  return diff;
+}
 
-void* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_bytes);
+unsigned char* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_bytes);

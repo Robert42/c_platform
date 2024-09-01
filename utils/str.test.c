@@ -4,7 +4,7 @@
 
 void str_test()
 {
-  char BUFFER[4096];
+  u8 BUFFER[4096];
   Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
   
   assert_cstr_eq(str_fmt(&region, "Hello, %s!", "World"), "Hello, World!");

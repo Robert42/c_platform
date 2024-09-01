@@ -5,7 +5,7 @@
 void mem_test()
 {
 #define LEN 5
-  u32 abc[LEN];
+  u8 abc[LEN];
   assert_usize_eq(ARRAY_LEN(abc), LEN);
   
   Mem_Region region = MEM_REGION_FROM_ARRAY(abc);

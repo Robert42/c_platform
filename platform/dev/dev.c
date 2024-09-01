@@ -1,15 +1,19 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
+#if !ENV_STATIC_ANALYSIS
 usize __assert_capture__ = 0;
 usize __assert_caught__ = 0;
+#endif
 
 static void __assert_failed__()
 {
+#if !ENV_STATIC_ANALYSIS
   if(__assert_capture__)
   {
     __assert_caught__++;
     return;
   }
+#endif
 
   printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
   abort();
@@ -17,11 +21,13 @@ static void __assert_failed__()
 
 static void __bin_assert_failed__(const char* lhs, const char* rhs)
 {
+#if !ENV_STATIC_ANALYSIS
   if(__assert_capture__)
   {
     __assert_caught__++;
     return;
   }
+#endif
 
   printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
   printf("lhs: %s\n", lhs);
@@ -90,11 +96,13 @@ void dev_env_demo()
 #ifdef __linux__
 void __linux_call_failed__(const char* call, const char* file, int line)
 {
+#if !ENV_STATIC_ANALYSIS
   if(__assert_capture__)
   {
     __assert_caught__++;
     return;
   }
+#endif
 
   printf("%s==== ASSERT_LINUX ====%s\n", TERM_RED, TERM_RED_BOLD);
   perror(call);

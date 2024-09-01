@@ -7,6 +7,14 @@
 #define ENV_DEBUG 1
 #endif
 
+#if defined(__FRAMAC__)
+#define ENV_STATIC_ANALYSIS 1
+#define GHOST 1
+#else
+#define ENV_STATIC_ANALYSIS 0
+#define GHOST 0
+#endif
+
 #define COMPILER_TCC 1
 #define COMPILER_GCC 2
 #define COMPILER_CLANG 3

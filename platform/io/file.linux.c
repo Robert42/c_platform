@@ -4,7 +4,7 @@
 void* _linux_read_all_bytes_from_fd(int fd, Mem_Region* region)
 {
     debug_assert_ptr_ne(region, NULL);
-    const usize bytes_available = mem_region_available_bytes(region);
+    const usize bytes_available = mem_region_available_bytes(*region);
     ssize bytes_read = read(fd, region->begin, bytes_available);
     LINUX_ASSERT_NE(bytes_read, -1);
 
