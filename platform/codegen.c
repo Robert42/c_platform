@@ -43,6 +43,8 @@ static void platform_codegen_assertions()
 
   file_text_create_from_cstr(assert_h, gen_h);
   file_text_create_from_cstr(assert_c, gen_c);
+
+  // TODO: don't forget marking the condition as likely
 }
 
 #undef X_MACRO_ASSERT_NUM_CMP_BIN

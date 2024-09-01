@@ -10,3 +10,8 @@ RNG_ASSERT_NUM_CMP(usize, usize)
 RNG_ASSERT_NUM_CMP(ssize, ssize)
 RNG_ASSERT_NUM_CMP(ptr, const void*)
 
+/*@
+  exits !(x <= y);
+  ensures x <= y;
+*/
+void assert_usize_lte(usize x, usize y);
