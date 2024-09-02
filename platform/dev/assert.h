@@ -137,3 +137,52 @@ void debug_assert_bool_eq(bool x, bool y);
 //@ terminates true; assigns \nothing; exits false; ensures x == y;
 void assert_bool_eq(bool x, bool y);
 
+#ifdef __FRAMAC__
+// ==== usize ====
+#define debug_assert_usize_eq(x, y)
+#define debug_assert_usize_ne(x, y)
+#define debug_assert_usize_lt(x, y)
+#define debug_assert_usize_lte(x, y)
+#define debug_assert_usize_gt(x, y)
+#define debug_assert_usize_gte(x, y)
+
+#define debug_assert_usize_lte_lte(x, y, z)
+#define debug_assert_usize_lte_lt(x, y, z)
+
+// ==== ssize ====
+#define debug_assert_ssize_eq(x, y)
+#define debug_assert_ssize_ne(x, y)
+#define debug_assert_ssize_lt(x, y)
+#define debug_assert_ssize_lte(x, y)
+#define debug_assert_ssize_gt(x, y)
+#define debug_assert_ssize_gte(x, y)
+
+#define debug_assert_ssize_lte_lte(x, y, z)
+#define debug_assert_ssize_lte_lt(x, y, z)
+
+// ==== int ====
+#define debug_assert_int_eq(x, y)
+#define debug_assert_int_ne(x, y)
+#define debug_assert_int_lt(x, y)
+#define debug_assert_int_lte(x, y)
+#define debug_assert_int_gt(x, y)
+#define debug_assert_int_gte(x, y)
+
+// ==== ptr ====
+#define debug_assert_ptr_eq(x, y)
+#define debug_assert_ptr_ne(x, y)
+#define debug_assert_ptr_lt(x, y)
+#define debug_assert_ptr_lte(x, y)
+#define debug_assert_ptr_gt(x, y)
+#define debug_assert_ptr_gte(x, y)
+
+#define debug_assert_ptr_lte_lte(x, y, z)
+#define debug_assert_ptr_lte_lt(x, y, z)
+
+// ==== cstr_eq ====
+#define debug_assert_cstr_eq(x, y)
+
+// ==== bool_eq ====
+#define debug_assert_bool_eq(x, y)
+
+#endif // __FRAMAC__

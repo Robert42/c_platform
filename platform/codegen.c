@@ -166,7 +166,40 @@ static void platform_codegen_assertions()
   }
   X_MACRO_ASSERT_CUSTOM(X)
 #undef X
+
   fmt_write(&fc, "#endif // __FRAMAC__\n");
+
+  fmt_write(&fh, "#ifdef __FRAMAC__\n");
+  {
+#define X(NAME, TYPE, FMT_CODE, CAST) { \
+    const char* const name = #NAME; \
+    fmt_write(&fh, "// ==== %s ====\n", name); \
+    for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) \
+      fmt_write(&fh, "#define debug_assert_%s_%s(x, y)\n", name, bin_condition_name[i]); \
+    if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
+    { \
+      fmt_write(&fh, "\n"); \
+      for(int i=0; i<ARRAY_LEN(rng_conditions); ++i) \
+      { \
+        const u16 xy = rng_conditions[i]>>8; \
+        const u16 yz = rng_conditions[i] & 0xff; \
+        fmt_write(&fh, "#define debug_assert_%s_%s_%s(x, y, z)\n", name, bin_condition_name[xy], bin_condition_name[yz]); \
+      } \
+    } \
+    fmt_write(&fh, "\n"); \
+  }
+  X_MACRO_ASSERT_NUM_CMP_BIN(X)
+#undef X
+#define X(NAME, ENSURES, TYPE, FMT_CODE, CAST) { \
+    const char* const name = #NAME; \
+    fmt_write(&fh, "// ==== %s ====\n", #NAME); \
+    fmt_write(&fh, "#define debug_assert_%s(x, y)\n", #NAME); \
+    fmt_write(&fh, "\n"); \
+  }
+  X_MACRO_ASSERT_CUSTOM(X)
+#undef X
+  } \
+  fmt_write(&fh, "#endif // __FRAMAC__\n"); \
 
   file_text_create_from_cstr_if_different(assert_h, fh.begin);
   file_text_create_from_cstr_if_different(assert_c, fc.begin);
@@ -174,6 +207,9 @@ static void platform_codegen_assertions()
   // TODO: don't forget marking the condition as likely
   
   STACK = _prev_stack;
+
+#undef OR_STRCMP
+#undef CREATE_RANGE
 }
 
 #undef X_MACRO_ASSERT_NUM_CMP_BIN
