@@ -22,20 +22,6 @@ void platform_codegen()
   platform_codegen_assertions();
 }
 
-static void platform_codegen_assertions_fmt_bin(Fmt* fh, Fmt* fc, const char* name, const char* type, const char* fmt, const char* cast, const char* condition_code, const char* condition_name)
-{
-  fmt_write(
-    fh,
-    "//@ terminates true; assigns \\nothing; exits false;\n"
-    "void debug_assert_%s_%s(%s x, %s y);\n",
-    name, condition_name, type, type);
-  fmt_write(
-    fh,
-    "//@ terminates true; assigns \\nothing; exits false; ensures %s; \n"
-    "void assert_%s_%s(%s x, %s y);\n",
-    condition_code, name, condition_name, type, type);
-}
-
 static void platform_codegen_assertions()
 {
   const Mem_Region _prev_stack = STACK;
@@ -61,10 +47,17 @@ static void platform_codegen_assertions()
   for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i)
     bin_condition_code_bin[i] = str_fmt(&STACK, "x %s y", bin_condition_code[i]);
 
+  const char* contract_begin = "//@ terminates true; assigns \\nothing; exits false;";
+
 #define X(NAME, TYPE, FMT_CODE, CAST) { \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
     for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) \
-      platform_codegen_assertions_fmt_bin(&fh, &fc, #NAME, #TYPE, "str_fmt(\"" #FMT_CODE "\",", #CAST, bin_condition_code_bin[i], bin_condition_name[i]); \
+    { \
+      fmt_write(&fh, "%s\n", contract_begin);\
+      fmt_write(&fh, "void debug_assert_%s_%s(%s x, %s y);\n", #NAME, bin_condition_name[i], #TYPE, #TYPE); \
+      fmt_write(&fh, "%s ensures %s; \n", contract_begin, bin_condition_code_bin[i]); \
+      fmt_write(&fh, "void assert_%s_%s(%s x, %s y);\n", #NAME, bin_condition_name[i], #TYPE, #TYPE); \
+    } \
     fmt_write(&fh, "\n"); \
   }
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
