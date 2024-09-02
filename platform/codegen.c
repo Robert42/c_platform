@@ -8,8 +8,8 @@
 
 // TODO: ensure, that both strings are equal
 #define X_MACRO_ASSERT_CUSTOM(X) \
-  X(cstr_eq, "", const char*, (strcmp(x,y)==0), ) \
-  X(bool_eq, " ensures x == y;", bool, x==y, fmt_bool) \
+  X(cstr_eq, "", const char*, (strcmp(x,y) == 0), ) \
+  X(bool_eq, " ensures x == y;", bool, x == y, fmt_bool) \
 
 #define X_MACRO_ASSERT_NUM_CMP_RNG(X) \
   X(usize) \
@@ -81,15 +81,31 @@ static void platform_codegen_assertions()
 #define OR_STRCMP(X) || strcmp(#X, name)==0
 #define CREATE_RANGE(X) (false X(OR_STRCMP))
 
+  fmt_write(&fc, "#ifndef __FRAMAC__\n\n");
 #define X(NAME, TYPE, FMT_CODE, CAST) { \
     const char* const name = #NAME; \
     fmt_write(&fh, "// ==== %s ====\n", name); \
+    fmt_write(&fc, "// ==== %s ====\n", name); \
     for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) \
     { \
       fmt_write(&fh, "%s\n", contract_begin);\
       fmt_write(&fh, "void debug_assert_%s_%s(%s x, %s y);\n", name, bin_condition_name[i], #TYPE, #TYPE); \
       fmt_write(&fh, "%s ensures x %s y;\n", contract_begin, bin_condition_code[i]); \
       fmt_write(&fh, "void assert_%s_%s(%s x, %s y);\n", name, bin_condition_name[i], #TYPE, #TYPE); \
+\
+      fmt_write(&fc, "void debug_assert_%s_%s(%s x, %s y)\n{\n", name, bin_condition_name[i], #TYPE, #TYPE); \
+      fmt_write(&fc, "#if ENV_DEBUG\n"); \
+      fmt_write(&fc, "  assert_%s_%s(x, y);\n", name, bin_condition_name[i]); \
+      fmt_write(&fc, "#else\n"); \
+      fmt_write(&fc, "  (void)x; (void)y;\n"); \
+      fmt_write(&fc, "#endif\n"); \
+      fmt_write(&fc, "}\n"); \
+      fmt_write(&fc, "void assert_%s_%s(%s x, %s y)\n{\n", name, bin_condition_name[i], #TYPE, #TYPE); \
+      fmt_write(&fc, "  if(x %s y)\n"); \
+      fmt_write(&fc, "    return;\n"); \
+      fmt_write(&fc, "  else\n"); \
+      fmt_write(&fc, "  __assert_failed__();\n"); \
+      fmt_write(&fc, "}\n"); \
     } \
     if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
     { \
@@ -101,23 +117,56 @@ static void platform_codegen_assertions()
         fmt_write(&fh, "void debug_assert_%s_%s_%s(%s x, %s y, %s z);\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
         fmt_write(&fh, "%s ensures x %s y %s z;\n", contract_begin, bin_condition_code[xy], bin_condition_code[yz]); \
         fmt_write(&fh, "void assert_%s_%s_%s(%s x, %s y, %s z);\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
+\
+        fmt_write(&fc, "void debug_assert_%s_%s_%s(%s x, %s y, %s z)\n{\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
+        fmt_write(&fc, "#if ENV_DEBUG\n"); \
+        fmt_write(&fc, "  assert_%s_%s_%s(x, y);\n", name, bin_condition_name[xy], bin_condition_name[yz]); \
+        fmt_write(&fc, "#else\n"); \
+        fmt_write(&fc, "  (void)x; (void)y; (void)z;\n"); \
+        fmt_write(&fc, "#endif\n"); \
+        fmt_write(&fc, "}\n"); \
+        fmt_write(&fc, "void assert_%s_%s_%s(%s x, %s y)\n{\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
+        fmt_write(&fc, "  if(x %s y && y %s z)\n", bin_condition_code[xy], bin_condition_code[yz]); \
+        fmt_write(&fc, "    return;\n"); \
+        fmt_write(&fc, "  else\n"); \
+        fmt_write(&fc, "  __assert_failed__();\n"); \
+        fmt_write(&fc, "}\n"); \
       } \
     } \
     fmt_write(&fh, "\n"); \
+    fmt_write(&fc, "\n"); \
   }
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
 
 #define X(NAME, ENSURES, TYPE, FMT_CODE, CAST) { \
+    const char* const name = #NAME; \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
+    fmt_write(&fc, "// ==== %s ====\n", #NAME); \
     fmt_write(&fh, "%s\n", contract_begin);\
     fmt_write(&fh, "void debug_assert_%s(%s x, %s y);\n", #NAME, #TYPE, #TYPE); \
     fmt_write(&fh, "%s%s\n", contract_begin, ENSURES);\
     fmt_write(&fh, "void assert_%s(%s x, %s y);\n", #NAME, #TYPE, #TYPE); \
     fmt_write(&fh, "\n"); \
+\
+    fmt_write(&fc, "void debug_assert_%s(%s x, %s y)\n{\n", #NAME, #TYPE, #TYPE); \
+    fmt_write(&fc, "#if ENV_DEBUG\n"); \
+    fmt_write(&fc, "  assert_%s(x, y);\n", name); \
+    fmt_write(&fc, "#else\n"); \
+    fmt_write(&fc, "  (void)x; (void)y;\n"); \
+    fmt_write(&fc, "#endif\n"); \
+    fmt_write(&fc, "}\n"); \
+    fmt_write(&fc, "void assert_%s(%s x, %s y)\n{\n", #NAME, #TYPE, #TYPE); \
+    fmt_write(&fc, "  if(%s)\n", #FMT_CODE); \
+    fmt_write(&fc, "    return;\n"); \
+    fmt_write(&fc, "  else\n"); \
+    fmt_write(&fc, "  __assert_failed__();\n"); \
+    fmt_write(&fc, "}\n"); \
+    fmt_write(&fc, "\n"); \
   }
   X_MACRO_ASSERT_CUSTOM(X)
 #undef X
+  fmt_write(&fc, "#endif // __FRAMAC__\n");
 
   file_text_create_from_cstr_if_different(assert_h, fh.begin);
   file_text_create_from_cstr_if_different(assert_c, fc.begin);
