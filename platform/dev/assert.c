@@ -96,12 +96,12 @@ void assert_usize_gte(usize x, usize y)
 void debug_assert_usize_lte_lte(usize x, usize y, usize z)
 {
 #if ENV_DEBUG
-  assert_usize_lte_lte(x, y);
+  assert_usize_lte_lte(x, y, z);
 #else
   (void)x; (void)y; (void)z;
 #endif
 }
-void assert_usize_lte_lte(usize x, usize y)
+void assert_usize_lte_lte(usize x, usize y, usize z)
 {
   if(x <= y && y <= z)
     return;
@@ -111,12 +111,12 @@ void assert_usize_lte_lte(usize x, usize y)
 void debug_assert_usize_lte_lt(usize x, usize y, usize z)
 {
 #if ENV_DEBUG
-  assert_usize_lte_lt(x, y);
+  assert_usize_lte_lt(x, y, z);
 #else
   (void)x; (void)y; (void)z;
 #endif
 }
-void assert_usize_lte_lt(usize x, usize y)
+void assert_usize_lte_lt(usize x, usize y, usize z)
 {
   if(x <= y && y < z)
     return;
@@ -218,12 +218,12 @@ void assert_ssize_gte(ssize x, ssize y)
 void debug_assert_ssize_lte_lte(ssize x, ssize y, ssize z)
 {
 #if ENV_DEBUG
-  assert_ssize_lte_lte(x, y);
+  assert_ssize_lte_lte(x, y, z);
 #else
   (void)x; (void)y; (void)z;
 #endif
 }
-void assert_ssize_lte_lte(ssize x, ssize y)
+void assert_ssize_lte_lte(ssize x, ssize y, ssize z)
 {
   if(x <= y && y <= z)
     return;
@@ -233,12 +233,12 @@ void assert_ssize_lte_lte(ssize x, ssize y)
 void debug_assert_ssize_lte_lt(ssize x, ssize y, ssize z)
 {
 #if ENV_DEBUG
-  assert_ssize_lte_lt(x, y);
+  assert_ssize_lte_lt(x, y, z);
 #else
   (void)x; (void)y; (void)z;
 #endif
 }
-void assert_ssize_lte_lt(ssize x, ssize y)
+void assert_ssize_lte_lt(ssize x, ssize y, ssize z)
 {
   if(x <= y && y < z)
     return;
@@ -432,12 +432,12 @@ void assert_ptr_gte(const void* x, const void* y)
 void debug_assert_ptr_lte_lte(const void* x, const void* y, const void* z)
 {
 #if ENV_DEBUG
-  assert_ptr_lte_lte(x, y);
+  assert_ptr_lte_lte(x, y, z);
 #else
   (void)x; (void)y; (void)z;
 #endif
 }
-void assert_ptr_lte_lte(const void* x, const void* y)
+void assert_ptr_lte_lte(const void* x, const void* y, const void* z)
 {
   if(x <= y && y <= z)
     return;
@@ -447,12 +447,12 @@ void assert_ptr_lte_lte(const void* x, const void* y)
 void debug_assert_ptr_lte_lt(const void* x, const void* y, const void* z)
 {
 #if ENV_DEBUG
-  assert_ptr_lte_lt(x, y);
+  assert_ptr_lte_lt(x, y, z);
 #else
   (void)x; (void)y; (void)z;
 #endif
 }
-void assert_ptr_lte_lt(const void* x, const void* y)
+void assert_ptr_lte_lt(const void* x, const void* y, const void* z)
 {
   if(x <= y && y < z)
     return;

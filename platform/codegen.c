@@ -120,12 +120,12 @@ static void platform_codegen_assertions()
 \
         fmt_write(&fc, "void debug_assert_%s_%s_%s(%s x, %s y, %s z)\n{\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
         fmt_write(&fc, "#if ENV_DEBUG\n"); \
-        fmt_write(&fc, "  assert_%s_%s_%s(x, y);\n", name, bin_condition_name[xy], bin_condition_name[yz]); \
+        fmt_write(&fc, "  assert_%s_%s_%s(x, y, z);\n", name, bin_condition_name[xy], bin_condition_name[yz]); \
         fmt_write(&fc, "#else\n"); \
         fmt_write(&fc, "  (void)x; (void)y; (void)z;\n"); \
         fmt_write(&fc, "#endif\n"); \
         fmt_write(&fc, "}\n"); \
-        fmt_write(&fc, "void assert_%s_%s_%s(%s x, %s y)\n{\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
+        fmt_write(&fc, "void assert_%s_%s_%s(%s x, %s y, %s z)\n{\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
         fmt_write(&fc, "  if(x %s y && y %s z)\n", bin_condition_code[xy], bin_condition_code[yz]); \
         fmt_write(&fc, "    return;\n"); \
         fmt_write(&fc, "  else\n"); \
