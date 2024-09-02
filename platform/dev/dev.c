@@ -5,6 +5,9 @@ usize __assert_capture__ = 0;
 usize __assert_caught__ = 0;
 #endif
 
+// TODO: move to a header
+char* str_fmt(Mem_Region* region, const char* fmt, ...);
+
 static void __assert_failed__()
 {
 #if !ENV_STATIC_ANALYSIS

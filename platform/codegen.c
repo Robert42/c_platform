@@ -95,7 +95,7 @@ static void platform_codegen_assertions()
       fmt_write(&fc, "  if(LIKELY(x %s y))\n", bin_condition_code[i]); \
       fmt_write(&fc, "    return;\n"); \
       fmt_write(&fc, "  else\n"); \
-      fmt_write(&fc, "  __bin_assert_failed__(condition, \"TODO\", \"TODO\", file, line);\n"); \
+      fmt_write(&fc, "  __bin_assert_failed__(condition, str_fmt(&SCRATCH, %s, x), str_fmt(&SCRATCH, %s, y), file, line);\n", #FMT_CODE, #FMT_CODE); \
       fmt_write(&fc, "}\n"); \
     } \
     if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
