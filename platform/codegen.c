@@ -101,7 +101,7 @@ static void platform_codegen_assertions()
       fmt_write(&fc, "#endif\n"); \
       fmt_write(&fc, "}\n"); \
       fmt_write(&fc, "void assert_%s_%s(%s x, %s y)\n{\n", name, bin_condition_name[i], #TYPE, #TYPE); \
-      fmt_write(&fc, "  if(x %s y)\n", bin_condition_code[i]); \
+      fmt_write(&fc, "  if(LIKELY(x %s y))\n", bin_condition_code[i]); \
       fmt_write(&fc, "    return;\n"); \
       fmt_write(&fc, "  else\n"); \
       fmt_write(&fc, "  __assert_failed__();\n"); \
@@ -126,7 +126,7 @@ static void platform_codegen_assertions()
         fmt_write(&fc, "#endif\n"); \
         fmt_write(&fc, "}\n"); \
         fmt_write(&fc, "void assert_%s_%s_%s(%s x, %s y, %s z)\n{\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
-        fmt_write(&fc, "  if(x %s y && y %s z)\n", bin_condition_code[xy], bin_condition_code[yz]); \
+        fmt_write(&fc, "  if(LIKELY(x %s y && y %s z))\n", bin_condition_code[xy], bin_condition_code[yz]); \
         fmt_write(&fc, "    return;\n"); \
         fmt_write(&fc, "  else\n"); \
         fmt_write(&fc, "  __assert_failed__();\n"); \
@@ -157,7 +157,7 @@ static void platform_codegen_assertions()
     fmt_write(&fc, "#endif\n"); \
     fmt_write(&fc, "}\n"); \
     fmt_write(&fc, "void assert_%s(%s x, %s y)\n{\n", #NAME, #TYPE, #TYPE); \
-    fmt_write(&fc, "  if(%s)\n", #FMT_CODE); \
+    fmt_write(&fc, "  if(LIKELY(%s))\n", #FMT_CODE); \
     fmt_write(&fc, "    return;\n"); \
     fmt_write(&fc, "  else\n"); \
     fmt_write(&fc, "  __assert_failed__();\n"); \
@@ -204,8 +204,6 @@ static void platform_codegen_assertions()
   file_text_create_from_cstr_if_different(assert_h, fh.begin);
   file_text_create_from_cstr_if_different(assert_c, fc.begin);
 
-  // TODO: don't forget marking the condition as likely
-  
   STACK = _prev_stack;
 
 #undef OR_STRCMP

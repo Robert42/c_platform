@@ -13,7 +13,7 @@ void debug_assert_usize_eq(usize x, usize y)
 }
 void assert_usize_eq(usize x, usize y)
 {
-  if(x == y)
+  if(LIKELY(x == y))
     return;
   else
   __assert_failed__();
@@ -28,7 +28,7 @@ void debug_assert_usize_ne(usize x, usize y)
 }
 void assert_usize_ne(usize x, usize y)
 {
-  if(x != y)
+  if(LIKELY(x != y))
     return;
   else
   __assert_failed__();
@@ -43,7 +43,7 @@ void debug_assert_usize_lt(usize x, usize y)
 }
 void assert_usize_lt(usize x, usize y)
 {
-  if(x < y)
+  if(LIKELY(x < y))
     return;
   else
   __assert_failed__();
@@ -58,7 +58,7 @@ void debug_assert_usize_lte(usize x, usize y)
 }
 void assert_usize_lte(usize x, usize y)
 {
-  if(x <= y)
+  if(LIKELY(x <= y))
     return;
   else
   __assert_failed__();
@@ -73,7 +73,7 @@ void debug_assert_usize_gt(usize x, usize y)
 }
 void assert_usize_gt(usize x, usize y)
 {
-  if(x > y)
+  if(LIKELY(x > y))
     return;
   else
   __assert_failed__();
@@ -88,7 +88,7 @@ void debug_assert_usize_gte(usize x, usize y)
 }
 void assert_usize_gte(usize x, usize y)
 {
-  if(x >= y)
+  if(LIKELY(x >= y))
     return;
   else
   __assert_failed__();
@@ -103,7 +103,7 @@ void debug_assert_usize_lte_lte(usize x, usize y, usize z)
 }
 void assert_usize_lte_lte(usize x, usize y, usize z)
 {
-  if(x <= y && y <= z)
+  if(LIKELY(x <= y && y <= z))
     return;
   else
   __assert_failed__();
@@ -118,7 +118,7 @@ void debug_assert_usize_lte_lt(usize x, usize y, usize z)
 }
 void assert_usize_lte_lt(usize x, usize y, usize z)
 {
-  if(x <= y && y < z)
+  if(LIKELY(x <= y && y < z))
     return;
   else
   __assert_failed__();
@@ -135,7 +135,7 @@ void debug_assert_ssize_eq(ssize x, ssize y)
 }
 void assert_ssize_eq(ssize x, ssize y)
 {
-  if(x == y)
+  if(LIKELY(x == y))
     return;
   else
   __assert_failed__();
@@ -150,7 +150,7 @@ void debug_assert_ssize_ne(ssize x, ssize y)
 }
 void assert_ssize_ne(ssize x, ssize y)
 {
-  if(x != y)
+  if(LIKELY(x != y))
     return;
   else
   __assert_failed__();
@@ -165,7 +165,7 @@ void debug_assert_ssize_lt(ssize x, ssize y)
 }
 void assert_ssize_lt(ssize x, ssize y)
 {
-  if(x < y)
+  if(LIKELY(x < y))
     return;
   else
   __assert_failed__();
@@ -180,7 +180,7 @@ void debug_assert_ssize_lte(ssize x, ssize y)
 }
 void assert_ssize_lte(ssize x, ssize y)
 {
-  if(x <= y)
+  if(LIKELY(x <= y))
     return;
   else
   __assert_failed__();
@@ -195,7 +195,7 @@ void debug_assert_ssize_gt(ssize x, ssize y)
 }
 void assert_ssize_gt(ssize x, ssize y)
 {
-  if(x > y)
+  if(LIKELY(x > y))
     return;
   else
   __assert_failed__();
@@ -210,7 +210,7 @@ void debug_assert_ssize_gte(ssize x, ssize y)
 }
 void assert_ssize_gte(ssize x, ssize y)
 {
-  if(x >= y)
+  if(LIKELY(x >= y))
     return;
   else
   __assert_failed__();
@@ -225,7 +225,7 @@ void debug_assert_ssize_lte_lte(ssize x, ssize y, ssize z)
 }
 void assert_ssize_lte_lte(ssize x, ssize y, ssize z)
 {
-  if(x <= y && y <= z)
+  if(LIKELY(x <= y && y <= z))
     return;
   else
   __assert_failed__();
@@ -240,7 +240,7 @@ void debug_assert_ssize_lte_lt(ssize x, ssize y, ssize z)
 }
 void assert_ssize_lte_lt(ssize x, ssize y, ssize z)
 {
-  if(x <= y && y < z)
+  if(LIKELY(x <= y && y < z))
     return;
   else
   __assert_failed__();
@@ -257,7 +257,7 @@ void debug_assert_int_eq(int x, int y)
 }
 void assert_int_eq(int x, int y)
 {
-  if(x == y)
+  if(LIKELY(x == y))
     return;
   else
   __assert_failed__();
@@ -272,7 +272,7 @@ void debug_assert_int_ne(int x, int y)
 }
 void assert_int_ne(int x, int y)
 {
-  if(x != y)
+  if(LIKELY(x != y))
     return;
   else
   __assert_failed__();
@@ -287,7 +287,7 @@ void debug_assert_int_lt(int x, int y)
 }
 void assert_int_lt(int x, int y)
 {
-  if(x < y)
+  if(LIKELY(x < y))
     return;
   else
   __assert_failed__();
@@ -302,7 +302,7 @@ void debug_assert_int_lte(int x, int y)
 }
 void assert_int_lte(int x, int y)
 {
-  if(x <= y)
+  if(LIKELY(x <= y))
     return;
   else
   __assert_failed__();
@@ -317,7 +317,7 @@ void debug_assert_int_gt(int x, int y)
 }
 void assert_int_gt(int x, int y)
 {
-  if(x > y)
+  if(LIKELY(x > y))
     return;
   else
   __assert_failed__();
@@ -332,7 +332,7 @@ void debug_assert_int_gte(int x, int y)
 }
 void assert_int_gte(int x, int y)
 {
-  if(x >= y)
+  if(LIKELY(x >= y))
     return;
   else
   __assert_failed__();
@@ -349,7 +349,7 @@ void debug_assert_ptr_eq(const void* x, const void* y)
 }
 void assert_ptr_eq(const void* x, const void* y)
 {
-  if(x == y)
+  if(LIKELY(x == y))
     return;
   else
   __assert_failed__();
@@ -364,7 +364,7 @@ void debug_assert_ptr_ne(const void* x, const void* y)
 }
 void assert_ptr_ne(const void* x, const void* y)
 {
-  if(x != y)
+  if(LIKELY(x != y))
     return;
   else
   __assert_failed__();
@@ -379,7 +379,7 @@ void debug_assert_ptr_lt(const void* x, const void* y)
 }
 void assert_ptr_lt(const void* x, const void* y)
 {
-  if(x < y)
+  if(LIKELY(x < y))
     return;
   else
   __assert_failed__();
@@ -394,7 +394,7 @@ void debug_assert_ptr_lte(const void* x, const void* y)
 }
 void assert_ptr_lte(const void* x, const void* y)
 {
-  if(x <= y)
+  if(LIKELY(x <= y))
     return;
   else
   __assert_failed__();
@@ -409,7 +409,7 @@ void debug_assert_ptr_gt(const void* x, const void* y)
 }
 void assert_ptr_gt(const void* x, const void* y)
 {
-  if(x > y)
+  if(LIKELY(x > y))
     return;
   else
   __assert_failed__();
@@ -424,7 +424,7 @@ void debug_assert_ptr_gte(const void* x, const void* y)
 }
 void assert_ptr_gte(const void* x, const void* y)
 {
-  if(x >= y)
+  if(LIKELY(x >= y))
     return;
   else
   __assert_failed__();
@@ -439,7 +439,7 @@ void debug_assert_ptr_lte_lte(const void* x, const void* y, const void* z)
 }
 void assert_ptr_lte_lte(const void* x, const void* y, const void* z)
 {
-  if(x <= y && y <= z)
+  if(LIKELY(x <= y && y <= z))
     return;
   else
   __assert_failed__();
@@ -454,7 +454,7 @@ void debug_assert_ptr_lte_lt(const void* x, const void* y, const void* z)
 }
 void assert_ptr_lte_lt(const void* x, const void* y, const void* z)
 {
-  if(x <= y && y < z)
+  if(LIKELY(x <= y && y < z))
     return;
   else
   __assert_failed__();
@@ -471,7 +471,7 @@ void debug_assert_cstr_eq(const char* x, const char* y)
 }
 void assert_cstr_eq(const char* x, const char* y)
 {
-  if((strcmp(x,y) == 0))
+  if(LIKELY((strcmp(x,y) == 0)))
     return;
   else
   __assert_failed__();
@@ -488,7 +488,7 @@ void debug_assert_bool_eq(bool x, bool y)
 }
 void assert_bool_eq(bool x, bool y)
 {
-  if(x == y)
+  if(LIKELY(x == y))
     return;
   else
   __assert_failed__();
