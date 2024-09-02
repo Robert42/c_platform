@@ -36,7 +36,9 @@ Fmt fmt_new(char* buffer, usize capacity)
 }
 
 /*@ requires valid_fmt: \valid(f) && fmt_valid(*f);
-    assigns f->end, f->end[0..f->available_bytes-1], f->available_bytes;
+    assigns f->end \from f->end, f->available_bytes;
+    assigns f->end[0..f->available_bytes-1];
+    assigns f->available_bytes;
     ensures fmt_valid(*f);
 */
 void fmt(Fmt* f, const char* text, ...)
