@@ -101,7 +101,7 @@ static void platform_codegen_assertions()
       fmt_write(&fc, "#endif\n"); \
       fmt_write(&fc, "}\n"); \
       fmt_write(&fc, "void assert_%s_%s(%s x, %s y)\n{\n", name, bin_condition_name[i], #TYPE, #TYPE); \
-      fmt_write(&fc, "  if(x %s y)\n"); \
+      fmt_write(&fc, "  if(x %s y)\n", bin_condition_code[i]); \
       fmt_write(&fc, "    return;\n"); \
       fmt_write(&fc, "  else\n"); \
       fmt_write(&fc, "  __assert_failed__();\n"); \

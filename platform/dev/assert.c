@@ -13,9 +13,7 @@ void debug_assert_usize_eq(usize x, usize y)
 }
 void assert_usize_eq(usize x, usize y)
 {
-  if(x void assert_usize_eq(usize x, usize y)
-{
-  if(x  y)
+  if(x == y)
     return;
   else
   __assert_failed__();
@@ -30,9 +28,7 @@ void debug_assert_usize_ne(usize x, usize y)
 }
 void assert_usize_ne(usize x, usize y)
 {
-  if(x void assert_usize_ne(usize x, usize y)
-{
-  if(x  y)
+  if(x != y)
     return;
   else
   __assert_failed__();
@@ -47,9 +43,7 @@ void debug_assert_usize_lt(usize x, usize y)
 }
 void assert_usize_lt(usize x, usize y)
 {
-  if(x void assert_usize_lt(usize x, usize y)
-{
-  if(x  y)
+  if(x < y)
     return;
   else
   __assert_failed__();
@@ -64,9 +58,7 @@ void debug_assert_usize_lte(usize x, usize y)
 }
 void assert_usize_lte(usize x, usize y)
 {
-  if(x void assert_usize_lte(usize x, usize y)
-{
-  if(x  y)
+  if(x <= y)
     return;
   else
   __assert_failed__();
@@ -81,9 +73,7 @@ void debug_assert_usize_gt(usize x, usize y)
 }
 void assert_usize_gt(usize x, usize y)
 {
-  if(x void assert_usize_gt(usize x, usize y)
-{
-  if(x  y)
+  if(x > y)
     return;
   else
   __assert_failed__();
@@ -98,9 +88,7 @@ void debug_assert_usize_gte(usize x, usize y)
 }
 void assert_usize_gte(usize x, usize y)
 {
-  if(x void assert_usize_gte(usize x, usize y)
-{
-  if(x  y)
+  if(x >= y)
     return;
   else
   __assert_failed__();
@@ -147,9 +135,7 @@ void debug_assert_ssize_eq(ssize x, ssize y)
 }
 void assert_ssize_eq(ssize x, ssize y)
 {
-  if(x void assert_ssize_eq(ssize x, ssize y)
-{
-  if(x  y)
+  if(x == y)
     return;
   else
   __assert_failed__();
@@ -164,9 +150,7 @@ void debug_assert_ssize_ne(ssize x, ssize y)
 }
 void assert_ssize_ne(ssize x, ssize y)
 {
-  if(x void assert_ssize_ne(ssize x, ssize y)
-{
-  if(x  y)
+  if(x != y)
     return;
   else
   __assert_failed__();
@@ -181,9 +165,7 @@ void debug_assert_ssize_lt(ssize x, ssize y)
 }
 void assert_ssize_lt(ssize x, ssize y)
 {
-  if(x void assert_ssize_lt(ssize x, ssize y)
-{
-  if(x  y)
+  if(x < y)
     return;
   else
   __assert_failed__();
@@ -198,9 +180,7 @@ void debug_assert_ssize_lte(ssize x, ssize y)
 }
 void assert_ssize_lte(ssize x, ssize y)
 {
-  if(x void assert_ssize_lte(ssize x, ssize y)
-{
-  if(x  y)
+  if(x <= y)
     return;
   else
   __assert_failed__();
@@ -215,9 +195,7 @@ void debug_assert_ssize_gt(ssize x, ssize y)
 }
 void assert_ssize_gt(ssize x, ssize y)
 {
-  if(x void assert_ssize_gt(ssize x, ssize y)
-{
-  if(x  y)
+  if(x > y)
     return;
   else
   __assert_failed__();
@@ -232,9 +210,7 @@ void debug_assert_ssize_gte(ssize x, ssize y)
 }
 void assert_ssize_gte(ssize x, ssize y)
 {
-  if(x void assert_ssize_gte(ssize x, ssize y)
-{
-  if(x  y)
+  if(x >= y)
     return;
   else
   __assert_failed__();
@@ -281,9 +257,7 @@ void debug_assert_int_eq(int x, int y)
 }
 void assert_int_eq(int x, int y)
 {
-  if(x void assert_int_eq(int x, int y)
-{
-  if(x  y)
+  if(x == y)
     return;
   else
   __assert_failed__();
@@ -298,9 +272,7 @@ void debug_assert_int_ne(int x, int y)
 }
 void assert_int_ne(int x, int y)
 {
-  if(x void assert_int_ne(int x, int y)
-{
-  if(x  y)
+  if(x != y)
     return;
   else
   __assert_failed__();
@@ -315,9 +287,7 @@ void debug_assert_int_lt(int x, int y)
 }
 void assert_int_lt(int x, int y)
 {
-  if(x void assert_int_lt(int x, int y)
-{
-  if(x  y)
+  if(x < y)
     return;
   else
   __assert_failed__();
@@ -332,9 +302,7 @@ void debug_assert_int_lte(int x, int y)
 }
 void assert_int_lte(int x, int y)
 {
-  if(x void assert_int_lte(int x, int y)
-{
-  if(x  y)
+  if(x <= y)
     return;
   else
   __assert_failed__();
@@ -349,9 +317,7 @@ void debug_assert_int_gt(int x, int y)
 }
 void assert_int_gt(int x, int y)
 {
-  if(x void assert_int_gt(int x, int y)
-{
-  if(x  y)
+  if(x > y)
     return;
   else
   __assert_failed__();
@@ -366,9 +332,7 @@ void debug_assert_int_gte(int x, int y)
 }
 void assert_int_gte(int x, int y)
 {
-  if(x void assert_int_gte(int x, int y)
-{
-  if(x  y)
+  if(x >= y)
     return;
   else
   __assert_failed__();
@@ -385,9 +349,7 @@ void debug_assert_ptr_eq(const void* x, const void* y)
 }
 void assert_ptr_eq(const void* x, const void* y)
 {
-  if(x void assert_ptr_eq(const void* x, const void* y)
-{
-  if(x  y)
+  if(x == y)
     return;
   else
   __assert_failed__();
@@ -402,9 +364,7 @@ void debug_assert_ptr_ne(const void* x, const void* y)
 }
 void assert_ptr_ne(const void* x, const void* y)
 {
-  if(x void assert_ptr_ne(const void* x, const void* y)
-{
-  if(x  y)
+  if(x != y)
     return;
   else
   __assert_failed__();
@@ -419,9 +379,7 @@ void debug_assert_ptr_lt(const void* x, const void* y)
 }
 void assert_ptr_lt(const void* x, const void* y)
 {
-  if(x void assert_ptr_lt(const void* x, const void* y)
-{
-  if(x  y)
+  if(x < y)
     return;
   else
   __assert_failed__();
@@ -436,9 +394,7 @@ void debug_assert_ptr_lte(const void* x, const void* y)
 }
 void assert_ptr_lte(const void* x, const void* y)
 {
-  if(x void assert_ptr_lte(const void* x, const void* y)
-{
-  if(x  y)
+  if(x <= y)
     return;
   else
   __assert_failed__();
@@ -453,9 +409,7 @@ void debug_assert_ptr_gt(const void* x, const void* y)
 }
 void assert_ptr_gt(const void* x, const void* y)
 {
-  if(x void assert_ptr_gt(const void* x, const void* y)
-{
-  if(x  y)
+  if(x > y)
     return;
   else
   __assert_failed__();
@@ -470,9 +424,7 @@ void debug_assert_ptr_gte(const void* x, const void* y)
 }
 void assert_ptr_gte(const void* x, const void* y)
 {
-  if(x void assert_ptr_gte(const void* x, const void* y)
-{
-  if(x  y)
+  if(x >= y)
     return;
   else
   __assert_failed__();
