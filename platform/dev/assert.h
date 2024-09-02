@@ -26,6 +26,13 @@ void debug_assert_usize_gte(usize x, usize y);
 //@ terminates true; assigns \nothing; exits false; ensures x >= y;
 void assert_usize_gte(usize x, usize y);
 
+void debug_assert_usize_lte_lte(usize x, usize y, usize z);
+//@ terminates true; assigns \nothing; exits false; ensures x <= y <= z;
+void assert_usize_lte_lte(usize x, usize y, usize z);
+void debug_assert_usize_lte_lt(usize x, usize y, usize z);
+//@ terminates true; assigns \nothing; exits false; ensures x <= y < z;
+void assert_usize_lte_lt(usize x, usize y, usize z);
+
 // ==== ssize ====
 //@ terminates true; assigns \nothing; exits false;
 void debug_assert_ssize_eq(ssize x, ssize y);
@@ -51,6 +58,13 @@ void assert_ssize_gt(ssize x, ssize y);
 void debug_assert_ssize_gte(ssize x, ssize y);
 //@ terminates true; assigns \nothing; exits false; ensures x >= y;
 void assert_ssize_gte(ssize x, ssize y);
+
+void debug_assert_ssize_lte_lte(ssize x, ssize y, ssize z);
+//@ terminates true; assigns \nothing; exits false; ensures x <= y <= z;
+void assert_ssize_lte_lte(ssize x, ssize y, ssize z);
+void debug_assert_ssize_lte_lt(ssize x, ssize y, ssize z);
+//@ terminates true; assigns \nothing; exits false; ensures x <= y < z;
+void assert_ssize_lte_lt(ssize x, ssize y, ssize z);
 
 // ==== int ====
 //@ terminates true; assigns \nothing; exits false;
@@ -103,6 +117,13 @@ void assert_ptr_gt(const void* x, const void* y);
 void debug_assert_ptr_gte(const void* x, const void* y);
 //@ terminates true; assigns \nothing; exits false; ensures x >= y;
 void assert_ptr_gte(const void* x, const void* y);
+
+void debug_assert_ptr_lte_lte(const void* x, const void* y, const void* z);
+//@ terminates true; assigns \nothing; exits false; ensures x <= y <= z;
+void assert_ptr_lte_lte(const void* x, const void* y, const void* z);
+void debug_assert_ptr_lte_lt(const void* x, const void* y, const void* z);
+//@ terminates true; assigns \nothing; exits false; ensures x <= y < z;
+void assert_ptr_lte_lt(const void* x, const void* y, const void* z);
 
 // ==== cstr_eq ====
 //@ terminates true; assigns \nothing; exits false;

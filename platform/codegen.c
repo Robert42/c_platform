@@ -12,9 +12,9 @@
   X(bool_eq, " ensures x == y;", bool, x==y, fmt_bool) \
 
 #define X_MACRO_ASSERT_NUM_CMP_RNG(X) \
-  X(usize, usize, "%zu", /*no cast*/) \
-  X(ssize, ssize, "%zs", /*no cast*/) \
-  X(ptr, const void*, "%p", /*cast*/(usize) ) \
+  X(usize) \
+  X(ssize) \
+  X(ptr) \
 
 static void platform_codegen_assertions();
 
@@ -64,6 +64,10 @@ static void platform_codegen_assertions()
     [CMP_GT] = "gt",
     [CMP_GTE] = "gte",
   };
+  const u16 rng_conditions[] = {
+    (CMP_LTE << 8) | CMP_LTE,
+    (CMP_LTE << 8) | CMP_LT,
+  };
 
   const char* bin_condition_code_bin[ARRAY_LEN(bin_condition_code)];
   for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i)
@@ -78,14 +82,30 @@ static void platform_codegen_assertions()
 #undef CMP_GT
 #undef CMP_GTE
 
+#define OR_STRCMP(X) || strcmp(#X, name)==0
+#define CREATE_RANGE(X) (false X(OR_STRCMP))
+
 #define X(NAME, TYPE, FMT_CODE, CAST) { \
-    fmt_write(&fh, "// ==== %s ====\n", #NAME); \
+    const char* const name = #NAME; \
+    fmt_write(&fh, "// ==== %s ====\n", name); \
     for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) \
     { \
       fmt_write(&fh, "%s\n", contract_begin);\
-      fmt_write(&fh, "void debug_assert_%s_%s(%s x, %s y);\n", #NAME, bin_condition_name[i], #TYPE, #TYPE); \
+      fmt_write(&fh, "void debug_assert_%s_%s(%s x, %s y);\n", name, bin_condition_name[i], #TYPE, #TYPE); \
       fmt_write(&fh, "%s ensures %s;\n", contract_begin, bin_condition_code_bin[i]); \
-      fmt_write(&fh, "void assert_%s_%s(%s x, %s y);\n", #NAME, bin_condition_name[i], #TYPE, #TYPE); \
+      fmt_write(&fh, "void assert_%s_%s(%s x, %s y);\n", name, bin_condition_name[i], #TYPE, #TYPE); \
+    } \
+    if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
+    { \
+      fmt_write(&fh, "\n"); \
+      for(int i=0; i<ARRAY_LEN(rng_conditions); ++i) \
+      { \
+        const u16 xy = rng_conditions[i]>>8; \
+        const u16 yz = rng_conditions[i] & 0xff; \
+        fmt_write(&fh, "void debug_assert_%s_%s_%s(%s x, %s y, %s z);\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
+        fmt_write(&fh, "%s ensures x %s y %s z;\n", contract_begin, bin_condition_code[xy], bin_condition_code[yz]); \
+        fmt_write(&fh, "void assert_%s_%s_%s(%s x, %s y, %s z);\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
+      } \
     } \
     fmt_write(&fh, "\n"); \
   }
