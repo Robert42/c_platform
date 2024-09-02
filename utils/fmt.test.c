@@ -9,8 +9,8 @@ void fmt_test()
 
     assert_cstr_eq(f.begin, "");
 
-    fmt(&f, "player");
-    fmt(&f, ".pos");
+    fmt_write(&f, "player");
+    fmt_write(&f, ".pos");
     assert_cstr_eq(f.begin, "player.pos");
   }
 }

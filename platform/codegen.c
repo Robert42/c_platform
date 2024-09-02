@@ -35,9 +35,9 @@ static void platform_codegen_assertions()
   Fmt fh = fmt_new(gen_h, sizeof(gen_h));
   Fmt fc = fmt_new(gen_c, sizeof(gen_c));
 
-  fmt(&fh, "%s", BANNER);
+  fmt_write(&fh, "%s", BANNER);
+  fmt_write(&fc, "%s", BANNER);
 
-  fmt(&fc, "%s", BANNER);
 
   file_text_create_from_cstr(assert_h, fh.begin);
   file_text_create_from_cstr(assert_c, fc.begin);

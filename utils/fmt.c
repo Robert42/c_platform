@@ -41,7 +41,7 @@ Fmt fmt_new(char* buffer, usize capacity)
     assigns f->available_bytes;
     ensures fmt_valid(*f);
 */
-void fmt(Fmt* f, const char* text, ...)
+void fmt_write(Fmt* f, const char* text, ...)
 {
   usize avail = _fmt_available_chars(*f);
 
