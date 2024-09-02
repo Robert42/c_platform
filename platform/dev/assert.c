@@ -50,14 +50,14 @@ void __assert_usize_lte_lte__(usize x, usize y, usize z, const char* condition, 
   if(LIKELY(x <= y && y <= z))
     return;
   else
-  __assert_failed__();
+  __ter_assert_failed__(condition, str_fmt(&SCRATCH, "%zu", x), str_fmt(&SCRATCH, "%zu", y), str_fmt(&SCRATCH, "%zu", z), file, line);
 }
 void __assert_usize_lte_lt__(usize x, usize y, usize z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y < z))
     return;
   else
-  __assert_failed__();
+  __ter_assert_failed__(condition, str_fmt(&SCRATCH, "%zu", x), str_fmt(&SCRATCH, "%zu", y), str_fmt(&SCRATCH, "%zu", z), file, line);
 }
 
 // ==== ssize ====
@@ -108,14 +108,14 @@ void __assert_ssize_lte_lte__(ssize x, ssize y, ssize z, const char* condition, 
   if(LIKELY(x <= y && y <= z))
     return;
   else
-  __assert_failed__();
+  __ter_assert_failed__(condition, str_fmt(&SCRATCH, "%zs", x), str_fmt(&SCRATCH, "%zs", y), str_fmt(&SCRATCH, "%zs", z), file, line);
 }
 void __assert_ssize_lte_lt__(ssize x, ssize y, ssize z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y < z))
     return;
   else
-  __assert_failed__();
+  __ter_assert_failed__(condition, str_fmt(&SCRATCH, "%zs", x), str_fmt(&SCRATCH, "%zs", y), str_fmt(&SCRATCH, "%zs", z), file, line);
 }
 
 // ==== int ====
@@ -210,14 +210,14 @@ void __assert_ptr_lte_lte__(const void* x, const void* y, const void* z, const c
   if(LIKELY(x <= y && y <= z))
     return;
   else
-  __assert_failed__();
+  __ter_assert_failed__(condition, str_fmt(&SCRATCH, "%p", x), str_fmt(&SCRATCH, "%p", y), str_fmt(&SCRATCH, "%p", z), file, line);
 }
 void __assert_ptr_lte_lt__(const void* x, const void* y, const void* z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y < z))
     return;
   else
-  __assert_failed__();
+  __ter_assert_failed__(condition, str_fmt(&SCRATCH, "%p", x), str_fmt(&SCRATCH, "%p", y), str_fmt(&SCRATCH, "%p", z), file, line);
 }
 
 // ==== cstr_eq ====

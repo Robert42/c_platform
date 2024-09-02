@@ -112,7 +112,7 @@ static void platform_codegen_assertions()
         fmt_write(&fc, "  if(LIKELY(x %s y && y %s z))\n", bin_condition_code[xy], bin_condition_code[yz]); \
         fmt_write(&fc, "    return;\n"); \
         fmt_write(&fc, "  else\n"); \
-        fmt_write(&fc, "  __assert_failed__();\n"); \
+        fmt_write(&fc, "  __ter_assert_failed__(condition, str_fmt(&SCRATCH, %s, x), str_fmt(&SCRATCH, %s, y), str_fmt(&SCRATCH, %s, z), file, line);\n", #FMT_CODE, #FMT_CODE, #FMT_CODE); \
         fmt_write(&fc, "}\n"); \
       } \
     } \
