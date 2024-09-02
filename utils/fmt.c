@@ -36,16 +36,27 @@ Fmt fmt_new(char* buffer, usize capacity)
 }
 
 /*@ requires valid_fmt: \valid(f) && fmt_valid(*f);
+    assigns f->end, f->end[0..f->available_bytes-1], f->available_bytes;
+    ensures fmt_valid(*f);
 */
 void fmt(Fmt* f, const char* text, ...)
 {
   usize avail = _fmt_available_chars(*f);
+
   va_list args;
   va_start(args, text);
   ssize bytes_written = vsnprintf(f->end, avail, text, args);
   va_end(args);
-  assert_usize_lte_lte(0, bytes_written, avail);
+  assert_ssize_lte(0, bytes_written); // runtime error
+  assert_usize_lt(bytes_written, avail); // out of memory
 
   f->end += bytes_written;
+#if GHOST
+  f->available_bytes -= bytes_written;
+#endif
+
+  // TODO: Should this be specified by the spec of `vsnprintf`?
+  //@ assert safe_to_write: f->end < f->begin + f->buffer_capacity;
+  f->end[0] = 0;
 }
 

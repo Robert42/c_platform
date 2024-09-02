@@ -11,13 +11,33 @@ RNG_ASSERT_NUM_CMP(ssize, ssize)
 RNG_ASSERT_NUM_CMP(ptr, const void*)
 
 /*@
+  terminates true;
   assigns \nothing;
+  exits false;
   admit ensures x <= y;
 */
 void assert_usize_lte(usize x, usize y);
+
 /*@
+  terminates true;
   assigns \nothing;
-  admit ensures x <= y <= z;
+  exits false;
+  admit ensures x < y;
 */
-void assert_usize_lte_lte(usize x, usize y, usize z);
+void assert_usize_lt(usize x, usize y);
+
+/*@
+  terminates true;
+  assigns \nothing;
+  exits false;
+  admit ensures x <= y;
+*/
+void assert_ssize_lte(ssize x, ssize y);
+/*@
+  terminates true;
+  assigns \nothing;
+  exits false;
+  admit ensures x <= y < z;
+*/
+void assert_usize_lte_lt(usize x, usize y, usize z);
 

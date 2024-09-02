@@ -21,10 +21,12 @@ typedef struct _utils_Fmt
   && f.begin <= f.end < f.begin+f.buffer_capacity
   && f.buffer_capacity > 0
   && f.end[0] == 0 // So f.begin is always a valid nullterminated cstr
-  && f.available_bytes == _logic_fmt_availalbe_chars(f)
+  && 0 <= f.available_bytes == _logic_fmt_availalbe_chars(f)
   && f.buffer_capacity == (ssize)f.buffer_capacity
   && f.available_bytes <= f.buffer_capacity
-  && _logic_fmt_used_chars(f) <= f.buffer_capacity
+  && f.end+f.available_bytes == f.begin+f.buffer_capacity
+  && 0 <= _logic_fmt_used_chars(f) <= f.buffer_capacity
+  && 0 <= _logic_fmt_used_chars(f) + _logic_fmt_availalbe_chars(f) == f.buffer_capacity
 ;
 */
 
