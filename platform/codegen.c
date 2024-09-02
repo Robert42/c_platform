@@ -32,17 +32,15 @@ static void platform_codegen_assertions()
   char gen_h[32 * 1024] = {0};
   char gen_c[32 * 1024] = {0};
 
-  char* gen_h_end = gen_h;
-  char* gen_c_end = gen_c;
+  Fmt fh = fmt_new(gen_h, sizeof(gen_h));
+  Fmt fc = fmt_new(gen_c, sizeof(gen_c));
 
-  gen_h_end += snprintf(gen_h_end, sizeof(gen_h)-(gen_h_end-gen_h), "%s", BANNER);
-  assert_ptr_lt(gen_h_end, gen_h+sizeof(gen_h));
-  
-  gen_c_end += snprintf(gen_c_end, sizeof(gen_c)-(gen_c_end-gen_c), "%s", BANNER);
-  assert_ptr_lt(gen_c_end, gen_c+sizeof(gen_c));
+  fmt(&fh, "%s", BANNER);
 
-  file_text_create_from_cstr(assert_h, gen_h);
-  file_text_create_from_cstr(assert_c, gen_c);
+  fmt(&fc, "%s", BANNER);
+
+  file_text_create_from_cstr(assert_h, fh.begin);
+  file_text_create_from_cstr(assert_c, fc.begin);
 
   // TODO: don't forget marking the condition as likely
 }
