@@ -22,6 +22,16 @@ void platform_codegen()
   platform_codegen_assertions();
 }
 
+static void platform_codegen_assertions_fmt_bin(Fmt* fh, Fmt* fc, const char* name, const char* type, const char* fmt, const char* cast, const char* condition_code, const char* condition_name)
+{
+  fmt_write(
+    fh,
+    "//@ terminates true; assigns \\nothing; exits false;\n"
+    "void debug_assert_%s_%s(%s x, %s y);\n",
+    name, condition_name, type, type);
+  fmt_write(fh, "\n");
+}
+
 static void platform_codegen_assertions()
 {
   const Path platform_dir = path_parent(path_realpath(path_from_cstr(__FILE__)));
@@ -38,10 +48,16 @@ static void platform_codegen_assertions()
   fmt_write(&fh, "%s", BANNER);
   fmt_write(&fc, "%s", BANNER);
 
+  const char* const bin_condition_code[] = {"==", "!=", "<",   "<=",  ">",  ">="};
+  const char* const bin_condition_name[] = {"eq", "ne", "lt", "lte", "gt", "gte"};
+
+#define X(NAME, TYPE, FMT_CODE, CAST) {for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) platform_codegen_assertions_fmt_bin(&fh, &fc, #NAME, #TYPE, #FMT_CODE, #CAST, bin_condition_code[i], bin_condition_name[i]);}
+  X_MACRO_ASSERT_NUM_CMP_BIN(X)
+#undef X
 
   file_text_create_from_cstr(assert_h, fh.begin);
   file_text_create_from_cstr(assert_c, fc.begin);
-
+  
   // TODO: don't forget marking the condition as likely
 }
 
