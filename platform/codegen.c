@@ -69,10 +69,6 @@ static void platform_codegen_assertions()
     (CMP_LTE << 8) | CMP_LT,
   };
 
-  const char* bin_condition_code_bin[ARRAY_LEN(bin_condition_code)];
-  for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i)
-    bin_condition_code_bin[i] = str_fmt(&STACK, "x %s y", bin_condition_code[i]);
-
   const char* contract_begin = "//@ terminates true; assigns \\nothing; exits false;";
 
 #undef CMP_EQ
@@ -92,7 +88,7 @@ static void platform_codegen_assertions()
     { \
       fmt_write(&fh, "%s\n", contract_begin);\
       fmt_write(&fh, "void debug_assert_%s_%s(%s x, %s y);\n", name, bin_condition_name[i], #TYPE, #TYPE); \
-      fmt_write(&fh, "%s ensures %s;\n", contract_begin, bin_condition_code_bin[i]); \
+      fmt_write(&fh, "%s ensures x %s y;\n", contract_begin, bin_condition_code[i]); \
       fmt_write(&fh, "void assert_%s_%s(%s x, %s y);\n", name, bin_condition_name[i], #TYPE, #TYPE); \
     } \
     if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
