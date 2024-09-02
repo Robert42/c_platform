@@ -55,7 +55,7 @@ static void platform_codegen_assertions()
     { \
       fmt_write(&fh, "%s\n", contract_begin);\
       fmt_write(&fh, "void debug_assert_%s_%s(%s x, %s y);\n", #NAME, bin_condition_name[i], #TYPE, #TYPE); \
-      fmt_write(&fh, "%s ensures %s; \n", contract_begin, bin_condition_code_bin[i]); \
+      fmt_write(&fh, "%s ensures %s;\n", contract_begin, bin_condition_code_bin[i]); \
       fmt_write(&fh, "void assert_%s_%s(%s x, %s y);\n", #NAME, bin_condition_name[i], #TYPE, #TYPE); \
     } \
     fmt_write(&fh, "\n"); \
