@@ -3,120 +3,56 @@
 #ifndef __FRAMAC__
 
 // ==== usize ====
-void debug_assert_usize_eq(usize x, usize y)
-{
-#if ENV_DEBUG
-  assert_usize_eq(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_usize_eq(usize x, usize y)
+void __assert_usize_eq__(usize x, usize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x == y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_usize_ne(usize x, usize y)
-{
-#if ENV_DEBUG
-  assert_usize_ne(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_usize_ne(usize x, usize y)
+void __assert_usize_ne__(usize x, usize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x != y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_usize_lt(usize x, usize y)
-{
-#if ENV_DEBUG
-  assert_usize_lt(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_usize_lt(usize x, usize y)
+void __assert_usize_lt__(usize x, usize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x < y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_usize_lte(usize x, usize y)
-{
-#if ENV_DEBUG
-  assert_usize_lte(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_usize_lte(usize x, usize y)
+void __assert_usize_lte__(usize x, usize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_usize_gt(usize x, usize y)
-{
-#if ENV_DEBUG
-  assert_usize_gt(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_usize_gt(usize x, usize y)
+void __assert_usize_gt__(usize x, usize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x > y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_usize_gte(usize x, usize y)
-{
-#if ENV_DEBUG
-  assert_usize_gte(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_usize_gte(usize x, usize y)
+void __assert_usize_gte__(usize x, usize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x >= y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_usize_lte_lte(usize x, usize y, usize z)
-{
-#if ENV_DEBUG
-  assert_usize_lte_lte(x, y, z);
-#else
-  (void)x; (void)y; (void)z;
-#endif
-}
-void assert_usize_lte_lte(usize x, usize y, usize z)
+void __assert_usize_lte_lte__(usize x, usize y, usize z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y <= z))
     return;
   else
   __assert_failed__();
 }
-void debug_assert_usize_lte_lt(usize x, usize y, usize z)
-{
-#if ENV_DEBUG
-  assert_usize_lte_lt(x, y, z);
-#else
-  (void)x; (void)y; (void)z;
-#endif
-}
-void assert_usize_lte_lt(usize x, usize y, usize z)
+void __assert_usize_lte_lt__(usize x, usize y, usize z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y < z))
     return;
@@ -125,120 +61,56 @@ void assert_usize_lte_lt(usize x, usize y, usize z)
 }
 
 // ==== ssize ====
-void debug_assert_ssize_eq(ssize x, ssize y)
-{
-#if ENV_DEBUG
-  assert_ssize_eq(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ssize_eq(ssize x, ssize y)
+void __assert_ssize_eq__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x == y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ssize_ne(ssize x, ssize y)
-{
-#if ENV_DEBUG
-  assert_ssize_ne(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ssize_ne(ssize x, ssize y)
+void __assert_ssize_ne__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x != y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ssize_lt(ssize x, ssize y)
-{
-#if ENV_DEBUG
-  assert_ssize_lt(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ssize_lt(ssize x, ssize y)
+void __assert_ssize_lt__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x < y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ssize_lte(ssize x, ssize y)
-{
-#if ENV_DEBUG
-  assert_ssize_lte(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ssize_lte(ssize x, ssize y)
+void __assert_ssize_lte__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ssize_gt(ssize x, ssize y)
-{
-#if ENV_DEBUG
-  assert_ssize_gt(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ssize_gt(ssize x, ssize y)
+void __assert_ssize_gt__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x > y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ssize_gte(ssize x, ssize y)
-{
-#if ENV_DEBUG
-  assert_ssize_gte(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ssize_gte(ssize x, ssize y)
+void __assert_ssize_gte__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x >= y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ssize_lte_lte(ssize x, ssize y, ssize z)
-{
-#if ENV_DEBUG
-  assert_ssize_lte_lte(x, y, z);
-#else
-  (void)x; (void)y; (void)z;
-#endif
-}
-void assert_ssize_lte_lte(ssize x, ssize y, ssize z)
+void __assert_ssize_lte_lte__(ssize x, ssize y, ssize z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y <= z))
     return;
   else
   __assert_failed__();
 }
-void debug_assert_ssize_lte_lt(ssize x, ssize y, ssize z)
-{
-#if ENV_DEBUG
-  assert_ssize_lte_lt(x, y, z);
-#else
-  (void)x; (void)y; (void)z;
-#endif
-}
-void assert_ssize_lte_lt(ssize x, ssize y, ssize z)
+void __assert_ssize_lte_lt__(ssize x, ssize y, ssize z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y < z))
     return;
@@ -247,212 +119,100 @@ void assert_ssize_lte_lt(ssize x, ssize y, ssize z)
 }
 
 // ==== int ====
-void debug_assert_int_eq(int x, int y)
-{
-#if ENV_DEBUG
-  assert_int_eq(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_int_eq(int x, int y)
+void __assert_int_eq__(int x, int y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x == y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_int_ne(int x, int y)
-{
-#if ENV_DEBUG
-  assert_int_ne(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_int_ne(int x, int y)
+void __assert_int_ne__(int x, int y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x != y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_int_lt(int x, int y)
-{
-#if ENV_DEBUG
-  assert_int_lt(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_int_lt(int x, int y)
+void __assert_int_lt__(int x, int y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x < y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_int_lte(int x, int y)
-{
-#if ENV_DEBUG
-  assert_int_lte(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_int_lte(int x, int y)
+void __assert_int_lte__(int x, int y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_int_gt(int x, int y)
-{
-#if ENV_DEBUG
-  assert_int_gt(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_int_gt(int x, int y)
+void __assert_int_gt__(int x, int y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x > y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_int_gte(int x, int y)
-{
-#if ENV_DEBUG
-  assert_int_gte(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_int_gte(int x, int y)
+void __assert_int_gte__(int x, int y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x >= y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
 
 // ==== ptr ====
-void debug_assert_ptr_eq(const void* x, const void* y)
-{
-#if ENV_DEBUG
-  assert_ptr_eq(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ptr_eq(const void* x, const void* y)
+void __assert_ptr_eq__(const void* x, const void* y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x == y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ptr_ne(const void* x, const void* y)
-{
-#if ENV_DEBUG
-  assert_ptr_ne(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ptr_ne(const void* x, const void* y)
+void __assert_ptr_ne__(const void* x, const void* y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x != y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ptr_lt(const void* x, const void* y)
-{
-#if ENV_DEBUG
-  assert_ptr_lt(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ptr_lt(const void* x, const void* y)
+void __assert_ptr_lt__(const void* x, const void* y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x < y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ptr_lte(const void* x, const void* y)
-{
-#if ENV_DEBUG
-  assert_ptr_lte(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ptr_lte(const void* x, const void* y)
+void __assert_ptr_lte__(const void* x, const void* y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ptr_gt(const void* x, const void* y)
-{
-#if ENV_DEBUG
-  assert_ptr_gt(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ptr_gt(const void* x, const void* y)
+void __assert_ptr_gt__(const void* x, const void* y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x > y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ptr_gte(const void* x, const void* y)
-{
-#if ENV_DEBUG
-  assert_ptr_gte(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_ptr_gte(const void* x, const void* y)
+void __assert_ptr_gte__(const void* x, const void* y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x >= y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, "TODO", "TODO", file, line);
 }
-void debug_assert_ptr_lte_lte(const void* x, const void* y, const void* z)
-{
-#if ENV_DEBUG
-  assert_ptr_lte_lte(x, y, z);
-#else
-  (void)x; (void)y; (void)z;
-#endif
-}
-void assert_ptr_lte_lte(const void* x, const void* y, const void* z)
+void __assert_ptr_lte_lte__(const void* x, const void* y, const void* z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y <= z))
     return;
   else
   __assert_failed__();
 }
-void debug_assert_ptr_lte_lt(const void* x, const void* y, const void* z)
-{
-#if ENV_DEBUG
-  assert_ptr_lte_lt(x, y, z);
-#else
-  (void)x; (void)y; (void)z;
-#endif
-}
-void assert_ptr_lte_lt(const void* x, const void* y, const void* z)
+void __assert_ptr_lte_lt__(const void* x, const void* y, const void* z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y < z))
     return;
@@ -461,15 +221,7 @@ void assert_ptr_lte_lt(const void* x, const void* y, const void* z)
 }
 
 // ==== cstr_eq ====
-void debug_assert_cstr_eq(const char* x, const char* y)
-{
-#if ENV_DEBUG
-  assert_cstr_eq(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_cstr_eq(const char* x, const char* y)
+void __assert_cstr_eq__(const char* x, const char* y)
 {
   if(LIKELY((strcmp(x,y) == 0)))
     return;
@@ -478,15 +230,7 @@ void assert_cstr_eq(const char* x, const char* y)
 }
 
 // ==== bool_eq ====
-void debug_assert_bool_eq(bool x, bool y)
-{
-#if ENV_DEBUG
-  assert_bool_eq(x, y);
-#else
-  (void)x; (void)y;
-#endif
-}
-void assert_bool_eq(bool x, bool y)
+void __assert_bool_eq__(bool x, bool y)
 {
   if(LIKELY(x == y))
     return;

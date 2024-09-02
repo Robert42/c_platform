@@ -19,7 +19,7 @@ static void __assert_failed__()
   abort();
 }
 
-static void __bin_assert_failed__(const char* lhs, const char* rhs)
+static void __bin_assert_failed__(const char* condition, const char* lhs, const char* rhs, const char* file, int line)
 {
 #if !ENV_STATIC_ANALYSIS
   if(__assert_capture__)
@@ -30,8 +30,13 @@ static void __bin_assert_failed__(const char* lhs, const char* rhs)
 #endif
 
   printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
+  printf("%s\n", condition);
+  printf("\n");
   printf("lhs: %s\n", lhs);
   printf("rhs: %s\n", rhs);
+  printf("\n");
+  printf("%s:%i", file, line);
+  printf("%s====%s\n", TERM_RED, TERM_NORMAL);
   abort();
 }
 
