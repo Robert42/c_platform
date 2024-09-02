@@ -28,6 +28,7 @@ typedef struct _platform_mem_Region
 */
 
 extern Mem_Region SCRATCH;
+extern Mem_Region STACK;
 
 void _mem_swap_scratch(Mem_Region* scratch_var, Mem_Region region_1, Mem_Region region_2);
 
