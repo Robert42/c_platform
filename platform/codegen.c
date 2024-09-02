@@ -41,14 +41,42 @@ static void platform_codegen_assertions()
   fmt_write(&fh, "%s", BANNER);
   fmt_write(&fc, "%s", BANNER);
 
-  const char* const bin_condition_code[] = {"==", "!=", "<",   "<=",  ">",  ">="};
-  const char* const bin_condition_name[] = {"eq", "ne", "lt", "lte", "gt", "gte"};
+#define CMP_EQ 0
+#define CMP_NE 1
+#define CMP_LT 2
+#define CMP_LTE 3
+#define CMP_GT 4
+#define CMP_GTE 5
+
+  const char* const bin_condition_code[] = {
+    [CMP_EQ] = "==",
+    [CMP_NE] = "!=",
+    [CMP_LT] = "<",
+    [CMP_LTE] = "<=",
+    [CMP_GT] = ">",
+    [CMP_GTE] = ">=",
+   };
+  const char* const bin_condition_name[] = {
+    [CMP_EQ] = "eq",
+    [CMP_NE] = "ne",
+    [CMP_LT] = "lt",
+    [CMP_LTE] = "lte",
+    [CMP_GT] = "gt",
+    [CMP_GTE] = "gte",
+  };
 
   const char* bin_condition_code_bin[ARRAY_LEN(bin_condition_code)];
   for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i)
     bin_condition_code_bin[i] = str_fmt(&STACK, "x %s y", bin_condition_code[i]);
 
   const char* contract_begin = "//@ terminates true; assigns \\nothing; exits false;";
+
+#undef CMP_EQ
+#undef CMP_NE
+#undef CMP_LT
+#undef CMP_LTE
+#undef CMP_GT
+#undef CMP_GTE
 
 #define X(NAME, TYPE, FMT_CODE, CAST) { \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
