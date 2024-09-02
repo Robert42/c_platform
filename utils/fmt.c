@@ -58,7 +58,7 @@ void fmt(Fmt* f, const char* text, ...)
 #endif
 
   // TODO: Should this be specified by the spec of `vsnprintf`?
-  //@ assert safe_to_write: f->end < f->begin + f->buffer_capacity;
+  //@ assert safe_to_append zero: \valid(f->end);
   f->end[0] = 0;
 }
 
