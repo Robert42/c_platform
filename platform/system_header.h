@@ -104,3 +104,7 @@ struct linux_dirent64
 };
 ssize_t getdents64(int fd, void* dirp, size_t count);
 #endif
+
+#if __FRAMAC__
+#include "system_header_spec.h"
+#endif

@@ -56,9 +56,5 @@ void fmt(Fmt* f, const char* text, ...)
 #if GHOST
   f->available_bytes -= bytes_written;
 #endif
-
-  // TODO: Should this be specified by the spec of `vsnprintf`?
-  //@ assert safe_to_append zero: \valid(f->end);
-  f->end[0] = 0;
 }
 
