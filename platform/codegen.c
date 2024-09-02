@@ -30,10 +30,18 @@ static void platform_codegen_assertions_fmt_bin(Fmt* fh, Fmt* fc, const char* na
     "void debug_assert_%s_%s(%s x, %s y);\n",
     name, condition_name, type, type);
   fmt_write(fh, "\n");
+  fmt_write(
+    fh,
+    "//@ terminates true; assigns \\nothing; exits false; ensures %s; \n"
+    "void assert_%s_%s(%s x, %s y);\n",
+    condition_code, name, condition_name, type, type);
+  fmt_write(fh, "\n");
 }
 
 static void platform_codegen_assertions()
 {
+  const Mem_Region _prev_stack = STACK;
+
   const Path platform_dir = path_parent(path_realpath(path_from_cstr(__FILE__)));
 
   const Path assert_h = path_join(platform_dir, path_from_cstr("dev/assert.h"));
@@ -51,7 +59,11 @@ static void platform_codegen_assertions()
   const char* const bin_condition_code[] = {"==", "!=", "<",   "<=",  ">",  ">="};
   const char* const bin_condition_name[] = {"eq", "ne", "lt", "lte", "gt", "gte"};
 
-#define X(NAME, TYPE, FMT_CODE, CAST) {for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) platform_codegen_assertions_fmt_bin(&fh, &fc, #NAME, #TYPE, #FMT_CODE, #CAST, bin_condition_code[i], bin_condition_name[i]);}
+  const char* bin_condition_code_bin[ARRAY_LEN(bin_condition_code)];
+  for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i)
+    bin_condition_code_bin[i] = str_fmt(&STACK, "x %s y", bin_condition_code[i]);
+
+#define X(NAME, TYPE, FMT_CODE, CAST) {for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) platform_codegen_assertions_fmt_bin(&fh, &fc, #NAME, #TYPE, #FMT_CODE, #CAST, bin_condition_code_bin[i], bin_condition_name[i]);}
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
 
@@ -59,6 +71,8 @@ static void platform_codegen_assertions()
   file_text_create_from_cstr_if_different(assert_c, fc.begin);
 
   // TODO: don't forget marking the condition as likely
+  
+  STACK = _prev_stack;
 }
 
 #undef X_MACRO_ASSERT_NUM_CMP_BIN
