@@ -73,11 +73,11 @@ void __assert_ptr_lte_lt__(const void* x, const void* y, const void* z, const ch
 
 // ==== cstr_eq ====
 //@ terminates true; assigns \nothing; exits false;
-void __assert_cstr_eq__(const char* x, const char* y);
+void __assert_cstr_eq__(const char* x, const char* y, const char* condition, const char* file, int line);
 
 // ==== bool_eq ====
 //@ terminates true; assigns \nothing; exits false; ensures x == y;
-void __assert_bool_eq__(bool x, bool y);
+void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file, int line);
 
 // ==== usize ====
 #define assert_usize_eq(x, y) __assert_usize_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
@@ -121,10 +121,10 @@ void __assert_bool_eq__(bool x, bool y);
 #define assert_ptr_lte_lt(x, y, z) __assert_ptr_lte_lt__(x, y, z, #x " <= " #y " < " #z, __FILE__, __LINE__)
 
 // ==== cstr_eq ====
-#define assert_cstr_eq(x, y) __assert_cstr_eq__(x, y)
+#define assert_cstr_eq(x, y) __assert_cstr_eq__(x, y, #x " TODO " #y, __FILE__, __LINE__)
 
 // ==== bool_eq ====
-#define assert_bool_eq(x, y) __assert_bool_eq__(x, y)
+#define assert_bool_eq(x, y) __assert_bool_eq__(x, y, #x " TODO " #y, __FILE__, __LINE__)
 
 #if defined(__FRAMAC__) || !ENV_DEBUG
 // ==== usize ====
@@ -217,9 +217,9 @@ void __assert_bool_eq__(bool x, bool y);
 #define debug_assert_ptr_lte_lt(x, y, z) assert_ptr_lte_lt(x, y, z)
 
 // ==== cstr_eq ====
-#define debug_assert_cstr_eq(x, y) __assert_cstr_eq__(x, y)
+#define debug_assert_cstr_eq(x, y) __assert_cstr_eq__(x, y, #x " TODO " #y, __FILE__, __LINE__)
 
 // ==== bool_eq ====
-#define debug_assert_bool_eq(x, y) __assert_bool_eq__(x, y)
+#define debug_assert_bool_eq(x, y) __assert_bool_eq__(x, y, #x " TODO " #y, __FILE__, __LINE__)
 
 #endif // __FRAMAC__ || !ENV_DEBUG

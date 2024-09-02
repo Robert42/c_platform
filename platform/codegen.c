@@ -122,19 +122,19 @@ static void platform_codegen_assertions()
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
 
-#define X(NAME, ENSURES, TYPE, FMT_CODE, CAST) { \
+#define X(NAME, ENSURES, TYPE, CONDITION, FMT_CODE) { \
     const char* const name = #NAME; \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
     fmt_write(&fc, "// ==== %s ====\n", #NAME); \
     fmt_write(&fh, "%s%s\n", contract_begin, ENSURES);\
-    fmt_write(&fh, "void __assert_%s__(%s x, %s y);\n", #NAME, #TYPE, #TYPE); \
+    fmt_write(&fh, "void __assert_%s__(%s x, %s y, const char* condition, const char* file, int line);\n", #NAME, #TYPE, #TYPE); \
     fmt_write(&fh, "\n"); \
 \
-    fmt_write(&fc, "void __assert_%s__(%s x, %s y)\n{\n", #NAME, #TYPE, #TYPE); \
-    fmt_write(&fc, "  if(LIKELY(%s))\n", #FMT_CODE); \
+    fmt_write(&fc, "void __assert_%s__(%s x, %s y, const char* condition, const char* file, int line)\n{\n", #NAME, #TYPE, #TYPE); \
+    fmt_write(&fc, "  if(LIKELY(%s))\n", #CONDITION); \
     fmt_write(&fc, "    return;\n"); \
     fmt_write(&fc, "  else\n"); \
-    fmt_write(&fc, "  __assert_failed__();\n"); \
+    fmt_write(&fc, "  __bin_assert_failed__(condition, %s(x), %s(y), file, line);\n", #FMT_CODE, #FMT_CODE); \
     fmt_write(&fc, "}\n"); \
     fmt_write(&fc, "\n"); \
   }
@@ -167,7 +167,7 @@ static void platform_codegen_assertions()
 #define X(NAME, ENSURES, TYPE, FMT_CODE, CAST) { \
     const char* const name = #NAME; \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
-    fmt_write(&fh, "#define assert_%s(x, y) __assert_%s__(x, y)\n", #NAME, #NAME); \
+    fmt_write(&fh, "#define assert_%s(x, y) __assert_%s__(x, y, #x \" TODO \" #y, __FILE__, __LINE__)\n", #NAME, #NAME); \
     fmt_write(&fh, "\n"); \
   }
   X_MACRO_ASSERT_CUSTOM(X)
@@ -228,7 +228,7 @@ static void platform_codegen_assertions()
 #define X(NAME, ENSURES, TYPE, FMT_CODE, CAST) { \
     const char* const name = #NAME; \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
-    fmt_write(&fh, "#define debug_assert_%s(x, y) __assert_%s__(x, y)\n", #NAME, #NAME); \
+    fmt_write(&fh, "#define debug_assert_%s(x, y) __assert_%s__(x, y, #x \" TODO \" #y, __FILE__, __LINE__)\n", #NAME, #NAME); \
     fmt_write(&fh, "\n"); \
   }
   X_MACRO_ASSERT_CUSTOM(X)

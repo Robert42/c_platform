@@ -221,21 +221,21 @@ void __assert_ptr_lte_lt__(const void* x, const void* y, const void* z, const ch
 }
 
 // ==== cstr_eq ====
-void __assert_cstr_eq__(const char* x, const char* y)
+void __assert_cstr_eq__(const char* x, const char* y, const char* condition, const char* file, int line)
 {
   if(LIKELY((strcmp(x,y) == 0)))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, (x), (y), file, line);
 }
 
 // ==== bool_eq ====
-void __assert_bool_eq__(bool x, bool y)
+void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x == y))
     return;
   else
-  __assert_failed__();
+  __bin_assert_failed__(condition, fmt_bool(x), fmt_bool(y), file, line);
 }
 
 #endif // __FRAMAC__
