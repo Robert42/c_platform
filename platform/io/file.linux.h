@@ -3,4 +3,4 @@
 
 #include "file.h"
 
-void* _linux_read_all_bytes_from_fd(int fd, Mem_Region* region);
+Bytes _linux_read_all_bytes_from_fd(int fd, Mem_Region* region);

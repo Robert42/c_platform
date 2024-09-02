@@ -14,6 +14,7 @@ enum Action
   ACTION_UNIT_TEST = 1<<0,
   ACTION_VERIFY = 1<<1,
   ACTION_ALL_TESTS = 1<<2,
+  ACTION_CODEGEN = 1<<3,
 };
 
 struct Config
@@ -55,6 +56,12 @@ void run_tests(struct Config cfg, Path dir)
     Path test_path = path_append_cstr(bin_path, ".c");
     cc_compile_and_run(cfg.cc, test_path, bin_path);
   }
+  if(cfg.actions & ACTION_CODEGEN)
+  {
+    Path bin_path = path_join(dir, path_from_cstr("codegen"));
+    Path test_path = path_append_cstr(bin_path, ".c");
+    cc_compile_and_run(cfg.cc, test_path, bin_path);
+  }
   const u64 time_end = timer_now();
 
 #if PRINT_ITER_STATS
@@ -85,6 +92,8 @@ int main(int argc, char** argv)
       cfg.actions |= ACTION_VERIFY;
     else if(strcmp(argv[i], "--all_tests") == 0)
       cfg.actions |= ACTION_ALL_TESTS;
+    else if(strcmp(argv[i], "--codegen") == 0)
+      cfg.actions |= ACTION_CODEGEN;
     else
       errx(EXIT_FAILURE, "Unexpected argument `%s`\n", argv[i]);
   }

@@ -51,6 +51,8 @@ char* strtok(char* restrict str, const char* restrict delim);
 const char* dirname(const char* path);
 char* realpath(const char* path, char* buffer);
 
+int memcmp(const void* s1, const void* s2, size_t n);
+
 NORETURN
 void errx(int eval, const char* fmt, ...);
 

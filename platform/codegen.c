@@ -55,9 +55,9 @@ static void platform_codegen_assertions()
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
 
-  file_text_create_from_cstr(assert_h, fh.begin);
-  file_text_create_from_cstr(assert_c, fc.begin);
-  
+  file_text_create_from_cstr_if_different(assert_h, fh.begin);
+  file_text_create_from_cstr_if_different(assert_c, fc.begin);
+
   // TODO: don't forget marking the condition as likely
 }
 

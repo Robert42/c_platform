@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "file.linux.h"
 
-void* _linux_read_all_bytes_from_fd(int fd, Mem_Region* region)
+Bytes _linux_read_all_bytes_from_fd(int fd, Mem_Region* region)
 {
     debug_assert_ptr_ne(region, NULL);
     const usize bytes_available = mem_region_available_bytes(*region);
@@ -16,7 +16,22 @@ void* _linux_read_all_bytes_from_fd(int fd, Mem_Region* region)
     *(u8*)region->begin = 0;
     region->begin++;
 
-    return data;
+    return (Bytes){
+      .begin = data,
+      .end = data + bytes_read,
+    };
+}
+
+Bytes _read_all_file_bytes(const char* path, Mem_Region* region)
+{
+  const int fd = open(path, O_RDONLY);
+  LINUX_ASSERT_NE(fd, -1);
+
+  Bytes data = _linux_read_all_bytes_from_fd(fd, region);
+  
+  LINUX_ASSERT_NE(close(fd), -1);
+
+  return data;
 }
 
 void _create_file_from_bytes(const char* path, const void* bytes, usize num_bytes)
