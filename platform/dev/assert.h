@@ -104,3 +104,15 @@ void debug_assert_ptr_gte(const void* x, const void* y);
 //@ terminates true; assigns \nothing; exits false; ensures x >= y;
 void assert_ptr_gte(const void* x, const void* y);
 
+// ==== cstr_eq ====
+//@ terminates true; assigns \nothing; exits false;
+void debug_assert_cstr_eq(const char* x, const char* y);
+//@ terminates true; assigns \nothing; exits false;
+void assert_cstr_eq(const char* x, const char* y);
+
+// ==== bool_eq ====
+//@ terminates true; assigns \nothing; exits false;
+void debug_assert_bool_eq(bool x, bool y);
+//@ terminates true; assigns \nothing; exits false; ensures x == y;
+void assert_bool_eq(bool x, bool y);
+

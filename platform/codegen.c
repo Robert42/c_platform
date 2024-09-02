@@ -6,9 +6,10 @@
   X(int, int, "%i", /*no cast*/) \
   X(ptr, const void*, "%p", /*cast*/(usize) ) \
 
+// TODO: ensure, that both strings are equal
 #define X_MACRO_ASSERT_CUSTOM(X) \
-  X(cstr_eq, const char*, (strcmp(x,y)==0), ) \
-  X(bool_eq, bool, x==y, fmt_bool) \
+  X(cstr_eq, "", const char*, (strcmp(x,y)==0), ) \
+  X(bool_eq, " ensures x == y;", bool, x==y, fmt_bool) \
 
 #define X_MACRO_ASSERT_NUM_CMP_RNG(X) \
   X(usize, usize, "%zu", /*no cast*/) \
@@ -61,6 +62,17 @@ static void platform_codegen_assertions()
     fmt_write(&fh, "\n"); \
   }
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
+#undef X
+
+#define X(NAME, ENSURES, TYPE, FMT_CODE, CAST) { \
+    fmt_write(&fh, "// ==== %s ====\n", #NAME); \
+    fmt_write(&fh, "%s\n", contract_begin);\
+    fmt_write(&fh, "void debug_assert_%s(%s x, %s y);\n", #NAME, #TYPE, #TYPE); \
+    fmt_write(&fh, "%s%s\n", contract_begin, ENSURES);\
+    fmt_write(&fh, "void assert_%s(%s x, %s y);\n", #NAME, #TYPE, #TYPE); \
+    fmt_write(&fh, "\n"); \
+  }
+  X_MACRO_ASSERT_CUSTOM(X)
 #undef X
 
   file_text_create_from_cstr_if_different(assert_h, fh.begin);
