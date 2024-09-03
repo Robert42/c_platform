@@ -12,10 +12,10 @@
     requires separate_regions: mem_region_separated(region_1, region_2);
     requires var_not_sep: !mem_region_separated(region_1, *scratch_var) || !mem_region_separated(region_2, *scratch_var);
     requires var_identical_end: region_1.end == scratch_var->end || region_2.end == scratch_var->end;
-    assigns \nothing;
+    assigns *scratch_var \from region_1, region_2;
     ensures mem_region_valid(*scratch_var);
-    ensures mem_region_separated(region_1, \old(*scratch_var)) ==> !mem_region_separated(region_2, *scratch_var);
-    ensures mem_region_separated(region_2, \old(*scratch_var)) ==> !mem_region_separated(region_1, *scratch_var);
+    ensures region_1.end == \old(scratch_var->end) ==> !mem_region_separated(region_2, *scratch_var);
+    ensures region_2.end == \old(scratch_var->end) ==> !mem_region_separated(region_1, *scratch_var);
 */
 void _mem_swap_scratch(Mem_Region* scratch_var, Mem_Region region_1, Mem_Region region_2)
 {
