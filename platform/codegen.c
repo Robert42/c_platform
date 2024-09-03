@@ -40,6 +40,7 @@ struct Platform_Codegen_Assert_Group
   unsigned int begin, end; // range of slice of Platform_Codegen_Assert withign this group
 };
 
+static void platform_codegen_assertion_define(Fmt* f, const char** arg_name, struct Platform_Codegen_Assert a, const char* prefix, bool call_proc);
 static void platform_codegen_assertions()
 {
   const Mem_Region _prev_stack = STACK;
@@ -242,23 +243,7 @@ static void platform_codegen_assertions()
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
-      const char* signature_begin = fh.end;
-      fmt_write(&fh, "#define %s(", a.name);
-      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
-        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
-      fmt_write(&fh, ") __%s__(", a.name);
-      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
-        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
-      fmt_write(&fh, ",");
-      for(int arg_idx=0; arg_idx<=a.num_args; ++arg_idx)
-      {
-        const char* snippet = a.pretty_print_comparison[arg_idx];
-        if(snippet)
-          fmt_write(&fh, " \"%s\"", snippet);
-        if(arg_idx < a.num_args)
-          fmt_write(&fh, " #%s", arg_name[arg_idx]);
-      }
-      fmt_write(&fh, ", __FILE__, __LINE__)\n");
+      platform_codegen_assertion_define(&fh, arg_name, a, "", true);
     }
     fmt_write(&fh, "\n");
   }
@@ -325,6 +310,26 @@ static void platform_codegen_assertions()
 
 #undef OR_STRCMP
 #undef CREATE_RANGE
+}
+
+static void platform_codegen_assertion_define(Fmt* f, const char** arg_name, struct Platform_Codegen_Assert a, const char* prefix, bool call_proc)
+{
+  fmt_write(f, "#define %s(", a.name);
+  for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
+    fmt_write(f, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
+  fmt_write(f, ") __%s__(", a.name);
+  for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
+    fmt_write(f, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
+  fmt_write(f, ",");
+  for(int arg_idx=0; arg_idx<=a.num_args; ++arg_idx)
+  {
+    const char* snippet = a.pretty_print_comparison[arg_idx];
+    if(snippet)
+      fmt_write(f, " \"%s\"", snippet);
+    if(arg_idx < a.num_args)
+      fmt_write(f, " #%s", arg_name[arg_idx]);
+  }
+  fmt_write(f, ", __FILE__, __LINE__)\n");
 }
 
 #undef X_MACRO_ASSERT_NUM_CMP_BIN
