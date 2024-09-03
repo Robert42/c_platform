@@ -29,7 +29,7 @@ struct Platform_Codegen_Assert
   const char* type; // "usize"
   const char* condition; // "x <= y && y < z"
   const char* contract; // "x <= y && y < z"
-  const char* panic; // "__ter_assert_failed__(condition, str_fmt(&SCRATCH, \"%zu\", x), str_fmt(&SCRATCH, \"%zu\", y), str_fmt(&SCRATCH, \"%zu\", z), file, line);"
+  const char* panic; // "__ter_assert_failed__(condition, str_fmt(&PANIC_REGION, \"%zu\", x), str_fmt(&PANIC_REGION, \"%zu\", y), str_fmt(&PANIC_REGION, \"%zu\", z), file, line);"
   const char* pretty_print_comparison[5]; // {"", " <= ", " < ", ""}
   unsigned int num_args : 2; // 3 in case of `assert_usize_lte_lt`
 };
@@ -113,7 +113,7 @@ static void platform_codegen_assertions()
         .type = #TYPE, \
         .condition = condition, \
         .contract = str_fmt(&STACK, " ensures %s;", condition), \
-        .panic = str_fmt(&STACK, "__bin_assert_failed__(condition, str_fmt(&SCRATCH, %s, x), str_fmt(&SCRATCH, %s, y), file, line);\n", #FMT_CODE, #FMT_CODE), \
+        .panic = str_fmt(&STACK, "__bin_assert_failed__(condition, str_fmt(&PANIC_REGION, %s, x), str_fmt(&PANIC_REGION, %s, y), file, line);\n", #FMT_CODE, #FMT_CODE), \
         .pretty_print_comparison = {NULL, str_fmt(&STACK, " %s ", bin_condition_code[xy]), NULL}, \
         .num_args = 2, \
       }; \
@@ -129,7 +129,7 @@ static void platform_codegen_assertions()
           .type = #TYPE, \
           .condition = str_fmt(&STACK, "x %s y && y %s z", bin_condition_code[xy], bin_condition_code[yz]), \
           .contract = str_fmt(&STACK, " ensures x %s y %s z;", bin_condition_code[xy], bin_condition_code[yz]), \
-          .panic = str_fmt(&STACK, "__ter_assert_failed__(condition, str_fmt(&SCRATCH, %s, x), str_fmt(&SCRATCH, %s, y), str_fmt(&SCRATCH, %s, z), file, line);\n", #FMT_CODE, #FMT_CODE, #FMT_CODE), \
+          .panic = str_fmt(&STACK, "__ter_assert_failed__(condition, str_fmt(&PANIC_REGION, %s, x), str_fmt(&PANIC_REGION, %s, y), str_fmt(&PANIC_REGION, %s, z), file, line);\n", #FMT_CODE, #FMT_CODE, #FMT_CODE), \
           .pretty_print_comparison = {NULL, str_fmt(&STACK, " %s ", bin_condition_code[xy]), str_fmt(&STACK, " %s ", bin_condition_code[yz]), NULL}, \
           .num_args = 3, \
         }; \
@@ -289,8 +289,6 @@ static void platform_codegen_assertions()
   }
   fmt_write(&fh, "#endif // __FRAMAC__ || !ENV_DEBUG\n");
   
-// TODO: instead of formatting the arguments using the SCRATCH region, reserve a few KiB to format assertions, in case the assertions was thrown, because the SCRATCH was out of memory
-
   file_text_create_from_cstr_if_different(assert_h, fh.begin);
   file_text_create_from_cstr_if_different(assert_c, fc.begin);
 
