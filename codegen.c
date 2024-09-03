@@ -1,5 +1,8 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
+// usefulf commands whlie working on codegeneration:
+// - `git restore [PATH]`
+
 #include "c_script.h"
 
 const char* const BANNER =
