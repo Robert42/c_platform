@@ -8,8 +8,8 @@
 
 // TODO: add to contract of cstr_eq: ensure, that both strings are equal
 #define X_MACRO_ASSERT_CUSTOM(X) \
-  X(cstr_eq, "", const char*, (strcmp(x,y) == 0), ) \
-  X(bool_eq, " ensures x == y;", bool, x == y, fmt_bool) \
+  X(cstr_eq, " == ", "", const char*, (strcmp(x,y) == 0), ) \
+  X(bool_eq, " == ", " ensures x == y;", bool, x == y, fmt_bool) \
 
 #define X_MACRO_ASSERT_NUM_CMP_RNG(X) \
   X(usize) \
@@ -122,7 +122,7 @@ static void platform_codegen_assertions()
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
 
-#define X(NAME, ENSURES, TYPE, CONDITION, FMT_CODE) { \
+#define X(NAME, PRINT_MID, ENSURES, TYPE, CONDITION, FMT_CODE) { \
     const char* const name = #NAME; \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
     fmt_write(&fc, "// ==== %s ====\n", #NAME); \
@@ -164,10 +164,10 @@ static void platform_codegen_assertions()
   }
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
-#define X(NAME, ENSURES, TYPE, FMT_CODE, CAST) { \
+#define X(NAME, PRINT_MID, ENSURES, TYPE, FMT_CODE, CAST) { \
     const char* const name = #NAME; \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
-    fmt_write(&fh, "#define assert_%s(x, y) __assert_%s__(x, y, #x \" TODO \" #y, __FILE__, __LINE__)\n", #NAME, #NAME); \
+    fmt_write(&fh, "#define assert_%s(x, y) __assert_%s__(x, y, #x " #PRINT_MID " #y, __FILE__, __LINE__)\n", #NAME, #NAME); \
     fmt_write(&fh, "\n"); \
   }
   X_MACRO_ASSERT_CUSTOM(X)
@@ -193,7 +193,7 @@ static void platform_codegen_assertions()
   }
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
-#define X(NAME, ENSURES, TYPE, FMT_CODE, CAST) { \
+#define X(NAME, PRINT_MID, ENSURES, TYPE, FMT_CODE, CAST) { \
     const char* const name = #NAME; \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
     fmt_write(&fh, "#define debug_assert_%s(x, y)\n", #NAME); \
@@ -225,10 +225,10 @@ static void platform_codegen_assertions()
   }
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
-#define X(NAME, ENSURES, TYPE, FMT_CODE, CAST) { \
+#define X(NAME, PRINT_MID, ENSURES, TYPE, FMT_CODE, CAST) { \
     const char* const name = #NAME; \
     fmt_write(&fh, "// ==== %s ====\n", #NAME); \
-    fmt_write(&fh, "#define debug_assert_%s(x, y) __assert_%s__(x, y, #x \" TODO \" #y, __FILE__, __LINE__)\n", #NAME, #NAME); \
+    fmt_write(&fh, "#define debug_assert_%s(x, y) assert_%s(x, y)\n", #NAME, #NAME); \
     fmt_write(&fh, "\n"); \
   }
   X_MACRO_ASSERT_CUSTOM(X)
