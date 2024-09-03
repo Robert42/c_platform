@@ -23,6 +23,23 @@ void platform_codegen()
   platform_codegen_assertions();
 }
 
+struct Platform_Codegen_Assert
+{
+  const char* name; // "assert_usize_lte_lt"
+  const char* type; // "usize"
+  const char* condition; // "x <= y && y < z"
+  const char* contract; // "x <= y && y < z"
+  const char* panic; // "__ter_assert_failed__(condition, str_fmt(&SCRATCH, \"%zu\", x), str_fmt(&SCRATCH, \"%zu\", y), str_fmt(&SCRATCH, \"%zu\", z), file, line);"
+  const char* pretty_print_comparison[5]; // {"", " <= ", " < ", ""}
+  unsigned int num_args : 2; // 3 in case of `assert_usize_lte_lt`
+};
+
+struct Platform_Codegen_Assert_Group
+{
+  const char* name; // "ptr"
+  unsigned int begin, end; // range of slice of Platform_Codegen_Assert withign this group
+};
+
 static void platform_codegen_assertions()
 {
   const Mem_Region _prev_stack = STACK;
@@ -69,8 +86,6 @@ static void platform_codegen_assertions()
     (CMP_LTE << 8) | CMP_LT,
   };
 
-  const char* contract_begin = "//@ terminates true; assigns \\nothing; exits false;";
-
 #undef CMP_EQ
 #undef CMP_NE
 #undef CMP_LT
@@ -78,165 +93,230 @@ static void platform_codegen_assertions()
 #undef CMP_GT
 #undef CMP_GTE
 
+  struct Platform_Codegen_Assert assertions[1024];
+  struct Platform_Codegen_Assert_Group assert_group[256];
+  int num_assertions = 0;
+  int num_assert_groups = 0;
+
 #define OR_STRCMP(X) || strcmp(#X, name)==0
 #define CREATE_RANGE(X) (false X(OR_STRCMP))
 
-  fmt_write(&fc, "#ifndef __FRAMAC__\n\n");
 #define X(NAME, TYPE, FMT_CODE, CAST) { \
     const char* const name = #NAME; \
-    fmt_write(&fh, "// ==== %s ====\n", name); \
-    fmt_write(&fc, "// ==== %s ====\n", name); \
-    for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) \
+    const int first_assert = num_assertions; \
+    for(int xy=0; xy<ARRAY_LEN(bin_condition_code); ++xy) \
     { \
-      fmt_write(&fh, "%s ensures x %s y;\n", contract_begin, bin_condition_code[i]); \
-      fmt_write(&fh, "void __assert_%s_%s__(%s x, %s y, const char* condition, const char* file, int line);\n", name, bin_condition_name[i], #TYPE, #TYPE); \
-\
-      fmt_write(&fc, "void __assert_%s_%s__(%s x, %s y, const char* condition, const char* file, int line)\n{\n", name, bin_condition_name[i], #TYPE, #TYPE); \
-      fmt_write(&fc, "  if(LIKELY(x %s y))\n", bin_condition_code[i]); \
-      fmt_write(&fc, "    return;\n"); \
-      fmt_write(&fc, "  else\n"); \
-      fmt_write(&fc, "  __bin_assert_failed__(condition, str_fmt(&SCRATCH, %s, x), str_fmt(&SCRATCH, %s, y), file, line);\n", #FMT_CODE, #FMT_CODE); \
-      fmt_write(&fc, "}\n"); \
+      const char* condition = str_fmt(&STACK, "x %s y", bin_condition_code[xy]); \
+      assertions[num_assertions++] = (struct Platform_Codegen_Assert){ \
+        .name = str_fmt(&STACK, "assert_%s_%s", #NAME, bin_condition_name[xy]), \
+        .type = #TYPE, \
+        .condition = condition, \
+        .contract = str_fmt(&STACK, " ensures %s;", condition), \
+        .panic = str_fmt(&STACK, "__bin_assert_failed__(condition, str_fmt(&SCRATCH, %s, x), str_fmt(&SCRATCH, %s, y), file, line);\n", #FMT_CODE, #FMT_CODE), \
+        .pretty_print_comparison = {NULL, str_fmt(&STACK, " %s ", bin_condition_code[xy]), NULL}, \
+        .num_args = 2, \
+      }; \
     } \
     if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
     { \
-      fmt_write(&fh, "\n"); \
       for(int i=0; i<ARRAY_LEN(rng_conditions); ++i) \
       { \
         const u16 xy = rng_conditions[i]>>8; \
         const u16 yz = rng_conditions[i] & 0xff; \
-        fmt_write(&fh, "%s ensures x %s y %s z;\n", contract_begin, bin_condition_code[xy], bin_condition_code[yz]); \
-        fmt_write(&fh, "void __assert_%s_%s_%s__(%s x, %s y, %s z, const char* condition, const char* file, int line);\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
-\
-        fmt_write(&fc, "void __assert_%s_%s_%s__(%s x, %s y, %s z, const char* condition, const char* file, int line)\n{\n", name, bin_condition_name[xy], bin_condition_name[yz], #TYPE, #TYPE, #TYPE); \
-        fmt_write(&fc, "  if(LIKELY(x %s y && y %s z))\n", bin_condition_code[xy], bin_condition_code[yz]); \
-        fmt_write(&fc, "    return;\n"); \
-        fmt_write(&fc, "  else\n"); \
-        fmt_write(&fc, "  __ter_assert_failed__(condition, str_fmt(&SCRATCH, %s, x), str_fmt(&SCRATCH, %s, y), str_fmt(&SCRATCH, %s, z), file, line);\n", #FMT_CODE, #FMT_CODE, #FMT_CODE); \
-        fmt_write(&fc, "}\n"); \
+        assertions[num_assertions++] = (struct Platform_Codegen_Assert){ \
+          .name = str_fmt(&STACK, "assert_%s_%s_%s", #NAME, bin_condition_name[xy], bin_condition_name[yz]), \
+          .type = #TYPE, \
+          .condition = str_fmt(&STACK, "x %s y && y %s z", bin_condition_code[xy], bin_condition_code[yz]), \
+          .contract = str_fmt(&STACK, " ensures x %s y %s z;", bin_condition_code[xy], bin_condition_code[yz]), \
+          .panic = str_fmt(&STACK, "__ter_assert_failed__(condition, str_fmt(&SCRATCH, %s, x), str_fmt(&SCRATCH, %s, y), str_fmt(&SCRATCH, %s, z), file, line);\n", #FMT_CODE, #FMT_CODE, #FMT_CODE), \
+          .pretty_print_comparison = {NULL, str_fmt(&STACK, " %s ", bin_condition_code[xy]), str_fmt(&STACK, " %s ", bin_condition_code[yz]), NULL}, \
+          .num_args = 3, \
+        }; \
       } \
     } \
-    fmt_write(&fh, "\n"); \
-    fmt_write(&fc, "\n"); \
+    assert_group[num_assert_groups++] = (struct Platform_Codegen_Assert_Group){ \
+      .name = #NAME, \
+      .begin = first_assert, \
+      .end = num_assertions, \
+    }; \
   }
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
 
 #define X(NAME, PRINT_MID, ENSURES, TYPE, CONDITION, FMT_CODE) { \
-    const char* const name = #NAME; \
-    fmt_write(&fh, "// ==== %s ====\n", #NAME); \
-    fmt_write(&fc, "// ==== %s ====\n", #NAME); \
-    fmt_write(&fh, "%s%s\n", contract_begin, ENSURES);\
-    fmt_write(&fh, "void __assert_%s__(%s x, %s y, const char* condition, const char* file, int line);\n", #NAME, #TYPE, #TYPE); \
-    fmt_write(&fh, "\n"); \
-\
-    fmt_write(&fc, "void __assert_%s__(%s x, %s y, const char* condition, const char* file, int line)\n{\n", #NAME, #TYPE, #TYPE); \
-    fmt_write(&fc, "  if(LIKELY(%s))\n", #CONDITION); \
-    fmt_write(&fc, "    return;\n"); \
-    fmt_write(&fc, "  else\n"); \
-    fmt_write(&fc, "  __bin_assert_failed__(condition, %s(x), %s(y), file, line);\n", #FMT_CODE, #FMT_CODE); \
-    fmt_write(&fc, "}\n"); \
-    fmt_write(&fc, "\n"); \
+    const int first_assert = num_assertions; \
+    assertions[num_assertions++] = (struct Platform_Codegen_Assert){ \
+      .name = str_fmt(&STACK, "assert_%s", #NAME), \
+      .type = #TYPE, \
+      .condition = #CONDITION, \
+      .contract = ENSURES, \
+      .panic = str_fmt(&STACK, "__bin_assert_failed__(condition, %s(x), %s(y), file, line);\n", #FMT_CODE, #FMT_CODE), \
+      .pretty_print_comparison = {NULL, PRINT_MID, NULL}, \
+      .num_args = 2, \
+    }; \
+    assert_group[num_assert_groups++] = (struct Platform_Codegen_Assert_Group){ \
+      .name = #NAME, \
+      .begin = first_assert, \
+      .end = num_assertions, \
+    }; \
   }
   X_MACRO_ASSERT_CUSTOM(X)
 #undef X
+
+#undef OR_STRCMP
+#undef CREATE_RANGE
+
+  const bool dbg = false;
+
+  // ==== assert procedures ====
+  fmt_write(&fc, "#ifndef __FRAMAC__\n\n");
+  const char* arg_name[] = {"x", "y", "z"};
+  for(int group_idx=0; group_idx<num_assert_groups; ++group_idx)
+  {
+    struct Platform_Codegen_Assert_Group g = assert_group[group_idx];
+
+    if(dbg)
+      printf("// ==== %s ====\n", g.name);
+    fmt_write(&fh, "// ==== %s ====\n", g.name);
+    fmt_write(&fc, "// ==== %s ====\n", g.name);
+    
+    for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
+    {
+      struct Platform_Codegen_Assert a = assertions[assert_idx];
+      assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
+
+      if(assert_idx>=0 && assertions[assert_idx-1].num_args == 2 && a.num_args == 3)
+        fmt_write(&fh, "\n");
+
+      if(dbg)
+      {
+        printf("Platform_Codegen_Assert{\n");
+        printf("  .name = `%s`\n", a.name);
+        printf("  .type = `%s`\n", a.type);
+        printf("  .condition = `%s`\n", a.condition);
+        printf("  .contract = `%s`\n", a.contract);
+        printf("  .panic = `%s`\n", a.panic);
+        printf("  .pretty_print_comparison = {");
+        for(int arg_idx=0; arg_idx<=a.num_args; ++arg_idx)
+          if(a.pretty_print_comparison[arg_idx])
+            printf("\"%s\",", a.pretty_print_comparison[arg_idx]);
+          else
+            printf("NULL,");
+        printf("},\n");
+        printf("  .num_args = `%u`\n", a.num_args);
+        printf("}\n");
+      }
+      fmt_write(&fh, "//@ terminates true; assigns \\nothing; exits false;%s\n", a.contract);
+      const char* signature_begin = fh.end;
+      fmt_write(&fh, "void __%s__(", a.name);
+      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
+        fmt_write(&fh, "%s%s %s", arg_idx?", ":"", a.type, arg_name[arg_idx]);
+      fmt_write(&fh, ", const char* condition, const char* file, int line)");
+      fmt_write(&fc, signature_begin); // Here, the segnature is anultlermianted string
+      fmt_write(&fh, ";\n");
+
+      fmt_write(&fc, "\n{\n");
+      fmt_write(&fc, "  if(LIKELY(%s))\n", a.condition);
+      fmt_write(&fc, "    return;\n");
+      fmt_write(&fc, "  else\n");
+      fmt_write(&fc, "  %s", a.panic);
+      fmt_write(&fc, "}\n");
+    }
+    fmt_write(&fh, "\n");
+    fmt_write(&fc, "\n");
+  }
 
   fmt_write(&fc, "#endif // __FRAMAC__\n");
+  // ==== assert macros ====
+  for(int group_idx=0; group_idx<num_assert_groups; ++group_idx)
+  {
+    struct Platform_Codegen_Assert_Group g = assert_group[group_idx];
 
-#define X(NAME, TYPE, FMT_CODE, CAST) { \
-    const char* const name = #NAME; \
-    fmt_write(&fh, "// ==== %s ====\n", name); \
-    for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) \
-    { \
-      fmt_write(&fh, "#define assert_%s_%s(x, y) __assert_%s_%s__(x, y, #x \" %s \" #y, __FILE__, __LINE__)\n", name, bin_condition_name[i], name, bin_condition_name[i], bin_condition_code[i]); \
-    } \
-    if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
-    { \
-      fmt_write(&fh, "\n"); \
-      for(int i=0; i<ARRAY_LEN(rng_conditions); ++i) \
-      { \
-        const u16 xy = rng_conditions[i]>>8; \
-        const u16 yz = rng_conditions[i] & 0xff; \
-        fmt_write(&fh, "#define assert_%s_%s_%s(x, y, z) __assert_%s_%s_%s__(x, y, z, #x \" %s \" #y \" %s \" #z, __FILE__, __LINE__)\n", name, bin_condition_name[xy], bin_condition_name[yz], name, bin_condition_name[xy], bin_condition_name[yz], bin_condition_code[xy], bin_condition_code[yz]); \
-      } \
-    } \
-    fmt_write(&fh, "\n"); \
-  }
-  X_MACRO_ASSERT_NUM_CMP_BIN(X)
-#undef X
-#define X(NAME, PRINT_MID, ENSURES, TYPE, FMT_CODE, CAST) { \
-    const char* const name = #NAME; \
-    fmt_write(&fh, "// ==== %s ====\n", #NAME); \
-    fmt_write(&fh, "#define assert_%s(x, y) __assert_%s__(x, y, #x " #PRINT_MID " #y, __FILE__, __LINE__)\n", #NAME, #NAME); \
-    fmt_write(&fh, "\n"); \
-  }
-  X_MACRO_ASSERT_CUSTOM(X)
-#undef X
+    fmt_write(&fh, "// ==== %s ====\n", g.name);
 
+    for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
+    {
+      struct Platform_Codegen_Assert a = assertions[assert_idx];
+      assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
+
+      if(assert_idx>=0 && assertions[assert_idx-1].num_args == 2 && a.num_args == 3)
+        fmt_write(&fh, "\n");
+
+      const char* signature_begin = fh.end;
+      fmt_write(&fh, "#define %s(", a.name);
+      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
+        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
+      fmt_write(&fh, ") __%s__(", a.name);
+      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
+        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
+      fmt_write(&fh, ",");
+      for(int arg_idx=0; arg_idx<=a.num_args; ++arg_idx)
+      {
+        const char* snippet = a.pretty_print_comparison[arg_idx];
+        if(snippet)
+          fmt_write(&fh, " \"%s\"", snippet);
+        if(arg_idx < a.num_args)
+          fmt_write(&fh, " #%s", arg_name[arg_idx]);
+      }
+      fmt_write(&fh, ", __FILE__, __LINE__)\n");
+    }
+    fmt_write(&fh, "\n");
+  }
+
+  // ==== debug assert macros ====
   fmt_write(&fh, "#if defined(__FRAMAC__) || !ENV_DEBUG\n");
-#define X(NAME, TYPE, FMT_CODE, CAST) { \
-    const char* const name = #NAME; \
-    fmt_write(&fh, "// ==== %s ====\n", name); \
-    for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) \
-      fmt_write(&fh, "#define debug_assert_%s_%s(x, y)\n", name, bin_condition_name[i]); \
-    if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
-    { \
-      fmt_write(&fh, "\n"); \
-      for(int i=0; i<ARRAY_LEN(rng_conditions); ++i) \
-      { \
-        const u16 xy = rng_conditions[i]>>8; \
-        const u16 yz = rng_conditions[i] & 0xff; \
-        fmt_write(&fh, "#define debug_assert_%s_%s_%s(x, y, z)\n", name, bin_condition_name[xy], bin_condition_name[yz]); \
-      } \
-    } \
-    fmt_write(&fh, "\n"); \
-  }
-  X_MACRO_ASSERT_NUM_CMP_BIN(X)
-#undef X
-#define X(NAME, PRINT_MID, ENSURES, TYPE, FMT_CODE, CAST) { \
-    const char* const name = #NAME; \
-    fmt_write(&fh, "// ==== %s ====\n", #NAME); \
-    fmt_write(&fh, "#define debug_assert_%s(x, y)\n", #NAME); \
-    fmt_write(&fh, "\n"); \
-  }
-  X_MACRO_ASSERT_CUSTOM(X)
-#undef X
+  for(int group_idx=0; group_idx<num_assert_groups; ++group_idx)
+  {
+    struct Platform_Codegen_Assert_Group g = assert_group[group_idx];
 
+    fmt_write(&fh, "// ==== %s ====\n", g.name);
+
+    for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
+    {
+      struct Platform_Codegen_Assert a = assertions[assert_idx];
+      assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
+
+      if(assert_idx>=0 && assertions[assert_idx-1].num_args == 2 && a.num_args == 3)
+        fmt_write(&fh, "\n");
+
+      const char* signature_begin = fh.end;
+      fmt_write(&fh, "#define debug_%s(", a.name);
+      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
+        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
+      fmt_write(&fh, ")\n");
+    }
+    fmt_write(&fh, "\n");
+  }
   fmt_write(&fh, "#else // __FRAMAC__ || !ENV_DEBUG\n");
+  for(int group_idx=0; group_idx<num_assert_groups; ++group_idx)
+  {
+    struct Platform_Codegen_Assert_Group g = assert_group[group_idx];
 
-#define X(NAME, TYPE, FMT_CODE, CAST) { \
-    const char* const name = #NAME; \
-    fmt_write(&fh, "// ==== %s ====\n", name); \
-    for(int i=0; i<ARRAY_LEN(bin_condition_code); ++i) \
-    { \
-      fmt_write(&fh, "#define debug_assert_%s_%s(x, y) assert_%s_%s(x, y)\n", name, bin_condition_name[i], name, bin_condition_name[i]); \
-    } \
-    if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
-    { \
-      fmt_write(&fh, "\n"); \
-      for(int i=0; i<ARRAY_LEN(rng_conditions); ++i) \
-      { \
-        const u16 xy = rng_conditions[i]>>8; \
-        const u16 yz = rng_conditions[i] & 0xff; \
-        fmt_write(&fh, "#define debug_assert_%s_%s_%s(x, y, z) assert_%s_%s_%s(x, y, z)\n", name, bin_condition_name[xy], bin_condition_name[yz], name, bin_condition_name[xy], bin_condition_name[yz]); \
-      } \
-    } \
-    fmt_write(&fh, "\n"); \
+    fmt_write(&fh, "// ==== %s ====\n", g.name);
+    
+    for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
+    {
+      struct Platform_Codegen_Assert a = assertions[assert_idx];
+      assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
+
+      if(assert_idx>=0 && assertions[assert_idx-1].num_args == 2 && a.num_args == 3)
+        fmt_write(&fh, "\n");
+
+      const char* signature_begin = fh.end;
+      fmt_write(&fh, "#define debug_%s(", a.name);
+      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
+        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
+      fmt_write(&fh, ") %s(", a.name);
+      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
+        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
+      fmt_write(&fh, ")\n");
+    }
+    fmt_write(&fh, "\n");
   }
-  X_MACRO_ASSERT_NUM_CMP_BIN(X)
-#undef X
-#define X(NAME, PRINT_MID, ENSURES, TYPE, FMT_CODE, CAST) { \
-    const char* const name = #NAME; \
-    fmt_write(&fh, "// ==== %s ====\n", #NAME); \
-    fmt_write(&fh, "#define debug_assert_%s(x, y) assert_%s(x, y)\n", #NAME, #NAME); \
-    fmt_write(&fh, "\n"); \
-  }
-  X_MACRO_ASSERT_CUSTOM(X)
-#undef X
+  fmt_write(&fh, "#endif // __FRAMAC__ || !ENV_DEBUG\n");
+  
 // TODO: insteaed of calling the assert_%s macros, call the __assert_%s__ function directly. Otherwise debug_assert_bool_eq(true, false) will print `((_Bool)0)` and `((_Bool)1)` for the arguments instead of the actual code
 // TODO: instead of formatting the arguments using the SCRATCH region, reserve a few KiB to format assertions, in case the assertions was thrown, because the SCRATCH was out of memory
-
-  fmt_write(&fh, "#endif // __FRAMAC__ || !ENV_DEBUG\n");
 
   file_text_create_from_cstr_if_different(assert_h, fh.begin);
   file_text_create_from_cstr_if_different(assert_c, fc.begin);
