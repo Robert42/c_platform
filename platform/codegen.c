@@ -233,6 +233,7 @@ static void platform_codegen_assertions()
   }
   X_MACRO_ASSERT_CUSTOM(X)
 #undef X
+// TODO: insteaed of calling the assert_%s macros, call the __assert_%s__ function directly. Otherwise debug_assert_bool_eq(true, false) will print `((_Bool)0)` and `((_Bool)1)` for the arguments instead of the actual code
 
   fmt_write(&fh, "#endif // __FRAMAC__ || !ENV_DEBUG\n");
 
