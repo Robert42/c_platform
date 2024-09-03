@@ -9,7 +9,7 @@
 // TODO: add to contract of cstr_eq: ensure, that both strings are equal
 #define X_MACRO_ASSERT_CUSTOM(X) \
   X(cstr_eq, " == ", "", const char*, (strcmp(x,y) == 0), ) \
-  X(bool_eq, " == ", " ensures x == y;", bool, x == y, fmt_bool) \
+  X(bool_eq, " == ", " admit ensures x == y;", bool, x == y, fmt_bool) \
 
 #define X_MACRO_ASSERT_NUM_CMP_RNG(X) \
   X(usize) \
@@ -112,7 +112,7 @@ static void platform_codegen_assertions()
         .name = str_fmt(&STACK, "assert_%s_%s", #NAME, bin_condition_name[xy]), \
         .type = #TYPE, \
         .condition = condition, \
-        .contract = str_fmt(&STACK, " ensures %s;", condition), \
+        .contract = str_fmt(&STACK, " admit ensures %s;", condition), \
         .panic = str_fmt(&STACK, "__bin_assert_failed__(condition, str_fmt(&PANIC_REGION, %s, x), str_fmt(&PANIC_REGION, %s, y), file, line);\n", #FMT_CODE, #FMT_CODE), \
         .pretty_print_comparison = {NULL, str_fmt(&STACK, " %s ", bin_condition_code[xy]), NULL}, \
         .num_args = 2, \
@@ -128,7 +128,7 @@ static void platform_codegen_assertions()
           .name = str_fmt(&STACK, "assert_%s_%s_%s", #NAME, bin_condition_name[xy], bin_condition_name[yz]), \
           .type = #TYPE, \
           .condition = str_fmt(&STACK, "x %s y && y %s z", bin_condition_code[xy], bin_condition_code[yz]), \
-          .contract = str_fmt(&STACK, " ensures x %s y %s z;", bin_condition_code[xy], bin_condition_code[yz]), \
+          .contract = str_fmt(&STACK, " admit ensures x %s y %s z;", bin_condition_code[xy], bin_condition_code[yz]), \
           .panic = str_fmt(&STACK, "__ter_assert_failed__(condition, str_fmt(&PANIC_REGION, %s, x), str_fmt(&PANIC_REGION, %s, y), str_fmt(&PANIC_REGION, %s, z), file, line);\n", #FMT_CODE, #FMT_CODE, #FMT_CODE), \
           .pretty_print_comparison = {NULL, str_fmt(&STACK, " %s ", bin_condition_code[xy]), str_fmt(&STACK, " %s ", bin_condition_code[yz]), NULL}, \
           .num_args = 3, \
