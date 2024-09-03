@@ -185,7 +185,7 @@ static void platform_codegen_assertions()
       struct Platform_Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
 
-      if(assert_idx>=0 && assertions[assert_idx-1].num_args == 2 && a.num_args == 3)
+      if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
       if(dbg)
@@ -239,7 +239,7 @@ static void platform_codegen_assertions()
       struct Platform_Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
 
-      if(assert_idx>=0 && assertions[assert_idx-1].num_args == 2 && a.num_args == 3)
+      if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
       const char* signature_begin = fh.end;
@@ -276,7 +276,7 @@ static void platform_codegen_assertions()
       struct Platform_Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
 
-      if(assert_idx>=0 && assertions[assert_idx-1].num_args == 2 && a.num_args == 3)
+      if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
       const char* signature_begin = fh.end;
@@ -299,7 +299,7 @@ static void platform_codegen_assertions()
       struct Platform_Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
 
-      if(assert_idx>=0 && assertions[assert_idx-1].num_args == 2 && a.num_args == 3)
+      if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
       const char* signature_begin = fh.end;
