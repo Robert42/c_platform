@@ -176,50 +176,50 @@ void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file,
 
 #else // __FRAMAC__ || !ENV_DEBUG
 // ==== usize ====
-#define debug_assert_usize_eq(x, y) assert_usize_eq(x, y)
-#define debug_assert_usize_ne(x, y) assert_usize_ne(x, y)
-#define debug_assert_usize_lt(x, y) assert_usize_lt(x, y)
-#define debug_assert_usize_lte(x, y) assert_usize_lte(x, y)
-#define debug_assert_usize_gt(x, y) assert_usize_gt(x, y)
-#define debug_assert_usize_gte(x, y) assert_usize_gte(x, y)
+#define debug_assert_usize_eq(x, y) __assert_usize_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
+#define debug_assert_usize_ne(x, y) __assert_usize_ne__(x, y, #x " != " #y, __FILE__, __LINE__)
+#define debug_assert_usize_lt(x, y) __assert_usize_lt__(x, y, #x " < " #y, __FILE__, __LINE__)
+#define debug_assert_usize_lte(x, y) __assert_usize_lte__(x, y, #x " <= " #y, __FILE__, __LINE__)
+#define debug_assert_usize_gt(x, y) __assert_usize_gt__(x, y, #x " > " #y, __FILE__, __LINE__)
+#define debug_assert_usize_gte(x, y) __assert_usize_gte__(x, y, #x " >= " #y, __FILE__, __LINE__)
 
-#define debug_assert_usize_lte_lte(x, y, z) assert_usize_lte_lte(x, y, z)
-#define debug_assert_usize_lte_lt(x, y, z) assert_usize_lte_lt(x, y, z)
+#define debug_assert_usize_lte_lte(x, y, z) __assert_usize_lte_lte__(x, y, z, #x " <= " #y " <= " #z, __FILE__, __LINE__)
+#define debug_assert_usize_lte_lt(x, y, z) __assert_usize_lte_lt__(x, y, z, #x " <= " #y " < " #z, __FILE__, __LINE__)
 
 // ==== ssize ====
-#define debug_assert_ssize_eq(x, y) assert_ssize_eq(x, y)
-#define debug_assert_ssize_ne(x, y) assert_ssize_ne(x, y)
-#define debug_assert_ssize_lt(x, y) assert_ssize_lt(x, y)
-#define debug_assert_ssize_lte(x, y) assert_ssize_lte(x, y)
-#define debug_assert_ssize_gt(x, y) assert_ssize_gt(x, y)
-#define debug_assert_ssize_gte(x, y) assert_ssize_gte(x, y)
+#define debug_assert_ssize_eq(x, y) __assert_ssize_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
+#define debug_assert_ssize_ne(x, y) __assert_ssize_ne__(x, y, #x " != " #y, __FILE__, __LINE__)
+#define debug_assert_ssize_lt(x, y) __assert_ssize_lt__(x, y, #x " < " #y, __FILE__, __LINE__)
+#define debug_assert_ssize_lte(x, y) __assert_ssize_lte__(x, y, #x " <= " #y, __FILE__, __LINE__)
+#define debug_assert_ssize_gt(x, y) __assert_ssize_gt__(x, y, #x " > " #y, __FILE__, __LINE__)
+#define debug_assert_ssize_gte(x, y) __assert_ssize_gte__(x, y, #x " >= " #y, __FILE__, __LINE__)
 
-#define debug_assert_ssize_lte_lte(x, y, z) assert_ssize_lte_lte(x, y, z)
-#define debug_assert_ssize_lte_lt(x, y, z) assert_ssize_lte_lt(x, y, z)
+#define debug_assert_ssize_lte_lte(x, y, z) __assert_ssize_lte_lte__(x, y, z, #x " <= " #y " <= " #z, __FILE__, __LINE__)
+#define debug_assert_ssize_lte_lt(x, y, z) __assert_ssize_lte_lt__(x, y, z, #x " <= " #y " < " #z, __FILE__, __LINE__)
 
 // ==== int ====
-#define debug_assert_int_eq(x, y) assert_int_eq(x, y)
-#define debug_assert_int_ne(x, y) assert_int_ne(x, y)
-#define debug_assert_int_lt(x, y) assert_int_lt(x, y)
-#define debug_assert_int_lte(x, y) assert_int_lte(x, y)
-#define debug_assert_int_gt(x, y) assert_int_gt(x, y)
-#define debug_assert_int_gte(x, y) assert_int_gte(x, y)
+#define debug_assert_int_eq(x, y) __assert_int_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
+#define debug_assert_int_ne(x, y) __assert_int_ne__(x, y, #x " != " #y, __FILE__, __LINE__)
+#define debug_assert_int_lt(x, y) __assert_int_lt__(x, y, #x " < " #y, __FILE__, __LINE__)
+#define debug_assert_int_lte(x, y) __assert_int_lte__(x, y, #x " <= " #y, __FILE__, __LINE__)
+#define debug_assert_int_gt(x, y) __assert_int_gt__(x, y, #x " > " #y, __FILE__, __LINE__)
+#define debug_assert_int_gte(x, y) __assert_int_gte__(x, y, #x " >= " #y, __FILE__, __LINE__)
 
 // ==== ptr ====
-#define debug_assert_ptr_eq(x, y) assert_ptr_eq(x, y)
-#define debug_assert_ptr_ne(x, y) assert_ptr_ne(x, y)
-#define debug_assert_ptr_lt(x, y) assert_ptr_lt(x, y)
-#define debug_assert_ptr_lte(x, y) assert_ptr_lte(x, y)
-#define debug_assert_ptr_gt(x, y) assert_ptr_gt(x, y)
-#define debug_assert_ptr_gte(x, y) assert_ptr_gte(x, y)
+#define debug_assert_ptr_eq(x, y) __assert_ptr_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
+#define debug_assert_ptr_ne(x, y) __assert_ptr_ne__(x, y, #x " != " #y, __FILE__, __LINE__)
+#define debug_assert_ptr_lt(x, y) __assert_ptr_lt__(x, y, #x " < " #y, __FILE__, __LINE__)
+#define debug_assert_ptr_lte(x, y) __assert_ptr_lte__(x, y, #x " <= " #y, __FILE__, __LINE__)
+#define debug_assert_ptr_gt(x, y) __assert_ptr_gt__(x, y, #x " > " #y, __FILE__, __LINE__)
+#define debug_assert_ptr_gte(x, y) __assert_ptr_gte__(x, y, #x " >= " #y, __FILE__, __LINE__)
 
-#define debug_assert_ptr_lte_lte(x, y, z) assert_ptr_lte_lte(x, y, z)
-#define debug_assert_ptr_lte_lt(x, y, z) assert_ptr_lte_lt(x, y, z)
+#define debug_assert_ptr_lte_lte(x, y, z) __assert_ptr_lte_lte__(x, y, z, #x " <= " #y " <= " #z, __FILE__, __LINE__)
+#define debug_assert_ptr_lte_lt(x, y, z) __assert_ptr_lte_lt__(x, y, z, #x " <= " #y " < " #z, __FILE__, __LINE__)
 
 // ==== cstr_eq ====
-#define debug_assert_cstr_eq(x, y) assert_cstr_eq(x, y)
+#define debug_assert_cstr_eq(x, y) __assert_cstr_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
 
 // ==== bool_eq ====
-#define debug_assert_bool_eq(x, y) assert_bool_eq(x, y)
+#define debug_assert_bool_eq(x, y) __assert_bool_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
 
 #endif // __FRAMAC__ || !ENV_DEBUG

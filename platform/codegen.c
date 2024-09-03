@@ -264,11 +264,7 @@ static void platform_codegen_assertions()
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
-      const char* signature_begin = fh.end;
-      fmt_write(&fh, "#define debug_%s(", a.name);
-      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
-        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
-      fmt_write(&fh, ")\n");
+      platform_codegen_assertion_define(&fh, arg_name, a, "debug_", false);
     }
     fmt_write(&fh, "\n");
   }
@@ -287,20 +283,12 @@ static void platform_codegen_assertions()
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
-      const char* signature_begin = fh.end;
-      fmt_write(&fh, "#define debug_%s(", a.name);
-      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
-        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
-      fmt_write(&fh, ") %s(", a.name);
-      for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
-        fmt_write(&fh, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
-      fmt_write(&fh, ")\n");
+      platform_codegen_assertion_define(&fh, arg_name, a, "debug_", true);
     }
     fmt_write(&fh, "\n");
   }
   fmt_write(&fh, "#endif // __FRAMAC__ || !ENV_DEBUG\n");
   
-// TODO: insteaed of calling the assert_%s macros, call the __assert_%s__ function directly. Otherwise debug_assert_bool_eq(true, false) will print `((_Bool)0)` and `((_Bool)1)` for the arguments instead of the actual code
 // TODO: instead of formatting the arguments using the SCRATCH region, reserve a few KiB to format assertions, in case the assertions was thrown, because the SCRATCH was out of memory
 
   file_text_create_from_cstr_if_different(assert_h, fh.begin);
@@ -314,22 +302,28 @@ static void platform_codegen_assertions()
 
 static void platform_codegen_assertion_define(Fmt* f, const char** arg_name, struct Platform_Codegen_Assert a, const char* prefix, bool call_proc)
 {
-  fmt_write(f, "#define %s(", a.name);
+  fmt_write(f, "#define %s%s(", prefix, a.name);
   for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
     fmt_write(f, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
-  fmt_write(f, ") __%s__(", a.name);
-  for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
-    fmt_write(f, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
-  fmt_write(f, ",");
-  for(int arg_idx=0; arg_idx<=a.num_args; ++arg_idx)
+  fmt_write(f, ")");
+
+  if(call_proc)
   {
-    const char* snippet = a.pretty_print_comparison[arg_idx];
-    if(snippet)
-      fmt_write(f, " \"%s\"", snippet);
-    if(arg_idx < a.num_args)
-      fmt_write(f, " #%s", arg_name[arg_idx]);
+    fmt_write(f, " __%s__(", a.name);
+    for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
+      fmt_write(f, "%s%s", arg_idx?", ":"", arg_name[arg_idx]);
+    fmt_write(f, ",");
+    for(int arg_idx=0; arg_idx<=a.num_args; ++arg_idx)
+    {
+      const char* snippet = a.pretty_print_comparison[arg_idx];
+      if(snippet)
+        fmt_write(f, " \"%s\"", snippet);
+      if(arg_idx < a.num_args)
+        fmt_write(f, " #%s", arg_name[arg_idx]);
+    }
+    fmt_write(f, ", __FILE__, __LINE__)");
   }
-  fmt_write(f, ", __FILE__, __LINE__)\n");
+  fmt_write(f, "\n");
 }
 
 #undef X_MACRO_ASSERT_NUM_CMP_BIN
