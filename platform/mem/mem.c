@@ -8,14 +8,14 @@
 /*@ requires valid_ptr: \valid(scratch_var);
     requires valid_ptr_region: mem_region_valid(*scratch_var);
     requires valid_region_1: mem_region_valid(region_1);
-    requires valid_region_1: mem_region_valid(region_2);
-    requires separate_regions: mem_region_separated(region_1, region_1);
+    requires valid_region_2: mem_region_valid(region_2);
+    requires separate_regions: mem_region_separated(region_1, region_2);
     requires var_not_sep: !mem_region_separated(region_1, *scratch_var) || !mem_region_separated(region_2, *scratch_var);
     requires var_identical_end: region_1.end == scratch_var->end || region_2.end == scratch_var->end;
     assigns \nothing;
     ensures mem_region_valid(*scratch_var);
     ensures mem_region_separated(region_1, \old(*scratch_var)) ==> !mem_region_separated(region_2, *scratch_var);
-    ensures mem_region_separated(region_2, \old(*scratch_var)) ==> !mem_region_separated(region_2, *scratch_var);
+    ensures mem_region_separated(region_2, \old(*scratch_var)) ==> !mem_region_separated(region_1, *scratch_var);
 */
 void _mem_swap_scratch(Mem_Region* scratch_var, Mem_Region region_1, Mem_Region region_2)
 {
