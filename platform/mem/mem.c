@@ -19,7 +19,7 @@
 */
 void _mem_swap_scratch(Mem_Region* scratch_var, Mem_Region region_1, Mem_Region region_2)
 {
-  if(scratch_var->end == region_1.end)
+  if((usize)scratch_var->end == (usize)region_1.end)
   {
     debug_assert_ptr_lte_lte(region_1.begin, scratch_var->begin, region_1.end);
     *scratch_var = region_2;
