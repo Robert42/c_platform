@@ -143,7 +143,8 @@ int main(int argc, const char** argv)
         char* const cmd_compile_clang[] = {"clang",
           "-std=c99",
           "-Wall",
-          "-pedantic", c_file.cstr,
+          "-pedantic",
+          c_file.cstr,
           "-o", output_file.cstr,
           NULL};
 
