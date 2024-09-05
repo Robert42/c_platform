@@ -58,7 +58,7 @@ static const struct Term_Escape_Codes TERM_CONTROL_CODES = {
 #undef CYAN_FG
 };
 
-struct Term_Escape_Codes TERM;
+struct Term_Escape_Codes TERM = {0};
 
 void term_init()
 {
