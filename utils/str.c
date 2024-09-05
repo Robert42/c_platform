@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "str.h"
 
-char* str_fmt(Mem_Region* region, const char* fmt, ...)
+char* cstr_fmt(Mem_Region* region, const char* fmt, ...)
 {
   va_list args;
   va_start(args, fmt);

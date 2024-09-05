@@ -29,7 +29,7 @@ struct Platform_Codegen_Assert
   const char* type; // "usize"
   const char* condition; // "x <= y && y < z"
   const char* contract; // "x <= y && y < z"
-  const char* panic; // "__ter_assert_failed__(condition, str_fmt(&PANIC_REGION, \"%zu\", x), str_fmt(&PANIC_REGION, \"%zu\", y), str_fmt(&PANIC_REGION, \"%zu\", z), file, line);"
+  const char* panic; // "__ter_assert_failed__(condition, cstr_fmt(&PANIC_REGION, \"%zu\", x), cstr_fmt(&PANIC_REGION, \"%zu\", y), cstr_fmt(&PANIC_REGION, \"%zu\", z), file, line);"
   const char* pretty_print_comparison[5]; // {"", " <= ", " < ", ""}
   unsigned int num_args : 2; // 3 in case of `assert_usize_lte_lt`
 };
@@ -107,14 +107,14 @@ static void platform_codegen_assertions()
     const int first_assert = num_assertions; \
     for(int xy=0; xy<ARRAY_LEN(bin_condition_code); ++xy) \
     { \
-      const char* condition = str_fmt(&STACK, "x %s y", bin_condition_code[xy]); \
+      const char* condition = cstr_fmt(&STACK, "x %s y", bin_condition_code[xy]); \
       assertions[num_assertions++] = (struct Platform_Codegen_Assert){ \
-        .name = str_fmt(&STACK, "assert_%s_%s", #NAME, bin_condition_name[xy]), \
+        .name = cstr_fmt(&STACK, "assert_%s_%s", #NAME, bin_condition_name[xy]), \
         .type = #TYPE, \
         .condition = condition, \
-        .contract = str_fmt(&STACK, " admit ensures %s;", condition), \
-        .panic = str_fmt(&STACK, "__bin_assert_failed__(condition, str_fmt(&PANIC_REGION, %s, x), str_fmt(&PANIC_REGION, %s, y), file, line);\n", #FMT_CODE, #FMT_CODE), \
-        .pretty_print_comparison = {NULL, str_fmt(&STACK, " %s ", bin_condition_code[xy]), NULL}, \
+        .contract = cstr_fmt(&STACK, " admit ensures %s;", condition), \
+        .panic = cstr_fmt(&STACK, "__bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, %s, x), cstr_fmt(&PANIC_REGION, %s, y), file, line);\n", #FMT_CODE, #FMT_CODE), \
+        .pretty_print_comparison = {NULL, cstr_fmt(&STACK, " %s ", bin_condition_code[xy]), NULL}, \
         .num_args = 2, \
       }; \
     } \
@@ -125,12 +125,12 @@ static void platform_codegen_assertions()
         const u16 xy = rng_conditions[i]>>8; \
         const u16 yz = rng_conditions[i] & 0xff; \
         assertions[num_assertions++] = (struct Platform_Codegen_Assert){ \
-          .name = str_fmt(&STACK, "assert_%s_%s_%s", #NAME, bin_condition_name[xy], bin_condition_name[yz]), \
+          .name = cstr_fmt(&STACK, "assert_%s_%s_%s", #NAME, bin_condition_name[xy], bin_condition_name[yz]), \
           .type = #TYPE, \
-          .condition = str_fmt(&STACK, "x %s y && y %s z", bin_condition_code[xy], bin_condition_code[yz]), \
-          .contract = str_fmt(&STACK, " admit ensures x %s y %s z;", bin_condition_code[xy], bin_condition_code[yz]), \
-          .panic = str_fmt(&STACK, "__ter_assert_failed__(condition, str_fmt(&PANIC_REGION, %s, x), str_fmt(&PANIC_REGION, %s, y), str_fmt(&PANIC_REGION, %s, z), file, line);\n", #FMT_CODE, #FMT_CODE, #FMT_CODE), \
-          .pretty_print_comparison = {NULL, str_fmt(&STACK, " %s ", bin_condition_code[xy]), str_fmt(&STACK, " %s ", bin_condition_code[yz]), NULL}, \
+          .condition = cstr_fmt(&STACK, "x %s y && y %s z", bin_condition_code[xy], bin_condition_code[yz]), \
+          .contract = cstr_fmt(&STACK, " admit ensures x %s y %s z;", bin_condition_code[xy], bin_condition_code[yz]), \
+          .panic = cstr_fmt(&STACK, "__ter_assert_failed__(condition, cstr_fmt(&PANIC_REGION, %s, x), cstr_fmt(&PANIC_REGION, %s, y), cstr_fmt(&PANIC_REGION, %s, z), file, line);\n", #FMT_CODE, #FMT_CODE, #FMT_CODE), \
+          .pretty_print_comparison = {NULL, cstr_fmt(&STACK, " %s ", bin_condition_code[xy]), cstr_fmt(&STACK, " %s ", bin_condition_code[yz]), NULL}, \
           .num_args = 3, \
         }; \
       } \
@@ -147,11 +147,11 @@ static void platform_codegen_assertions()
 #define X(NAME, PRINT_MID, ENSURES, TYPE, CONDITION, FMT_CODE) { \
     const int first_assert = num_assertions; \
     assertions[num_assertions++] = (struct Platform_Codegen_Assert){ \
-      .name = str_fmt(&STACK, "assert_%s", #NAME), \
+      .name = cstr_fmt(&STACK, "assert_%s", #NAME), \
       .type = #TYPE, \
       .condition = #CONDITION, \
       .contract = ENSURES, \
-      .panic = str_fmt(&STACK, "__bin_assert_failed__(condition, %s(x), %s(y), file, line);\n", #FMT_CODE, #FMT_CODE), \
+      .panic = cstr_fmt(&STACK, "__bin_assert_failed__(condition, %s(x), %s(y), file, line);\n", #FMT_CODE, #FMT_CODE), \
       .pretty_print_comparison = {NULL, PRINT_MID, NULL}, \
       .num_args = 2, \
     }; \

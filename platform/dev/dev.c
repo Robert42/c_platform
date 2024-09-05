@@ -6,7 +6,7 @@ usize __assert_caught__ = 0;
 #endif
 
 // TODO: move to a header
-char* str_fmt(Mem_Region* region, const char* fmt, ...);
+char* cstr_fmt(Mem_Region* region, const char* fmt, ...);
 
 static void __assert_failed__()
 {

@@ -4,7 +4,7 @@
 u64 timer_freq;
 
 // TODO: move to utils?
-char* str_fmt(Mem_Region* region, const char* fmt, ...);
+char* cstr_fmt(Mem_Region* region, const char* fmt, ...);
 char* time_format_short_duration(u64 time, Mem_Region* region)
 {
   long double seconds = (long double)time / (long double)timer_freq;
@@ -31,6 +31,6 @@ char* time_format_short_duration(u64 time, Mem_Region* region)
   }
 
   return two_digits
-          ? str_fmt(region, "%.2f %s", (double)seconds, unit)
-          : str_fmt(region, "%.0f %s", (double)seconds, unit);
+          ? cstr_fmt(region, "%.2f %s", (double)seconds, unit)
+          : cstr_fmt(region, "%.0f %s", (double)seconds, unit);
 }
