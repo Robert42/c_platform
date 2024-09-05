@@ -80,6 +80,37 @@ int main(int argc, const char** argv)
     frama_c_prev_stage = frama_c_kernel_sav;
   }
   {
+#define WP_WARNINGS
+
+    const Path frama_c_wp_sav = path_join(LOG_DIR, path_from_cstr("frama_c.wp.sav"));
+    const char* const log_err = frama_c_log_file("wp", ".err");
+    const char* const log_warn = frama_c_log_file("wp", ".warn");
+    char* const cmd_wp[] = {"frama-c",
+      "-load", frama_c_prev_stage.cstr,
+      WP_WARNINGS
+      "-wp-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
+      "-wp",
+      "-rte",
+      "-save", frama_c_wp_sav.cstr,
+      NULL};
+    char* const cmd_open_frama_c_gui[] = {"frama-c-gui",
+      "-load", frama_c_wp_sav.cstr,
+      NULL};
+
+    struct Cmd cmd = {
+      .name = "frama_c.wp",
+      .cmd = cmd_wp,
+      .cmd_open_gui = cmd_open_frama_c_gui,
+      .log_err = log_err,
+      .log_warn = log_warn,
+    };
+    cmd_exec(cmd);
+    frama_c_prev_stage = frama_c_wp_sav;
+
+    
+#undef WP_WARNINGS
+  }
+  {
 #define EVA_WARNINGS \
     "-unspecified-access", /* Book 2.4.1 p.100, reason why it is disabled by default on page 108 */ \
     "-warn-signed-downcast", /* Book p.103 */ \
