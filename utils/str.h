@@ -34,6 +34,7 @@ usize str_len(str s);
   ensures aliasing: \result.begin == s && \result.end == s+len;
 */
 str str_from_cstr_len(const char* s, usize len);
+#define STR_LIT(XS) str_from_cstr_len(XS, ARRAY_LEN(XS)-1)
 
 // TODO: tell the compilers & analyzers, that this is using printf formatting
 /*@

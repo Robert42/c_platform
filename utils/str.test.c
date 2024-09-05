@@ -17,6 +17,16 @@ void str_test()
     assert_ptr_eq(empty.begin, src+3);
     assert_ptr_eq(empty.end, empty.begin);
     assert_usize_eq(str_len(empty), 0);
+    
+    const str src_as_str = STR_LIT(src);
+    assert_usize_eq(str_len(src_as_str), 24);
+    assert_ptr_eq(src_as_str.begin, src);
+    assert_ptr_eq(src_as_str.end, src+24);
+    assert_usize_eq(src_as_str.end[-5], 'W');
+    assert_usize_eq(src_as_str.end[-4], 'o');
+    assert_usize_eq(src_as_str.end[-3], 'r');
+    assert_usize_eq(src_as_str.end[-2], 'l');
+    assert_usize_eq(src_as_str.end[-1], 'd');
   }
   
   // cstr_fmt
