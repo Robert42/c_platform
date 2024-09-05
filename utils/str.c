@@ -1,6 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "str.h"
 
+#ifndef __FRAMAC__ // TODO
 char* cstr_fmt(Mem_Region* region, const char* fmt, ...)
 {
   va_list args;
@@ -23,3 +24,4 @@ char* cstr_fmt_va(Mem_Region* region, const char* fmt, va_list args)
   region->begin += (usize)actual_len + 1;
   return begin;
 }
+#endif // __FRAMA_C__ // TODO
