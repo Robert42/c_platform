@@ -1,33 +1,27 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "terminal.h"
 
-const char* TERM_RED = "";
-const char* TERM_RED_BOLD = "";
-const char* TERM_GREEN = "";
-const char* TERM_GREEN_BOLD = "";
-const char* TERM_YELLOW = "";
-const char* TERM_YELLOW_BOLD = "";
-const char* TERM_BLUE = "";
-const char* TERM_BLUE_BOLD = "";
-const char* TERM_MAGENTA = "";
-const char* TERM_MAGENTA_BOLD = "";
-const char* TERM_CYAN = "";
-const char* TERM_CYAN_BOLD = "";
 
-const char* TERM_NORMAL = "";
-const char* TERM_CLEAR = "";
-const char* TERM_CLEAR_LINE = "";
+static const struct Term_Escape_Codes TERM_NONE = {
+  .red = "",
+  .red_bold = "",
+  .green = "",
+  .green_bold = "",
+  .yellow = "",
+  .yellow_bold = "",
+  .blue = "",
+  .blue_bold = "",
+  .magenta = "",
+  .magenta_bold = "",
+  .cyan = "",
+  .cyan_bold = "",
 
-void term_init()
-{
-#ifdef __linux__
-  bool is_terminal = isatty(STDOUT_FILENO) == 1;
-#else
-#error unimplemented
-#endif
-  
-  if(is_terminal)
-  {
+  .normal = "",
+  .clear = "",
+  .clear_line = "",
+};
+
+static const struct Term_Escape_Codes TERM_CONTROL_CODES = {
 #define ESCAPE "\x1B"
 
 #define NORMAL "0"
@@ -38,21 +32,21 @@ void term_init()
 #define BLUE_FG "34"
 #define MAGENTA_FG "35"
 #define CYAN_FG "36"
-    TERM_RED = ESCAPE "[" NORMAL ";" RED_FG "m";
-    TERM_RED_BOLD = ESCAPE "[" BOLD ";" RED_FG "m";
-    TERM_GREEN = ESCAPE "[" NORMAL ";" GREEN_FG "m";
-    TERM_GREEN_BOLD = ESCAPE "[" BOLD ";" GREEN_FG "m";
-    TERM_YELLOW = ESCAPE "[" NORMAL ";" YELLOW_FG "m";
-    TERM_YELLOW_BOLD = ESCAPE "[" BOLD ";" YELLOW_FG "m";
-    TERM_BLUE = ESCAPE "[" NORMAL ";" BLUE_FG "m";
-    TERM_BLUE_BOLD = ESCAPE "[" BOLD ";" BLUE_FG "m";
-    TERM_MAGENTA = ESCAPE "[" NORMAL ";" MAGENTA_FG "m";
-    TERM_MAGENTA_BOLD = ESCAPE "[" BOLD ";" MAGENTA_FG "m";
-    TERM_CYAN = ESCAPE "[" NORMAL ";" CYAN_FG "m";
-    TERM_CYAN_BOLD = ESCAPE "[" BOLD ";" CYAN_FG "m";
-    TERM_NORMAL = ESCAPE "[" NORMAL "m";
-    TERM_CLEAR = ESCAPE "[3J";
-    TERM_CLEAR_LINE = ESCAPE "[0G" ESCAPE "[2K";
+    .red = ESCAPE "[" NORMAL ";" RED_FG "m",
+    .red_bold = ESCAPE "[" BOLD ";" RED_FG "m",
+    .green = ESCAPE "[" NORMAL ";" GREEN_FG "m",
+    .green_bold = ESCAPE "[" BOLD ";" GREEN_FG "m",
+    .yellow = ESCAPE "[" NORMAL ";" YELLOW_FG "m",
+    .yellow_bold = ESCAPE "[" BOLD ";" YELLOW_FG "m",
+    .blue = ESCAPE "[" NORMAL ";" BLUE_FG "m",
+    .blue_bold = ESCAPE "[" BOLD ";" BLUE_FG "m",
+    .magenta = ESCAPE "[" NORMAL ";" MAGENTA_FG "m",
+    .magenta_bold = ESCAPE "[" BOLD ";" MAGENTA_FG "m",
+    .cyan = ESCAPE "[" NORMAL ";" CYAN_FG "m",
+    .cyan_bold = ESCAPE "[" BOLD ";" CYAN_FG "m",
+    .normal = ESCAPE "[" NORMAL "m",
+    .clear = ESCAPE "[3J",
+    .clear_line = ESCAPE "[0G" ESCAPE "[2K",
 #undef ESCAPE
 #undef BOLD
 #undef NORMAL
@@ -62,22 +56,40 @@ void term_init()
 #undef BLUE_FG
 #undef MAGENTA_FG
 #undef CYAN_FG
-  }
+};
+
+struct Term_Escape_Codes TERM = {0};
+
+/*@
+  assigns TERM \from TERM_NONE, TERM_CONTROL_CODES;
+*/
+void term_init()
+{
+#ifdef __linux__
+  bool is_terminal = isatty(STDOUT_FILENO) == 1;
+#else
+#error unimplemented
+#endif
+  
+  if(is_terminal)
+    TERM = TERM_CONTROL_CODES;
+  else
+    TERM = TERM_NONE;
 }
 
 void term_demo()
 {
-  printf("%s-- red normal --\n", TERM_RED);
-  printf("%s-- red bold --\n", TERM_RED_BOLD);
-  printf("%s-- green normal --\n", TERM_GREEN);
-  printf("%s-- green bold --\n", TERM_GREEN_BOLD);
-  printf("%s-- yellow normal --\n", TERM_YELLOW);
-  printf("%s-- yellow bold --\n", TERM_YELLOW_BOLD);
-  printf("%s-- blue normal --\n", TERM_BLUE);
-  printf("%s-- blue bold --\n", TERM_BLUE_BOLD);
-  printf("%s-- magenta normal --\n", TERM_MAGENTA);
-  printf("%s-- magenta bold --\n", TERM_MAGENTA_BOLD);
-  printf("%s-- cyan normal --\n", TERM_CYAN);
-  printf("%s-- cyan bold --\n", TERM_CYAN_BOLD);
-  printf("%s-- normal --\n", TERM_NORMAL);
+  printf("%s-- red normal --\n", TERM.red);
+  printf("%s-- red bold --\n", TERM.red_bold);
+  printf("%s-- green normal --\n", TERM.green);
+  printf("%s-- green bold --\n", TERM.green_bold);
+  printf("%s-- yellow normal --\n", TERM.yellow);
+  printf("%s-- yellow bold --\n", TERM.yellow_bold);
+  printf("%s-- blue normal --\n", TERM.blue);
+  printf("%s-- blue bold --\n", TERM.blue_bold);
+  printf("%s-- magenta normal --\n", TERM.magenta);
+  printf("%s-- magenta bold --\n", TERM.magenta_bold);
+  printf("%s-- cyan normal --\n", TERM.cyan);
+  printf("%s-- cyan bold --\n", TERM.cyan_bold);
+  printf("%s-- normal --\n", TERM.normal);
 }

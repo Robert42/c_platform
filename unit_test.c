@@ -23,7 +23,7 @@ int main(int argc, const char** argv)
   platform_test();
   utils_test();
 
-  printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
+  printf("%s==== DONE ====%s\n", TERM.green_bold, TERM.normal);
 
   return EXIT_SUCCESS;
 }
