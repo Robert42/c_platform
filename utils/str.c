@@ -1,6 +1,19 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "str.h"
 
+usize str_len(str s)
+{
+  debug_assert_ptr_lte(s.begin, s.end);
+  const ssize len = s.end - s.begin;
+  //@assert len >= 0;
+  return len;
+}
+
+str str_from_cstr_len(const char* s, usize len)
+{
+  return (str){s, s+len};
+}
+
 #ifndef __FRAMAC__ // TODO
 char* cstr_fmt(Mem_Region* region, const char* fmt, ...)
 {
