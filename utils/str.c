@@ -5,12 +5,12 @@ char* cstr_fmt(Mem_Region* region, const char* fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
-  char* result = str_fmt_va(region, fmt, args);
+  char* result = cstr_fmt_va(region, fmt, args);
   va_end(args);
   return result;
 }
 
-char* str_fmt_va(Mem_Region* region, const char* fmt, va_list args)
+char* cstr_fmt_va(Mem_Region* region, const char* fmt, va_list args)
 {
   char* const begin = (char*)region->begin;
   const usize available_bytes = mem_region_available_bytes(*region);
