@@ -106,8 +106,6 @@ int main(int argc, const char** argv)
     };
     cmd_exec(cmd);
     frama_c_prev_stage = frama_c_wp_sav;
-
-    
 #undef WP_WARNINGS
   }
   {
@@ -138,8 +136,7 @@ int main(int argc, const char** argv)
       .log_warn = log_warn,
     };
     cmd_exec(cmd);
-
-    
+    frama_c_prev_stage = frama_c_eva_sav;
 #undef EVA_WARNINGS
   }
 
