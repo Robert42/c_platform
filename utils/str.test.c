@@ -28,6 +28,26 @@ void str_test()
     assert_usize_eq(src_as_str.end[-2], 'l');
     assert_usize_eq(src_as_str.end[-1], 'd');
   }
+
+  // str_cmp
+  {
+    // empty
+    assert_int_eq(str_cmp(STR_LIT(""), STR_LIT("")), 0);
+
+    // difference in the content
+    assert_int_lt(str_cmp(STR_LIT("x"), STR_LIT("y")), 0);
+    assert_int_gt(str_cmp(STR_LIT("z"), STR_LIT("y")), 0);
+    assert_int_lt(str_cmp(STR_LIT("xyz"), STR_LIT("xzz")), 0);
+    assert_int_gt(str_cmp(STR_LIT("xyz"), STR_LIT("xyy")), 0);
+
+    // difference in the length
+    assert_int_gt(str_cmp(STR_LIT("x"), STR_LIT("")), 0);
+    assert_int_lt(str_cmp(STR_LIT(""), STR_LIT("x")), 0);
+    assert_int_lt(str_cmp(STR_LIT("xy"), STR_LIT("xyz")), 0);
+    assert_int_lt(str_cmp(STR_LIT("xy"), STR_LIT("xya")), 0);
+    assert_int_gt(str_cmp(STR_LIT("xyz"), STR_LIT("xy")), 0);
+    assert_int_gt(str_cmp(STR_LIT("xya"), STR_LIT("xy")), 0);
+  }
   
   // cstr_fmt
   {

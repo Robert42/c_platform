@@ -36,6 +36,32 @@ usize str_len(str s);
 str str_from_cstr_len(const char* s, usize len);
 #define STR_LIT(XS) str_from_cstr_len(XS, ARRAY_LEN(XS)-1)
 
+/*@
+  requires str_valid(x) && str_valid(y);
+  assigns \nothing;
+  behavior eq:
+    requires str_len(x) == str_len(y);
+    requires x.begin[0 .. str_len(x)-1] == y.begin[0 .. str_len(y)-1];
+    ensures \result == 0;
+  behavior lt_content:
+    requires \exists usize n; n<str_len(x) && n<str_len(y) ==> x.begin[0 .. n-1] == y.begin[0 .. n-1] && x.begin[n] < y.begin[n];
+    ensures \result < 0;
+  behavior lt_len:
+    requires str_len(x) < str_len(y);
+    requires x.begin[0 .. str_len(x)-1] == y.begin[0 .. str_len(x)-1];
+    ensures \result < 0;
+  behavior gt_content:
+    requires \exists usize n; n<str_len(x) && n<str_len(y) ==> x.begin[0 .. n-1] == y.begin[0 .. n-1] && x.begin[n] > y.begin[n];
+    ensures \result > 0;
+  behavior gt_len:
+    requires str_len(x) > str_len(y);
+    requires x.begin[0 .. str_len(y)-1] == y.begin[0 .. str_len(y)-1];
+    ensures \result > 0;
+  complete behaviors;
+  disjoint behaviors;
+*/
+int str_cmp(str x, str y);
+
 // TODO: tell the compilers & analyzers, that this is using printf formatting
 /*@
   assigns *region \from fmt;
