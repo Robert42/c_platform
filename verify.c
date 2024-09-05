@@ -78,11 +78,16 @@ int main(int argc, const char** argv)
     frama_c_prev_stage = frama_c_kernel_sav;
   }
   {
+#define EVA_WARNINGS \
+    "-unspecified-access", /* Book 2.4.1 p.100, reason why it is disabled by default on page 108 */ \
+    "-warn-signed-downcast", /* Book p.103 */ \
+
     const Path frama_c_eva_sav = path_join(LOG_DIR, path_from_cstr("frama_c.eva.sav"));
     const char* const log_err = frama_c_log_file("eva", ".err");
     const char* const log_warn = frama_c_log_file("eva", ".warn");
     char* const cmd_eva[] = {"frama-c",
       "-load", frama_c_prev_stage.cstr,
+      EVA_WARNINGS
       "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
       "-eva-precision", "3",
       "-eva",
@@ -96,6 +101,9 @@ int main(int argc, const char** argv)
       .log_warn = log_warn,
     };
     cmd_exec(cmd);
+
+    
+#undef EVA_WARNINGS
   }
 
   printf("%s==== compilers ====%s\n", TERM_HEADER, TERM_NORMAL);
