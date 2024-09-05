@@ -130,8 +130,8 @@ int main(int argc, const char** argv)
       {
         char* const cmd_compile_tcc[] = {"tcc",
           "-Wall",
-          c_file.cstr, "-o",
-          output_file.cstr,
+          c_file.cstr,
+          "-o", output_file.cstr,
           NULL};
         char* const cmd_compile_gcc[] = {"gcc",
           "-std=c99",
