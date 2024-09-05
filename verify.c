@@ -2,7 +2,7 @@
 
 #include "c_script.h"
 
-#define TERM_HEADER TERM_NORMAL
+#define TERM_HEADER TERM.normal
 
 #define OPEN_GUI 1
 struct Cmd
@@ -54,10 +54,10 @@ int main(int argc, const char** argv)
   LINUX_ASSERT_NE(mkdir(LOG_DIR.cstr, 0777), -1);
 
 
-  printf("%s", TERM_CLEAR);
+  printf("%s", TERM.clear);
   fflush(stdout);
 
-  printf("%s==== static analysis ====%s\n", TERM_HEADER, TERM_NORMAL);
+  printf("%s==== static analysis ====%s\n", TERM_HEADER, TERM.normal);
 
   Path frama_c_prev_stage;
   {
@@ -140,7 +140,7 @@ int main(int argc, const char** argv)
 #undef EVA_WARNINGS
   }
 
-  printf("%s==== compilers ====%s\n", TERM_HEADER, TERM_NORMAL);
+  printf("%s==== compilers ====%s\n", TERM_HEADER, TERM.normal);
   for(int cc_idx=0; cc_idx<CC_COUNT; ++cc_idx)
   {
     enum C_Compiler cc = (enum C_Compiler)cc_idx;
@@ -148,7 +148,7 @@ int main(int argc, const char** argv)
     if(!cc_compiler_is_available(cc))
       continue;
 
-    printf("%s== %s%s\n", TERM_HEADER, compiler_name, TERM_NORMAL);
+    printf("%s== %s%s\n", TERM_HEADER, compiler_name, TERM.normal);
     
     for(int src_idx=0; src_idx<SRC_COUNT; ++src_idx)
     {
@@ -203,16 +203,16 @@ int main(int argc, const char** argv)
   }
 
   if(HAD_WARNING)
-    printf("%s==== DONE (with %sWARNING%ss) ====%s\n", TERM_YELLOW, TERM_YELLOW_BOLD, TERM_YELLOW, TERM_NORMAL);
+    printf("%s==== DONE (with %sWARNING%ss) ====%s\n", TERM.yellow, TERM.yellow_bold, TERM.yellow, TERM.normal);
   else
-    printf("%s==== DONE ====%s\n", TERM_GREEN_BOLD, TERM_NORMAL);
+    printf("%s==== DONE ====%s\n", TERM.green_bold, TERM.normal);
 
   return EXIT_SUCCESS;
 }
 
 static void print_result(const char* style_name, const char* name, const char* style_result, const char* result, const char* duration)
 {
-  printf("%s%s%s%s %s%s (%s)%s\n", TERM_CLEAR_LINE, style_name, name, style_result, result, style_name, duration, TERM_NORMAL);
+  printf("%s%s%s%s %s%s (%s)%s\n", TERM.clear_line, style_name, name, style_result, result, style_name, duration, TERM.normal);
   fflush(stdout);
 }
 
@@ -226,7 +226,7 @@ static void cmd_exec(struct Cmd cmd)
   };
 
   // if te result is printed in a terminal, show what we are running while we are running
-  if(TERM_CLEAR_LINE[0])
+  if(TERM.clear_line[0])
   {
     printf("%s ...", cmd.name);
     fflush(stdout);
@@ -245,11 +245,11 @@ static void cmd_exec(struct Cmd cmd)
 
   const char* const duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
   if(ok && warning)
-    print_result(TERM_YELLOW, cmd.name, TERM_YELLOW_BOLD, "WARNING", duration);
+    print_result(TERM.yellow, cmd.name, TERM.yellow_bold, "WARNING", duration);
   else if(ok)
-    print_result(TERM_GREEN, cmd.name, TERM_GREEN_BOLD, "OK", duration);
+    print_result(TERM.green, cmd.name, TERM.green_bold, "OK", duration);
   else
-    print_result(TERM_RED, cmd.name, TERM_RED_BOLD, "FAILED", duration);
+    print_result(TERM.red, cmd.name, TERM.red_bold, "FAILED", duration);
 
   const Path log_path = path_join(LOG_DIR, path_from_cstr(cmd.name));
   if(result.captured_stdout[0] != 0)

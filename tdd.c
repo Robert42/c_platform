@@ -33,7 +33,7 @@ struct Config cfg_default()
 void run_tests(struct Config cfg, Path dir)
 {
 #if CLEAR
-  printf("%s", TERM_CLEAR);
+  printf("%s", TERM.clear);
   fflush(stdout);
 #endif
 
@@ -68,7 +68,7 @@ void run_tests(struct Config cfg, Path dir)
   const char* duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
   
   static usize iter_count = 0;
-  printf("%stest iteration: %zu duration: %s%s\n", TERM_CYAN, iter_count++, duration, TERM_NORMAL);
+  printf("%stest iteration: %zu duration: %s%s\n", TERM.cyan, iter_count++, duration, TERM.normal);
 #endif
 }
 

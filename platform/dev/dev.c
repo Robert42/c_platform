@@ -18,7 +18,7 @@ static void __assert_failed__()
   }
 #endif
 
-  printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
+  printf("%s==== ASSERT ====%s\n", TERM.red, TERM.normal);
   abort();
 }
 
@@ -32,14 +32,14 @@ static void __bin_assert_failed__(const char* condition, const char* lhs, const 
   }
 #endif
 
-  printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
+  printf("%s==== ASSERT ====%s\n", TERM.red, TERM.normal);
   printf("%s\n", condition);
   printf("\n");
   printf("lhs: %s\n", lhs);
   printf("rhs: %s\n", rhs);
   printf("\n");
   printf("%s:%i", file, line);
-  printf("%s====%s\n", TERM_RED, TERM_NORMAL);
+  printf("%s====%s\n", TERM.red, TERM.normal);
   abort();
 }
 
@@ -53,7 +53,7 @@ static void __ter_assert_failed__(const char* condition, const char* lhs, const 
   }
 #endif
 
-  printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
+  printf("%s==== ASSERT ====%s\n", TERM.red, TERM.normal);
   printf("%s\n", condition);
   printf("\n");
   printf("lhs: %s\n", lhs);
@@ -61,7 +61,7 @@ static void __ter_assert_failed__(const char* condition, const char* lhs, const 
   printf("rhs: %s\n", rhs);
   printf("\n");
   printf("%s:%i", file, line);
-  printf("%s====%s\n", TERM_RED, TERM_NORMAL);
+  printf("%s====%s\n", TERM.red, TERM.normal);
   abort();
 }
 
@@ -104,9 +104,9 @@ void __linux_call_failed__(const char* call, const char* file, int line)
   }
 #endif
 
-  printf("%s==== ASSERT_LINUX ====%s\n", TERM_RED, TERM_RED_BOLD);
+  printf("%s==== ASSERT_LINUX ====%s\n", TERM.red, TERM.red_bold);
   perror(call);
-  printf("%s%s:%d\n", TERM_NORMAL, __FILE__, __LINE__);
+  printf("%s%s:%d\n", TERM.normal, __FILE__, __LINE__);
   abort();
 }
 #endif
