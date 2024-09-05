@@ -57,14 +57,15 @@ int main(int argc, const char** argv)
 
   printf("%s==== static analysis ====%s\n", TERM_HEADER, TERM_NORMAL);
 
-  const Path frama_c_ast = path_join(LOG_DIR, path_from_cstr("frama_c_parse.sav"));
+  Path frama_c_prev_stage;
   {
+    const Path frama_c_kernel_sav = path_join(LOG_DIR, path_from_cstr("frama_c_parse.sav"));
     const char* const log_err = frama_c_log_file("kernel", ".err");
     const char* const log_warn = frama_c_log_file("kernel", ".warn");
     char* const cmd_parse[] = {"frama-c",
       src_c_path(SRC_ALL_TEST).cstr,
       "-kernel-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
-      "-save", frama_c_ast.cstr,
+      "-save", frama_c_kernel_sav.cstr,
       NULL};
 
     struct Cmd cmd = {
@@ -74,13 +75,14 @@ int main(int argc, const char** argv)
       .log_warn = log_warn,
     };
     cmd_exec(cmd);
+    frama_c_prev_stage = frama_c_kernel_sav;
   }
   {
     const Path frama_c_eva_sav = path_join(LOG_DIR, path_from_cstr("frama_c.eva.sav"));
     const char* const log_err = frama_c_log_file("eva", ".err");
     const char* const log_warn = frama_c_log_file("eva", ".warn");
     char* const cmd_eva[] = {"frama-c",
-      "-load", frama_c_ast.cstr,
+      "-load", frama_c_prev_stage.cstr,
       "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
       "-eva-precision", "3",
       "-eva",
