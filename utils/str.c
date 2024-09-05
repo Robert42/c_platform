@@ -13,7 +13,7 @@ char* cstr_fmt(Mem_Region* region, const char* fmt, ...)
 
 char* cstr_fmt_va(Mem_Region* region, const char* fmt, va_list args)
 {
-  char* const begin = (const char*)region->begin;
+  char* const begin = (char*)region->begin;
   const usize available_bytes = mem_region_available_bytes(*region);
 
   const ssize actual_len = vsnprintf(begin, available_bytes, fmt, args);
