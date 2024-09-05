@@ -60,6 +60,9 @@ static const struct Term_Escape_Codes TERM_CONTROL_CODES = {
 
 struct Term_Escape_Codes TERM = {0};
 
+/*@
+  assigns TERM \from TERM_NONE, TERM_CONTROL_CODES;
+*/
 void term_init()
 {
 #ifdef __linux__
