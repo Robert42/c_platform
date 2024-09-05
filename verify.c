@@ -61,7 +61,11 @@ int main(int argc, const char** argv)
   {
     const char* const log_err = frama_c_log_file("kernel", ".err");
     const char* const log_warn = frama_c_log_file("kernel", ".warn");
-    char* const cmd_parse[] = {"frama-c", src_c_path(SRC_ALL_TEST).cstr, "-kernel-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-save", frama_c_ast.cstr, NULL};
+    char* const cmd_parse[] = {"frama-c",
+      src_c_path(SRC_ALL_TEST).cstr,
+      "-kernel-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
+      "-save", frama_c_ast.cstr,
+      NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.parse",
@@ -75,7 +79,13 @@ int main(int argc, const char** argv)
     const Path frama_c_eva_sav = path_join(LOG_DIR, path_from_cstr("frama_c.eva.sav"));
     const char* const log_err = frama_c_log_file("eva", ".err");
     const char* const log_warn = frama_c_log_file("eva", ".warn");
-    char* const cmd_eva[] = {"frama-c", "-load", frama_c_ast.cstr, "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn), "-eva-precision", "3", "-eva", "-save", frama_c_eva_sav.cstr, NULL};
+    char* const cmd_eva[] = {"frama-c",
+      "-load", frama_c_ast.cstr,
+      "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
+      "-eva-precision", "3",
+      "-eva",
+      "-save", frama_c_eva_sav.cstr,
+      NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.eva",
@@ -102,9 +112,24 @@ int main(int argc, const char** argv)
       const Path c_file = src_c_path(src_idx);
       
       {
-        char* const cmd_compile_tcc[] = {"tcc", "-Wall", c_file.cstr, "-o", output_file.cstr, NULL};
-        char* const cmd_compile_gcc[] = {"gcc", "-std=c99", "-Wall", "-pedantic", c_file.cstr, "-o", output_file.cstr, NULL};
-        char* const cmd_compile_clang[] = {"clang", "-std=c99", "-Wall", "-pedantic", c_file.cstr, "-o", output_file.cstr, NULL};
+        char* const cmd_compile_tcc[] = {"tcc",
+          "-Wall",
+          c_file.cstr, "-o",
+          output_file.cstr,
+          NULL};
+        char* const cmd_compile_gcc[] = {"gcc",
+          "-std=c99",
+          "-Wall",
+          "-pedantic",
+          c_file.cstr,
+          "-o", output_file.cstr,
+          NULL};
+        char* const cmd_compile_clang[] = {"clang",
+          "-std=c99",
+          "-Wall",
+          "-pedantic", c_file.cstr,
+          "-o", output_file.cstr,
+          NULL};
 
         char* const * cmd_compile[] = {
           [CC_TCC] = cmd_compile_tcc,
