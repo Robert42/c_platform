@@ -2,11 +2,17 @@
 
 #include "prelude.h"
 
-void term_init();
-void timer_init();
+void term_init(void);
+void timer_init(void);
+
+
+Mem_Region PANIC_REGION;
+static u8 PANIC_BUFFER[16*1024];
 
 void platform_init()
 {
+  PANIC_REGION = MEM_REGION_FROM_ARRAY(PANIC_BUFFER);
+
   term_init();
   timer_init();
 }

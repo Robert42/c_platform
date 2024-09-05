@@ -4,8 +4,6 @@
 #define READ_END 0
 #define WRITE_END 1
 
-#define pipe(PIPES) pipe2(PIPES, 0)
-
 struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct Proc_Exec_Blocking_Settings settings)
 {
   int pipefd_stdout[2];
@@ -48,13 +46,13 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
 
   if(settings.capture_stdout)
   {
-    result.captured_stdout = settings.region_stdout ? _linux_read_all_bytes_from_fd(pipefd_stdout[READ_END], settings.region_stdout) : NULL;
+    result.captured_stdout = settings.region_stdout ? (char*)_linux_read_all_bytes_from_fd(pipefd_stdout[READ_END], settings.region_stdout).begin : NULL;
     LINUX_ASSERT_EQ(close(pipefd_stdout[READ_END]), 0);
   }
   
   if(settings.capture_stderr)
   {
-    result.captured_stderr = settings.region_stderr ? _linux_read_all_bytes_from_fd(pipefd_stderr[READ_END], settings.region_stderr) : NULL;
+    result.captured_stderr = settings.region_stderr ? (char*)_linux_read_all_bytes_from_fd(pipefd_stderr[READ_END], settings.region_stderr).begin : NULL;
     LINUX_ASSERT_EQ(close(pipefd_stderr[READ_END]), 0);
   }
 

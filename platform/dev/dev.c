@@ -1,31 +1,67 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
+#if !ENV_STATIC_ANALYSIS
 usize __assert_capture__ = 0;
 usize __assert_caught__ = 0;
+#endif
+
+// TODO: move to a header
+char* str_fmt(Mem_Region* region, const char* fmt, ...);
 
 static void __assert_failed__()
 {
+#if !ENV_STATIC_ANALYSIS
   if(__assert_capture__)
   {
     __assert_caught__++;
     return;
   }
+#endif
 
   printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
   abort();
 }
 
-static void __bin_assert_failed__(const char* lhs, const char* rhs)
+static void __bin_assert_failed__(const char* condition, const char* lhs, const char* rhs, const char* file, int line)
 {
+#if !ENV_STATIC_ANALYSIS
   if(__assert_capture__)
   {
     __assert_caught__++;
     return;
   }
+#endif
 
   printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
+  printf("%s\n", condition);
+  printf("\n");
   printf("lhs: %s\n", lhs);
   printf("rhs: %s\n", rhs);
+  printf("\n");
+  printf("%s:%i", file, line);
+  printf("%s====%s\n", TERM_RED, TERM_NORMAL);
+  abort();
+}
+
+static void __ter_assert_failed__(const char* condition, const char* lhs, const char* mid, const char* rhs, const char* file, int line)
+{
+#if !ENV_STATIC_ANALYSIS
+  if(__assert_capture__)
+  {
+    __assert_caught__++;
+    return;
+  }
+#endif
+
+  printf("%s==== ASSERT ====%s\n", TERM_RED, TERM_NORMAL);
+  printf("%s\n", condition);
+  printf("\n");
+  printf("lhs: %s\n", lhs);
+  printf("mid: %s\n", mid);
+  printf("rhs: %s\n", rhs);
+  printf("\n");
+  printf("%s:%i", file, line);
+  printf("%s====%s\n", TERM_RED, TERM_NORMAL);
   abort();
 }
 
@@ -34,37 +70,7 @@ static const char* fmt_bool(bool x)
   return x ? "true" : "false";
 }
 
-#if ENV_DEBUG
-#define DEBUG_VERSION_BIN(NAME, TY) void debug_assert_ ## NAME(TY x, TY y){assert_ ## NAME(x, y);}
-#define DEBUG_VERSION_RNG(NAME, TY) void debug_assert_ ## NAME(TY x, TY y, TY z){assert_ ## NAME(x, y, z);}
-#else
-#define DEBUG_VERSION_BIN(NAME, TY) void debug_assert_ ## NAME(TY x, TY y){(void)x;(void)y;}
-#define DEBUG_VERSION_RNG(NAME, TY) void debug_assert_ ## NAME(TY x, TY y, TY z){(void)x;(void)y;(void)z;}
-#endif
-#define DEFINE_NUM_BIN(NAME, TY, OP) \
-  void assert_ ## NAME(TY x, TY y){if(x OP y)return;else __assert_failed__(); } \
-  DEBUG_VERSION_BIN(NAME, TY)
-#define DEFINE_NUM_RNG(NAME, TY, OP1, OP2) \
-  void assert_ ## NAME(TY x, TY y, TY z){ if((x OP1 y) && (y OP2 z))return;else __assert_failed__(); } \
-  DEBUG_VERSION_RNG(NAME, TY)
-#define BIN_ASSERT_NUM_CMP(NAME, TY) \
-  DEFINE_NUM_BIN(NAME ## _eq, TY, ==) \
-  DEFINE_NUM_BIN(NAME ## _ne, TY, !=) \
-  DEFINE_NUM_BIN(NAME ## _lt, TY, <) \
-  DEFINE_NUM_BIN(NAME ## _lte, TY, <=) \
-  DEFINE_NUM_BIN(NAME ## _gt, TY, >) \
-  DEFINE_NUM_BIN(NAME ## _gte, TY, >=)
-#define RNG_ASSERT_NUM_CMP(NAME, TY) \
-  DEFINE_NUM_RNG(NAME ## _lte_lte, TY, <=, <=) \
-  DEFINE_NUM_RNG(NAME ## _lte_lt, TY, <=, <)
-#define BIN_ASSERT_CUSTOM(NAME, TY, CHECK, FMT) void assert_ ## NAME(TY x, TY y){if(CHECK)return;else __bin_assert_failed__(FMT(x), FMT(y)); } DEBUG_VERSION_BIN(NAME, TY)
-#include "assertions.h"
-#undef BIN_ASSERT_NUM_CMP
-#undef RNG_ASSERT_NUM_CMP
-#undef BIN_ASSERT_CUSTOM
-#undef DEBUG_VERSION_BIN
-#undef DEFINE_NUM_BIN
-#undef DEFINE_NUM_RNG
+#include "assert.c"
 
 // ==== env ====
 
@@ -90,11 +96,13 @@ void dev_env_demo()
 #ifdef __linux__
 void __linux_call_failed__(const char* call, const char* file, int line)
 {
+#if !ENV_STATIC_ANALYSIS
   if(__assert_capture__)
   {
     __assert_caught__++;
     return;
   }
+#endif
 
   printf("%s==== ASSERT_LINUX ====%s\n", TERM_RED, TERM_RED_BOLD);
   perror(call);

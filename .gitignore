@@ -1,5 +1,7 @@
 # ==== compiled binaries ====
 a.out
+/all_tests
+/verify
 /tdd
 /unit_test
 
@@ -7,7 +9,11 @@ a.out
 
 *.o
 
-# ==== rr ====
+# ==== debugging ====
 
 /*.rr/
+
+# ==== testing ====
+
+/*.log/
 

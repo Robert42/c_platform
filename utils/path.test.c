@@ -10,7 +10,7 @@ void path_test()
   // ==== path_from_cstr ====
   assert_cstr_eq(path_from_cstr("x").cstr, "x");
   {
-    char too_long[PATH_LEN_MAX + 2] = {};
+    char too_long[PATH_LEN_MAX + 2] = {0};
     for(usize i=0; i<PATH_LEN_MAX; ++i)
       too_long[i] = 'x';
     const Path p_max = path_from_cstr(too_long);
@@ -47,6 +47,10 @@ void path_test()
   // ==== path_append_char ====
   assert_cstr_eq(path_append_char(path_from_cstr(""), 'b').cstr, "b");
   assert_cstr_eq(path_append_char(path_from_cstr("a"), 'b').cstr, "ab");
+  
+  // ==== path_append_cstr ====
+  assert_cstr_eq(path_append_cstr(path_from_cstr(""), "bc").cstr, "bc");
+  assert_cstr_eq(path_append_cstr(path_from_cstr("a"), "bc").cstr, "abc");
   
   // ==== path_concat ====
   assert_cstr_eq(path_concat(path_from_cstr(""), path_from_cstr("b")).cstr, "b");

@@ -4,7 +4,7 @@
 
 void setintcddo_test()
 {
-  struct Set_Int_Change_Detection_Dismissing_Old xs = {};
+  struct Set_Int_Change_Detection_Dismissing_Old xs = {0};
   debug_assert_usize_eq(xs.len_new, 0);
   debug_assert_usize_eq(xs.len_old, 0);
 

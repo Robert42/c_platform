@@ -9,7 +9,7 @@ static u64 _linux_timespect_to_nsec(struct timespec t)
   return (u64)t.tv_nsec + sec_in_nsec * (u64)t.tv_sec;
 }
 
-#define CLOCK CLOCK_MONOTONIC_RAW
+#define CLOCK CLOCK_MONOTONIC
 
 u64 timer_now()
 {
@@ -28,3 +28,23 @@ void timer_init()
 }
 
 #undef CLOCK
+
+char* time_format_date_time_now(Mem_Region* region)
+{
+  char* const args[] = {"date", "+%Y-%m-%d_%H-%M-%S", NULL};
+  struct Proc_Exec_Blocking_Settings settings = {
+    .capture_stdout = true,
+    .capture_stderr = true,
+    .region_stdout = region,
+  };
+  struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, settings);
+  LINUX_ASSERT_EQ(result.exit_code, EXIT_SUCCESS);
+
+  // TODO: add util to trim linebraks
+  usize i = strlen(result.captured_stdout);
+  if(i>0 && result.captured_stdout[i-1] == '\n')
+    result.captured_stdout[i-1] = 0;
+
+  return result.captured_stdout;
+}
+

@@ -3,37 +3,34 @@
 
 u64 timer_freq;
 
-const char* time_format_short_duration(u64 time, Mem_Region* region)
+// TODO: move to utils?
+char* str_fmt(Mem_Region* region, const char* fmt, ...);
+char* time_format_short_duration(u64 time, Mem_Region* region)
 {
   long double seconds = (long double)time / (long double)timer_freq;
 
-  const char* fmt = NULL;
+  const char* unit = NULL;
+  bool two_digits = false;
 
   if(seconds >= 1)
   {
-    fmt = "%.2f s";
-  }else if(seconds >= 1.e-3)
+    unit = "s";
+    two_digits = true;
+  }else if(seconds*1000 >= 1)
   {
     seconds *= 1000;
-    fmt = "%.0f ms";
-  }else if(seconds >= 1.e-6)
+    unit = "ms";
+  }else if(seconds*1000*1000 >= 1)
   {
     seconds *= 1000 * 1000;
-    fmt = "%.0f us";
+    unit = "us";
   }else
   {
     seconds *= 1000 * 1000 * 1000;
-    fmt = "%.0f ns";
+    unit = "ns";
   }
 
-  const usize available = mem_region_available_bytes(region);
-
-  const int formatted_len = snprintf(region->begin, available, fmt, (double)seconds);
-  assert_usize_lte_lt(0, formatted_len, available); // out of memory?
-
-  char* text = region->begin;
-  region->begin += formatted_len + 1;
-  debug_assert_usize_eq(formatted_len, strlen(text));
-
-  return text;
+  return two_digits
+          ? str_fmt(region, "%.2f %s", (double)seconds, unit)
+          : str_fmt(region, "%.0f %s", (double)seconds, unit);
 }
