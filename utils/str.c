@@ -1,6 +1,10 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "str.h"
 
+/*@
+  assigns *region \from fmt;
+  assigns \result \from *region;
+*/
 char* cstr_fmt(Mem_Region* region, const char* fmt, ...)
 {
   va_list args;
@@ -10,9 +14,13 @@ char* cstr_fmt(Mem_Region* region, const char* fmt, ...)
   return result;
 }
 
+/*@
+  assigns *region \from fmt, args;
+  assigns \result \from *region;
+*/
 char* cstr_fmt_va(Mem_Region* region, const char* fmt, va_list args)
 {
-  char* const begin = (char*)region->begin;
+  char* const begin = (const char*)region->begin;
   const usize available_bytes = mem_region_available_bytes(*region);
 
   const ssize actual_len = vsnprintf(begin, available_bytes, fmt, args);
