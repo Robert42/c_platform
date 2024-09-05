@@ -4,10 +4,12 @@
 
 #define TERM_HEADER TERM_NORMAL
 
+#define OPEN_GUI 1
 struct Cmd
 {
   const char* name;
   char* const * cmd;
+  char* const * cmd_open_gui;
 
   const char* err_text;
   const char* warning_text;
@@ -93,10 +95,14 @@ int main(int argc, const char** argv)
       "-eva",
       "-save", frama_c_eva_sav.cstr,
       NULL};
+    char* const cmd_open_frama_c_gui[] = {"frama-c-gui",
+      "-load", frama_c_eva_sav.cstr,
+      NULL};
 
     struct Cmd cmd = {
       .name = "frama_c.eva",
       .cmd = cmd_eva,
+      .cmd_open_gui = cmd_open_frama_c_gui,
       .log_err = log_err,
       .log_warn = log_warn,
     };
@@ -223,6 +229,17 @@ static void cmd_exec(struct Cmd cmd)
     file_text_create_from_cstr(path_append_cstr(log_path, ".stderr.log"), result.captured_stderr);
 
   HAD_WARNING = HAD_WARNING || warning;
+
+#if OPEN_GUI
+  if((warning||!ok) && cmd.cmd_open_gui!=NULL)
+  {
+    struct Proc_Exec_Blocking_Settings block = {
+      // .capture_stdout = true,
+      // .capture_stderr = true,
+    };
+    proc_exec_blocking(cmd.cmd_open_gui, block);
+  }
+#endif
 
   if(!ok)
     exit(EXIT_FAILURE);
