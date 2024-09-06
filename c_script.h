@@ -1,10 +1,10 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #pragma once
 
-#include "foundation/prelude.h"
+#include "core/prelude.h"
 #include "platform/prelude.h"
 
-#include "foundation/foundation.c"
+#include "core/core.c"
 #include "platform/platform.c"
 #include "utils/utils.c"
 #include "c_compiler/c_compiler.c"

@@ -1,17 +1,17 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
-#include "foundation/foundation.c"
+#include "core/core.c"
 #include "platform/platform.c"
 #include "utils/utils.c"
 
-#include "foundation/test.c"
+#include "core/test.c"
 #include "platform/test.c"
 #include "utils/test.c"
 
 #define PRINT_ENV 0
 
 #if PRINT_ENV
-#include "foundation/env.demo.c"
+#include "core/env.demo.c"
 #endif
 
 static u8 _SCRATCH_BUFFER_1[1024*1024] = {0};
@@ -33,7 +33,7 @@ int main(int argc, const char** argv)
   dev_env_demo();
 #endif
 
-  foundation_test();
+  core_test();
   platform_test();
   utils_test();
 
