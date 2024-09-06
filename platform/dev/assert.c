@@ -229,6 +229,15 @@ void __assert_cstr_eq__(const char* x, const char* y, const char* condition, con
   __bin_assert_failed__(condition, (x), (y), file, line);
 }
 
+// ==== str_eq ====
+void __assert_str_eq__(str x, str y, const char* condition, const char* file, int line)
+{
+  if(LIKELY((str_cmp(x,y) == 0)))
+    return;
+  else
+  __bin_assert_failed__(condition, str_fmt(x), str_fmt(y), file, line);
+}
+
 // ==== bool_eq ====
 void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file, int line)
 {

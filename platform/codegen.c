@@ -9,6 +9,7 @@
 // TODO: add to contract of cstr_eq: ensure, that both strings are equal
 #define X_MACRO_ASSERT_CUSTOM(X) \
   X(cstr_eq, " == ", "", const char*, (strcmp(x,y) == 0), ) \
+  X(str_eq, " == ", "", str, (str_cmp(x,y) == 0), str_fmt) \
   X(bool_eq, " == ", " admit ensures x == y;", bool, x == y, fmt_bool) \
 
 #define X_MACRO_ASSERT_NUM_CMP_RNG(X) \

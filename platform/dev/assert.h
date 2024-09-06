@@ -75,6 +75,10 @@ void __assert_ptr_lte_lt__(const void* x, const void* y, const void* z, const ch
 //@ terminates true; assigns \nothing; exits false;
 void __assert_cstr_eq__(const char* x, const char* y, const char* condition, const char* file, int line);
 
+// ==== str_eq ====
+//@ terminates true; assigns \nothing; exits false;
+void __assert_str_eq__(str x, str y, const char* condition, const char* file, int line);
+
 // ==== bool_eq ====
 //@ terminates true; assigns \nothing; exits false; admit ensures x == y;
 void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file, int line);
@@ -122,6 +126,9 @@ void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file,
 
 // ==== cstr_eq ====
 #define assert_cstr_eq(x, y) __assert_cstr_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
+
+// ==== str_eq ====
+#define assert_str_eq(x, y) __assert_str_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
 
 // ==== bool_eq ====
 #define assert_bool_eq(x, y) __assert_bool_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
@@ -171,6 +178,9 @@ void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file,
 // ==== cstr_eq ====
 #define debug_assert_cstr_eq(x, y)
 
+// ==== str_eq ====
+#define debug_assert_str_eq(x, y)
+
 // ==== bool_eq ====
 #define debug_assert_bool_eq(x, y)
 
@@ -218,6 +228,9 @@ void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file,
 
 // ==== cstr_eq ====
 #define debug_assert_cstr_eq(x, y) __assert_cstr_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
+
+// ==== str_eq ====
+#define debug_assert_str_eq(x, y) __assert_str_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
 
 // ==== bool_eq ====
 #define debug_assert_bool_eq(x, y) __assert_bool_eq__(x, y, #x " == " #y, __FILE__, __LINE__)

@@ -12,11 +12,13 @@ void str_test()
     assert_ptr_eq(s.begin, src+12);
     assert_ptr_eq(s.end, src+12+5);
     assert_usize_eq(str_len(s), 5);
+    assert_str_eq(s, STR_LIT("Hello"));
     
     const str empty = str_from_cstr_len(src+3, 0);
     assert_ptr_eq(empty.begin, src+3);
     assert_ptr_eq(empty.end, empty.begin);
     assert_usize_eq(str_len(empty), 0);
+    assert_str_eq(empty, STR_LIT(""));
     
     const str src_as_str = STR_LIT(src);
     assert_usize_eq(str_len(src_as_str), 24);
@@ -27,6 +29,7 @@ void str_test()
     assert_usize_eq(src_as_str.end[-3], 'r');
     assert_usize_eq(src_as_str.end[-2], 'l');
     assert_usize_eq(src_as_str.end[-1], 'd');
+    assert_str_eq(src_as_str, STR_LIT("Let me say: Hello, World"));
   }
 
   // str_cmp
