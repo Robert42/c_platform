@@ -8,4 +8,5 @@ NORETURN void abort();
 extern Mem_Region PANIC_REGION;
 
 #include "dev/assert.c"
+#include "mem/mem.c"
 
