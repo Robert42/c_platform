@@ -59,6 +59,8 @@ str str_from_cstr_len(const char* s, usize len);
 */
 int str_cmp(str x, str y);
 
+const char* str_fmt(str x);
+
 // TODO: tell the compilers & analyzers, that this is using printf formatting
 /*@
   assigns *region \from fmt;

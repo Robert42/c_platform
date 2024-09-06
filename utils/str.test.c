@@ -48,6 +48,10 @@ void str_test()
     assert_int_gt(str_cmp(STR_LIT("xyz"), STR_LIT("xy")), 0);
     assert_int_gt(str_cmp(STR_LIT("xya"), STR_LIT("xy")), 0);
   }
+
+  {
+    assert_cstr_eq(str_fmt(STR_LIT("xyz")), "xyz");
+  }
   
   // cstr_fmt
   {

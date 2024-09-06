@@ -34,6 +34,15 @@ int str_cmp(str x, str y)
 }
 
 #ifndef __FRAMAC__ // TODO
+const char* str_fmt(str x)
+{
+  usize len = str_len(x);
+  char* const copy = mem_region_alloc_bytes_unaligned(&SCRATCH, len+1);
+  copy[len] = 0;
+  memcpy(copy, x.begin, len);
+  return copy;
+}
+
 char* cstr_fmt(Mem_Region* region, const char* fmt, ...)
 {
   va_list args;
