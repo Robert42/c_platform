@@ -32,6 +32,9 @@ int str_cmp(str x, str y)
   const usize y_len = str_len(y);
   const usize len = min_usize(x_len, y_len);
 
+  /*@
+    loop assigns \nothing;
+  */
   for(usize i=0; i<len; ++i)
     if(x.begin[i] != y.begin[i])
       return x.begin[i] - y.begin[i];
