@@ -50,6 +50,9 @@ void str_test()
     assert_int_lt(str_cmp(STR_LIT("xy"), STR_LIT("xya")), 0);
     assert_int_gt(str_cmp(STR_LIT("xyz"), STR_LIT("xy")), 0);
     assert_int_gt(str_cmp(STR_LIT("xya"), STR_LIT("xy")), 0);
+    
+    const char src[] = "xyzuvw";
+    assert_int_gt(str_cmp(str_from_cstr_len(src, 3), str_from_cstr_len(src, 2)), 0);
   }
 
   {
