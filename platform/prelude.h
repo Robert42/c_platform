@@ -5,6 +5,3 @@
 #include "mem/mem.h"
 #include "dev/dev.h"
 
-// TODO use intrinsic
-#define LIKELY(X) X
-
