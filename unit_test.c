@@ -19,7 +19,7 @@ static u8 _STACK_BUFFER[1024*1024] = {0};
 Mem_Region SCRATCH = {0};
 Mem_Region STACK = {0};
 
-int main(int argc, const char** argv)
+int main(UNUSED int argc, UNUSED const char** argv)
 {
   platform_init();
 
