@@ -25,7 +25,7 @@ bool HAD_WARNING = false;
 
 char* frama_c_log_file(const char* plugin_name, const char* suffix)
 {
-  return str_fmt(&PERSISTENT, "%s/frama_c.%s%s.log", LOG_DIR.cstr, plugin_name, suffix);
+  return cstr_fmt(&PERSISTENT, "%s/frama_c.%s%s.log", LOG_DIR.cstr, plugin_name, suffix);
 }
 
 enum Src_File
@@ -66,7 +66,7 @@ int main(int argc, const char** argv)
     const char* const log_warn = frama_c_log_file("kernel", ".warn");
     char* const cmd_parse[] = {"frama-c",
       src_c_path(SRC_ALL_TEST).cstr,
-      "-kernel-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
+      "-kernel-log", cstr_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
       "-save", frama_c_kernel_sav.cstr,
       NULL};
 
@@ -88,7 +88,7 @@ int main(int argc, const char** argv)
     char* const cmd_wp[] = {"frama-c",
       "-load", frama_c_prev_stage.cstr,
       WP_WARNINGS
-      "-wp-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
+      "-wp-log", cstr_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
       "-wp",
       "-rte",
       "-save", frama_c_wp_sav.cstr,
@@ -119,7 +119,7 @@ int main(int argc, const char** argv)
     char* const cmd_eva[] = {"frama-c",
       "-load", frama_c_prev_stage.cstr,
       EVA_WARNINGS
-      "-eva-log", str_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
+      "-eva-log", cstr_fmt(&SCRATCH, "e:%s,w:%s", log_err, log_warn),
       "-eva-precision", "3",
       "-eva",
       "-save", frama_c_eva_sav.cstr,
@@ -183,7 +183,7 @@ int main(int argc, const char** argv)
         };
 
         struct Cmd cmd = {
-          .name = str_fmt(&SCRATCH, "%s (compile)", SRC_BASENAME[src_idx]),
+          .name = cstr_fmt(&SCRATCH, "%s (compile)", SRC_BASENAME[src_idx]),
           .cmd = cmd_compile[cc],
           .err_text = "error:",
           .warning_text = "warning:",
