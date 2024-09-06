@@ -29,7 +29,7 @@ struct Platform_Codegen_Assert
   const char* name; // "assert_usize_lte_lt"
   const char* type; // "usize"
   const char* condition; // "x <= y && y < z"
-  const char* contract; // "x <= y && y < z"
+  const char* contract; // "x <= y < z"
   const char* panic; // "__ter_assert_failed__(condition, cstr_fmt(&PANIC_REGION, \"%zu\", x), cstr_fmt(&PANIC_REGION, \"%zu\", y), cstr_fmt(&PANIC_REGION, \"%zu\", z), file, line);"
   const char* pretty_print_comparison[5]; // {"", " <= ", " < ", ""}
   unsigned int num_args : 2; // 3 in case of `assert_usize_lte_lt`
