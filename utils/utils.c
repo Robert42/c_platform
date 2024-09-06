@@ -2,5 +2,4 @@
 
 #include "path.c"
 #include "file.c"
-#include "fmt.c"
 
