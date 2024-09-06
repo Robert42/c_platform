@@ -91,6 +91,9 @@ typedef  int64_t s64;
 typedef size_t usize;
 typedef ssize_t ssize;
 
+struct _utils_str;
+typedef struct _utils_str str;
+
 #ifdef __linux__
 #include <time.h>
 #include <errno.h>
