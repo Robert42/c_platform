@@ -88,13 +88,6 @@ static inline const char* dev_env_compiler_name(int compiler_id)
 #undef CASE
 }
 
-void dev_env_demo()
-{
-  printf("ENV_DEBUG: %i\n", ENV_DEBUG);
-  printf("ENV_COMPILER: %s\n", dev_env_compiler_name(ENV_COMPILER));
-}
-
-
 #ifdef __linux__
 void __linux_call_failed__(const char* call, const char* file, int line)
 {

@@ -1,7 +1,6 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #pragma once
 
-#include "dev/env.h"
 
 #define NORETURN __attribute__((noreturn))
 
