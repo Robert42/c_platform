@@ -1,6 +1,9 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "terminal.h"
 
+extern const char* TERM_STYLE_RED;
+extern const char* TERM_STYLE_RED_BOLD;
+extern const char* TERM_STYLE_RESET;
 
 static const struct Term_Escape_Codes TERM_NONE = {
   .red = "",
@@ -75,6 +78,10 @@ void term_init()
     TERM = TERM_CONTROL_CODES;
   else
     TERM = TERM_NONE;
+
+  TERM_STYLE_RED = TERM.red;
+  TERM_STYLE_RED_BOLD = TERM.red_bold;
+  TERM_STYLE_RESET = TERM.normal;
 }
 
 void term_demo()
