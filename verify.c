@@ -157,43 +157,43 @@ int main(int argc, const char** argv)
       const Path output_file = src_bin_path(src_idx);
       const Path c_file = src_c_path(src_idx);
       
+      char* const cmd_compile_tcc[] = {"tcc",
+        "-Wall",
+        c_file.cstr,
+        "-o", output_file.cstr,
+        NULL};
+      char* const cmd_compile_gcc[] = {"gcc",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-error=unused-parameter",
+        "-Wno-error=sign-compare",
+        "-pedantic",
+        c_file.cstr,
+        "-o", output_file.cstr,
+        NULL};
+      char* const cmd_compile_clang[] = {"clang",
+        "-std=c99",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-error=unused-parameter",
+        "-Wno-error=sign-compare",
+        "-pedantic",
+        c_file.cstr,
+        "-o", output_file.cstr,
+        NULL};
+
+      char* const * cmd_compile[] = {
+        [CC_TCC] = cmd_compile_tcc,
+        [CC_GCC] = cmd_compile_gcc,
+        [CC_CLANG] = cmd_compile_clang,
+      };
+
       {
-        char* const cmd_compile_tcc[] = {"tcc",
-          "-Wall",
-          c_file.cstr,
-          "-o", output_file.cstr,
-          NULL};
-        char* const cmd_compile_gcc[] = {"gcc",
-          "-std=c99",
-          "-Wall",
-          "-Wextra",
-          "-Werror",
-          "-Wno-error=unused-parameter",
-          "-Wno-error=sign-compare",
-          "-pedantic",
-          c_file.cstr,
-          "-o", output_file.cstr,
-          NULL};
-        char* const cmd_compile_clang[] = {"clang",
-          "-std=c99",
-          "-Wall",
-          "-Wextra",
-          "-Werror",
-          "-Wno-error=unused-parameter",
-          "-Wno-error=sign-compare",
-          "-pedantic",
-          c_file.cstr,
-          "-o", output_file.cstr,
-          NULL};
-
-        char* const * cmd_compile[] = {
-          [CC_TCC] = cmd_compile_tcc,
-          [CC_GCC] = cmd_compile_gcc,
-          [CC_CLANG] = cmd_compile_clang,
-        };
-
         struct Cmd cmd = {
-          .name = cstr_fmt(&SCRATCH, "%s (compile)", SRC_BASENAME[src_idx]),
+          .name = cstr_fmt(&SCRATCH, "%s (compile with %s)", SRC_BASENAME[src_idx], cmd_compile[cc][0]),
           .cmd = cmd_compile[cc],
           .err_text = "error:",
           .warning_text = "warning:",
@@ -204,7 +204,7 @@ int main(int argc, const char** argv)
       {
         char* const cmd_test[] = {output_file.cstr, NULL};
         struct Cmd cmd = {
-          .name = SRC_BASENAME[src_idx],
+          .name = cstr_fmt(&SCRATCH, "%s (%s)", SRC_BASENAME[src_idx], cmd_compile[cc][0]),
           .cmd = cmd_test,
         };
         cmd_exec(cmd);
