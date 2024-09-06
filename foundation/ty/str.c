@@ -16,18 +16,6 @@ str str_from_cstr_len(const char* s, usize len)
   return (str){s, s+len};
 }
 
-// TODO move elsewhere
-/*@
-  assigns \nothing;
-  ensures \result <= x;
-  ensures \result <= y;
-  ensures \result==x || \result==y;
-*/
-usize min_usize(usize x, usize y)
-{
-  return x < y ? x : y;
-}
-
 int str_cmp(str x, str y)
 {
   const usize x_len = str_len(x);

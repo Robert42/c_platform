@@ -14,6 +14,7 @@ typedef struct _platform_mem_Region Mem_Region;
 #include "ty/prim.h"
 #include "ty/str.h"
 #include "ty/cstr.h"
+#include "math/cmp.h"
 #include "dev/assert.h"
 #include "mem/bytes.h"
 #include "mem/mem.h"
