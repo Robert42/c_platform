@@ -63,12 +63,6 @@ void errx(int eval, const char* fmt, ...);
 
 #endif
 
-struct _utils_str
-{
-  const char* begin;
-  const char* end;
-};
-
 #ifdef __linux__
 #include <time.h>
 #include <errno.h>
