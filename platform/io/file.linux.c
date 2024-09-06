@@ -18,7 +18,7 @@ Bytes _linux_read_all_bytes_from_fd(int fd, Mem_Region* region)
 
     return (Bytes){
       .begin = data,
-      .end = data + bytes_read,
+      .end = (u8*)data + bytes_read,
     };
 }
 
