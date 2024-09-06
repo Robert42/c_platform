@@ -57,6 +57,7 @@ int main(int argc, const char** argv)
   printf("%s", TERM.clear);
   fflush(stdout);
 
+#if 0 // TODO: decide, whether to keep frama-c
   printf("%s==== static analysis ====%s\n", TERM_HEADER, TERM.normal);
 
   Path frama_c_prev_stage;
@@ -139,6 +140,7 @@ int main(int argc, const char** argv)
     frama_c_prev_stage = frama_c_eva_sav;
 #undef EVA_WARNINGS
   }
+  #endif
 
   printf("%s==== compilers ====%s\n", TERM_HEADER, TERM.normal);
   for(int cc_idx=0; cc_idx<CC_COUNT; ++cc_idx)
