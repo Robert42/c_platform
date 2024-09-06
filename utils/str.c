@@ -15,6 +15,12 @@ str str_from_cstr_len(const char* s, usize len)
 }
 
 // TODO move elsewhere
+/*@
+  assigns \nothing;
+  ensures \result <= x;
+  ensures \result <= y;
+  ensures \result==x || \result==y;
+*/
 usize min_usize(usize x, usize y)
 {
   return x < y ? x : y;
