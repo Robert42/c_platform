@@ -1,12 +1,6 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #pragma once
 
-struct _utils_str
-{
-  const char* begin;
-  const char* end;
-};
-
 /*@
   logic integer str_len(str s) = s.end - s.begin;
   predicate str_valid(str s) = 
