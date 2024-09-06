@@ -19,7 +19,7 @@ void file_text_create_from_cstr_if_different(const Path p, const char* str)
     const Mem_Region prev_stack = STACK;
     Bytes_Mut bytes = _read_all_file_bytes(p.cstr, &STACK);
 
-    if(bytes.end - bytes.begin == len && memcmp(bytes.begin, str, len)==0)
+    if(bytes_mut_len(bytes) == len && memcmp(bytes.begin, str, len)==0)
       already_exists_with_same_content = true;
 
     STACK = prev_stack;

@@ -9,6 +9,7 @@ extern Mem_Region PANIC_REGION;
 
 #include "dev/assert.c"
 #include "mem/mem.c"
+#include "mem/bytes.c"
 #include "math/cmp.c"
 #include "ty/str.c"
 #include "fmt.c"
