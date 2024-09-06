@@ -5,8 +5,6 @@
 
 // ==== mempry regions ====
 
-struct _platform_mem_Region;
-typedef struct _platform_mem_Region Mem_Region;
 struct _platform_mem_Region
 {
   unsigned char* begin;
