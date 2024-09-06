@@ -17,4 +17,5 @@ typedef struct _platform_mem_Region Mem_Region;
 #include "dev/assert.h"
 #include "mem/mem.h"
 #include "fmt.h"
+#include "x_macros.h"
 

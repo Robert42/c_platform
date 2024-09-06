@@ -2,7 +2,6 @@
 
 #include "c_script.h"
 
-#include "utils/x_macros.h"
 #include "utils/collections/set/setintcddo.c"
 #include "script/simple_file_watcher.c" // depends on setintcddo.c, x_macros.h
 
