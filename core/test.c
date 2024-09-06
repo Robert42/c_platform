@@ -5,7 +5,7 @@
 #include "ty/str.test.c"
 #include "fmt.test.c"
 
-void foundation_test()
+void core_test()
 {
   assert_test();
   mem_test();
