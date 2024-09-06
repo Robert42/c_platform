@@ -10,3 +10,5 @@ typedef struct _platform_mem_Region Mem_Region;
 #include "env.h"
 #include "attributes.h"
 #include "ty/prim.h"
+#include "ty/str.h"
+
