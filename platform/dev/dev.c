@@ -72,7 +72,7 @@ static const char* fmt_bool(bool x)
   return x ? "true" : "false";
 }
 
-#include "assert.c"
+#include "assert.generated.c"
 
 // ==== env ====
 

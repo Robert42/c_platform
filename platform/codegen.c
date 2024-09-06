@@ -48,8 +48,8 @@ static void platform_codegen_assertions()
 
   const Path platform_dir = path_parent(path_realpath(path_from_cstr(__FILE__)));
 
-  const Path assert_h = path_join(platform_dir, path_from_cstr("dev/assert.h"));
-  const Path assert_c = path_join(platform_dir, path_from_cstr("dev/assert.c"));
+  const Path assert_h = path_join(platform_dir, path_from_cstr("dev/assert.generated.h"));
+  const Path assert_c = path_join(platform_dir, path_from_cstr("dev/assert.generated.c"));
 
   char gen_h[32 * 1024] = {0};
   char gen_c[32 * 1024] = {0};

@@ -8,7 +8,7 @@ extern usize __assert_capture__;
 extern usize __assert_caught__;
 #endif
 
-#include "assert.h"
+#include "assert.generated.h"
 
 #define EXPECT_ASSERT(...) { \
   const usize __prev__ = __assert_caught__; \
