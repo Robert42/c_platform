@@ -93,7 +93,7 @@ void __linux_call_failed__(const char* call, const char* file, int line)
 
   printf("%s==== ASSERT_LINUX ====%s\n", TERM_STYLE_RED, TERM_STYLE_RED_BOLD);
   perror(call);
-  printf("%s%s:%d\n", TERM_STYLE_RESET, __FILE__, __LINE__);
+  printf("%s%s:%d\n", TERM_STYLE_RESET, file, line);
   abort();
 }
 #endif
