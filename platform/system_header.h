@@ -6,10 +6,6 @@
 
 #if ENV_COMPILER == COMPILER_TCC
 
-typedef _Bool bool;
-#define true ((bool)1)
-#define false ((bool)0)
-
 NORETURN
 void abort();
 
@@ -65,7 +61,6 @@ void errx(int eval, const char* fmt, ...);
 
 #include <stdarg.h>
 #include <stdint.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
