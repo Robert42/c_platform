@@ -16,7 +16,7 @@ void file_text_create_from_cstr_if_different(const Path p, const char* str)
   if(file_size>=0 && file_size == len)
   {
     // TODO: introduce STACK region
-    Bytes bytes = _read_all_file_bytes(p.cstr, &SCRATCH);
+    Bytes_Mut bytes = _read_all_file_bytes(p.cstr, &SCRATCH);
 
     if(bytes.end - bytes.begin == len && memcmp(bytes.begin, str, len)==0)
       return;
