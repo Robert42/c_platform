@@ -10,20 +10,6 @@ int str_cmp(str x, str y);
 const char* str_fmt(str x);
 char* cstr_fmt(Mem_Region* region, const char* fmt, ...);
 
-static void __assert_failed__()
-{
-#if !ENV_STATIC_ANALYSIS
-  if(__assert_capture__)
-  {
-    __assert_caught__++;
-    return;
-  }
-#endif
-
-  printf("%s==== ASSERT ====%s\n", TERM.red, TERM.normal);
-  abort();
-}
-
 static void __bin_assert_failed__(const char* condition, const char* lhs, const char* rhs, const char* file, int line)
 {
 #if !ENV_STATIC_ANALYSIS
