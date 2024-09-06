@@ -4,6 +4,7 @@
 #include "platform/platform.c"
 #include "utils/utils.c"
 
+#include "foundation/test.c"
 #include "platform/test.c"
 #include "utils/test.c"
 
@@ -29,6 +30,7 @@ int main(int argc, const char** argv)
   dev_env_demo();
 #endif
 
+  foundation_test();
   platform_test();
   utils_test();
 

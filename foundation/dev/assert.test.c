@@ -1,8 +1,8 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
-#include "dev.h"
+#include "assert.h"
 
-void dev_test()
+void assert_test()
 {
   int xs[2];
 

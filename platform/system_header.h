@@ -3,9 +3,6 @@
 
 #if ENV_COMPILER == COMPILER_TCC
 
-NORETURN
-void abort();
-
 #ifdef __linux__
 
 #include <sys/types.h> // pid_t
@@ -35,9 +32,6 @@ int mkdir(const char* path, mode_t mode);
 int pipe(int pipefd[2]);
 #endif
 
-int strcmp(const char* x, const char* y);
-const char* strstr(const char* haystack, const char* needle);
-char* strtok(char* restrict str, const char* restrict delim);
 const char* dirname(const char* path);
 char* realpath(const char* path, char* buffer);
 
@@ -50,7 +44,6 @@ void errx(int eval, const char* fmt, ...);
 
 #else // ENV_COMPILER == COMPILER_TCC
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <libgen.h>
@@ -65,7 +58,6 @@ void errx(int eval, const char* fmt, ...);
 
 #ifdef __linux__
 #include <time.h>
-#include <errno.h>
 
 // source:` man getdents(2)`
 struct linux_dirent64

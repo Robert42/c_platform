@@ -4,6 +4,7 @@
 #include "foundation/prelude.h"
 #include "platform/prelude.h"
 
+#include "foundation/foundation.c"
 #include "platform/platform.c"
 #include "utils/utils.c"
 #include "c_compiler/c_compiler.c"

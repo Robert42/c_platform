@@ -1,5 +1,12 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
+#ifdef __linux__
+#include <errno.h>
+#endif
+#if ENV_COMPILER != COMPILER_TCC
+#include <stdio.h>
+#endif
+
 #if !ENV_STATIC_ANALYSIS
 usize __assert_capture__ = 0;
 usize __assert_caught__ = 0;
