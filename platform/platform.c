@@ -19,6 +19,7 @@ void platform_init()
 
 #include "io/terminal.c"
 #include "io/path.c"
+#include "io/file.c"
 #include "time/timer.c"
 
 #ifdef __linux__
