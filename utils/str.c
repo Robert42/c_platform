@@ -46,7 +46,7 @@ int str_cmp(str x, str y)
 const char* str_fmt(str x)
 {
   usize len = str_len(x);
-  char* const copy = mem_region_alloc_bytes_unaligned(&SCRATCH, len+1);
+  char* const copy = (char*)mem_region_alloc_bytes_unaligned(&SCRATCH, len+1);
   copy[len] = 0;
   memcpy(copy, x.begin, len);
   return copy;
