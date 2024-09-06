@@ -3,8 +3,6 @@
 
 u64 timer_freq;
 
-// TODO: move to utils?
-char* cstr_fmt(Mem_Region* region, const char* fmt, ...);
 char* time_format_short_duration(u64 time, Mem_Region* region)
 {
   long double seconds = (long double)time / (long double)timer_freq;
