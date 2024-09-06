@@ -2,6 +2,5 @@
 
 #include "path.c"
 #include "file.c"
-#include "str.c"
 #include "fmt.c"
 
