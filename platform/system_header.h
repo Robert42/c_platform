@@ -66,9 +66,6 @@ void errx(int eval, const char* fmt, ...);
 
 #endif
 
-struct _utils_str;
-typedef struct _utils_str str;
-
 struct _utils_str
 {
   const char* begin;
