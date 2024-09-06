@@ -15,7 +15,7 @@ str str_from_cstr_len(const char* s, usize len)
 }
 
 // TODO move elsewhere
-usize min_zu(usize x, usize y)
+usize min_usize(usize x, usize y)
 {
   return x < y ? x : y;
 }
@@ -24,7 +24,7 @@ int str_cmp(str x, str y)
 {
   const usize x_len = str_len(x);
   const usize y_len = str_len(y);
-  const usize len = min_zu(x_len, y_len);
+  const usize len = min_usize(x_len, y_len);
 
   for(usize i=0; i<len; ++i)
     if(x.begin[i] != y.begin[i])
