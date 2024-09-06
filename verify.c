@@ -248,9 +248,11 @@ static void cmd_exec(struct Cmd cmd)
   const bool ok =
     result.exit_code == EXIT_SUCCESS
     && (cmd.log_err == NULL || _file_size(cmd.log_err)<=0)
+    && (cmd.err_text == NULL || !strstr(result.captured_stderr, cmd.err_text))
     && (cmd.err_text == NULL || !strstr(result.captured_stdout, cmd.err_text));
   const bool warning =
        (cmd.log_warn != NULL && _file_size(cmd.log_warn)>0)
+    || (cmd.warning_text != NULL && strstr(result.captured_stderr, cmd.warning_text))
     || (cmd.warning_text != NULL && strstr(result.captured_stdout, cmd.warning_text));
 
   const char* const duration = time_format_short_duration(time_end-time_begin, &SCRATCH);
