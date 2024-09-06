@@ -96,6 +96,7 @@ Path path_join(Path a, Path b)
   return path_concat(a, b);
 }
 
+#ifdef __linux__
 Path path_realpath(Path p)
 {
   char* maybe_path = realpath(p.cstr, NULL);
@@ -106,6 +107,7 @@ Path path_realpath(Path p)
 
   return p;
 }
+#endif
 
 bool path_is_c_file(const char* path)
 {
