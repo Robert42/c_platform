@@ -1,7 +1,5 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
-/* TODO uncomment
 #include "str.h"
-*/
 
 usize str_len(str s)
 {
