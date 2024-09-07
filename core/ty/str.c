@@ -39,7 +39,11 @@ int str_cmp(str x, str y)
   }
 
   //@ assert x.begin[0 .. len-1] == y.begin[0 .. len-1];
-  return x_len - y_len;
+  const ssize diff = x_len - y_len;
+  if(x_len < y_len) return -1;
+  if(x_len > y_len) return 1;
+  //@ assert diff == 0;
+  return 0;
 }
 
 #ifndef __FRAMAC__ // TODO
