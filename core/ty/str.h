@@ -48,12 +48,11 @@ int str_cmp(str x, str y);
 
 const char* str_fmt(str x);
 
-// TODO: tell the compilers & analyzers, that this is using printf formatting
 /*@
   assigns *region \from fmt;
   assigns \result \from *region;
 */
-char* cstr_fmt(Mem_Region* region, const char* fmt, ...);
+char* cstr_fmt(Mem_Region* region, const char* fmt, ...) ATT_PRINTF(2, 3);
 
 /*@
   assigns *region \from fmt, args;
