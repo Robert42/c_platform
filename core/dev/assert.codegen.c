@@ -24,7 +24,7 @@ void platform_codegen()
   platform_codegen_assertions();
 }
 
-struct Platform_Codegen_Assert
+struct Codegen_Assert
 {
   const char* name; // "assert_usize_lte_lt"
   const char* type; // "usize"
@@ -35,13 +35,13 @@ struct Platform_Codegen_Assert
   unsigned int num_args : 2; // 3 in case of `assert_usize_lte_lt`
 };
 
-struct Platform_Codegen_Assert_Group
+struct Codegen_Assert_Group
 {
   const char* name; // "ptr"
-  unsigned int begin, end; // range of slice of Platform_Codegen_Assert withign this group
+  unsigned int begin, end; // range of slice of Codegen_Assert withign this group
 };
 
-static void platform_codegen_assertion_define(Fmt* f, const char** arg_name, struct Platform_Codegen_Assert a, const char* prefix, bool call_proc);
+static void platform_codegen_assertion_define(Fmt* f, const char** arg_name, struct Codegen_Assert a, const char* prefix, bool call_proc);
 static void platform_codegen_assertions()
 {
   const Mem_Region _prev_stack = STACK;
@@ -95,8 +95,8 @@ static void platform_codegen_assertions()
 #undef CMP_GT
 #undef CMP_GTE
 
-  struct Platform_Codegen_Assert assertions[1024];
-  struct Platform_Codegen_Assert_Group assert_group[256];
+  struct Codegen_Assert assertions[1024];
+  struct Codegen_Assert_Group assert_group[256];
   int num_assertions = 0;
   int num_assert_groups = 0;
 
@@ -109,7 +109,7 @@ static void platform_codegen_assertions()
     for(int xy=0; xy<ARRAY_LEN(bin_condition_code); ++xy) \
     { \
       const char* condition = cstr_fmt(&STACK, "x %s y", bin_condition_code[xy]); \
-      assertions[num_assertions++] = (struct Platform_Codegen_Assert){ \
+      assertions[num_assertions++] = (struct Codegen_Assert){ \
         .name = cstr_fmt(&STACK, "assert_%s_%s", #NAME, bin_condition_name[xy]), \
         .type = #TYPE, \
         .condition = condition, \
@@ -125,7 +125,7 @@ static void platform_codegen_assertions()
       { \
         const u16 xy = rng_conditions[i]>>8; \
         const u16 yz = rng_conditions[i] & 0xff; \
-        assertions[num_assertions++] = (struct Platform_Codegen_Assert){ \
+        assertions[num_assertions++] = (struct Codegen_Assert){ \
           .name = cstr_fmt(&STACK, "assert_%s_%s_%s", #NAME, bin_condition_name[xy], bin_condition_name[yz]), \
           .type = #TYPE, \
           .condition = cstr_fmt(&STACK, "x %s y && y %s z", bin_condition_code[xy], bin_condition_code[yz]), \
@@ -136,7 +136,7 @@ static void platform_codegen_assertions()
         }; \
       } \
     } \
-    assert_group[num_assert_groups++] = (struct Platform_Codegen_Assert_Group){ \
+    assert_group[num_assert_groups++] = (struct Codegen_Assert_Group){ \
       .name = #NAME, \
       .begin = first_assert, \
       .end = num_assertions, \
@@ -147,7 +147,7 @@ static void platform_codegen_assertions()
 
 #define X(NAME, PRINT_MID, ENSURES, TYPE, CONDITION, FMT_CODE) { \
     const int first_assert = num_assertions; \
-    assertions[num_assertions++] = (struct Platform_Codegen_Assert){ \
+    assertions[num_assertions++] = (struct Codegen_Assert){ \
       .name = cstr_fmt(&STACK, "assert_%s", #NAME), \
       .type = #TYPE, \
       .condition = #CONDITION, \
@@ -156,7 +156,7 @@ static void platform_codegen_assertions()
       .pretty_print_comparison = {NULL, PRINT_MID, NULL}, \
       .num_args = 2, \
     }; \
-    assert_group[num_assert_groups++] = (struct Platform_Codegen_Assert_Group){ \
+    assert_group[num_assert_groups++] = (struct Codegen_Assert_Group){ \
       .name = #NAME, \
       .begin = first_assert, \
       .end = num_assertions, \
@@ -175,7 +175,7 @@ static void platform_codegen_assertions()
   const char* arg_name[] = {"x", "y", "z"};
   for(int group_idx=0; group_idx<num_assert_groups; ++group_idx)
   {
-    struct Platform_Codegen_Assert_Group g = assert_group[group_idx];
+    struct Codegen_Assert_Group g = assert_group[group_idx];
 
     if(dbg)
       printf("// ==== %s ====\n", g.name);
@@ -184,7 +184,7 @@ static void platform_codegen_assertions()
     
     for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
     {
-      struct Platform_Codegen_Assert a = assertions[assert_idx];
+      struct Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
 
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
@@ -192,7 +192,7 @@ static void platform_codegen_assertions()
 
       if(dbg)
       {
-        printf("Platform_Codegen_Assert{\n");
+        printf("Codegen_Assert{\n");
         printf("  .name = `%s`\n", a.name);
         printf("  .type = `%s`\n", a.type);
         printf("  .condition = `%s`\n", a.condition);
@@ -232,13 +232,13 @@ static void platform_codegen_assertions()
   // ==== assert macros ====
   for(int group_idx=0; group_idx<num_assert_groups; ++group_idx)
   {
-    struct Platform_Codegen_Assert_Group g = assert_group[group_idx];
+    struct Codegen_Assert_Group g = assert_group[group_idx];
 
     fmt_write(&fh, "// ==== %s ====\n", g.name);
 
     for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
     {
-      struct Platform_Codegen_Assert a = assertions[assert_idx];
+      struct Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
 
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
@@ -253,13 +253,13 @@ static void platform_codegen_assertions()
   fmt_write(&fh, "#if defined(__FRAMAC__) || !ENV_DEBUG\n");
   for(int group_idx=0; group_idx<num_assert_groups; ++group_idx)
   {
-    struct Platform_Codegen_Assert_Group g = assert_group[group_idx];
+    struct Codegen_Assert_Group g = assert_group[group_idx];
 
     fmt_write(&fh, "// ==== %s ====\n", g.name);
 
     for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
     {
-      struct Platform_Codegen_Assert a = assertions[assert_idx];
+      struct Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
 
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
@@ -272,13 +272,13 @@ static void platform_codegen_assertions()
   fmt_write(&fh, "#else // __FRAMAC__ || !ENV_DEBUG\n");
   for(int group_idx=0; group_idx<num_assert_groups; ++group_idx)
   {
-    struct Platform_Codegen_Assert_Group g = assert_group[group_idx];
+    struct Codegen_Assert_Group g = assert_group[group_idx];
 
     fmt_write(&fh, "// ==== %s ====\n", g.name);
     
     for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
     {
-      struct Platform_Codegen_Assert a = assertions[assert_idx];
+      struct Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
 
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
@@ -299,7 +299,7 @@ static void platform_codegen_assertions()
 #undef CREATE_RANGE
 }
 
-static void platform_codegen_assertion_define(Fmt* f, const char** arg_name, struct Platform_Codegen_Assert a, const char* prefix, bool call_proc)
+static void platform_codegen_assertion_define(Fmt* f, const char** arg_name, struct Codegen_Assert a, const char* prefix, bool call_proc)
 {
   fmt_write(f, "#define %s%s(", prefix, a.name);
   for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
