@@ -17,11 +17,11 @@
   X(ssize) \
   X(ptr) \
 
-static void platform_codegen_assertions();
+static void codegen_assertions();
 
-void platform_codegen()
+void codegen()
 {
-  platform_codegen_assertions();
+  codegen_assertions();
 }
 
 struct Codegen_Assert
@@ -41,8 +41,8 @@ struct Codegen_Assert_Group
   unsigned int begin, end; // range of slice of Codegen_Assert withign this group
 };
 
-static void platform_codegen_assertion_define(Fmt* f, const char** arg_name, struct Codegen_Assert a, const char* prefix, bool call_proc);
-static void platform_codegen_assertions()
+static void codegen_assertion_define(Fmt* f, const char** arg_name, struct Codegen_Assert a, const char* prefix, bool call_proc);
+static void codegen_assertions()
 {
   const Mem_Region _prev_stack = STACK;
 
@@ -244,7 +244,7 @@ static void platform_codegen_assertions()
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
-      platform_codegen_assertion_define(&fh, arg_name, a, "", true);
+      codegen_assertion_define(&fh, arg_name, a, "", true);
     }
     fmt_write(&fh, "\n");
   }
@@ -265,7 +265,7 @@ static void platform_codegen_assertions()
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
-      platform_codegen_assertion_define(&fh, arg_name, a, "debug_", false);
+      codegen_assertion_define(&fh, arg_name, a, "debug_", false);
     }
     fmt_write(&fh, "\n");
   }
@@ -284,7 +284,7 @@ static void platform_codegen_assertions()
       if(assert_idx>g.begin && assertions[assert_idx-1].num_args != a.num_args)
         fmt_write(&fh, "\n");
 
-      platform_codegen_assertion_define(&fh, arg_name, a, "debug_", true);
+      codegen_assertion_define(&fh, arg_name, a, "debug_", true);
     }
     fmt_write(&fh, "\n");
   }
@@ -299,7 +299,7 @@ static void platform_codegen_assertions()
 #undef CREATE_RANGE
 }
 
-static void platform_codegen_assertion_define(Fmt* f, const char** arg_name, struct Codegen_Assert a, const char* prefix, bool call_proc)
+static void codegen_assertion_define(Fmt* f, const char** arg_name, struct Codegen_Assert a, const char* prefix, bool call_proc)
 {
   fmt_write(f, "#define %s%s(", prefix, a.name);
   for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
