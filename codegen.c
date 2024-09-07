@@ -12,11 +12,12 @@ const char* const BANNER =
 
 #include "core/dev/assert.codegen.c"
 
+
 int main(int argc, char** argv)
 {
   c_script_init();
 
-  platform_codegen();
+  assert_codegen();
 
   printf("%s==== DONE ====%s\n", TERM.green_bold, TERM.normal);
 

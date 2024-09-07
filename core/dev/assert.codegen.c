@@ -17,13 +17,6 @@
   X(ssize) \
   X(ptr) \
 
-static void codegen_assertions();
-
-void codegen()
-{
-  codegen_assertions();
-}
-
 struct Codegen_Assert
 {
   const char* name; // "assert_usize_lte_lt"
@@ -42,7 +35,7 @@ struct Codegen_Assert_Group
 };
 
 static void codegen_assertion_define(Fmt* f, const char** arg_name, struct Codegen_Assert a, const char* prefix, bool call_proc);
-static void codegen_assertions()
+static void assert_codegen()
 {
   const Mem_Region _prev_stack = STACK;
 
