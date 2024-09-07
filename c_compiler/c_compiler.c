@@ -14,7 +14,7 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
   }
   case CC_GCC:
   {
-    char* const args_compile[] = {"gcc", "-std=c99", "-Wall", "-Werror", "-Wno-error=unused-function", "-pedantic", c_file.cstr, "-o", output_file.cstr, NULL};
+    char* const args_compile[] = {"gcc", "-std=c99", "-Wall", "-Werror", "-Werror=vla", "-Wno-error=unused-function", "-pedantic", c_file.cstr, "-o", output_file.cstr, NULL};
     char* const args_test[] = {output_file.cstr, NULL};
     if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).exit_code == EXIT_SUCCESS)
       proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0});
@@ -22,7 +22,7 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
   }
   case CC_CLANG:
   {
-    char* const args_compile[] = {"clang", "-std=c99", "-Wall", "-Werror", "-pedantic", c_file.cstr, "-o", output_file.cstr, NULL};
+    char* const args_compile[] = {"clang", "-std=c99", "-Wall", "-Werror", "-Werror=vla", "-pedantic", c_file.cstr, "-o", output_file.cstr, NULL};
     char* const args_test[] = {output_file.cstr, NULL};
     if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).exit_code == EXIT_SUCCESS)
       proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0});
