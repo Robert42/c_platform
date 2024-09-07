@@ -3,4 +3,4 @@
 
 #include "file.h"
 
-Bytes _linux_read_all_bytes_from_fd(int fd, Mem_Region* region);
+Bytes_Mut _linux_read_all_bytes_from_fd(int fd, Mem_Region* region);

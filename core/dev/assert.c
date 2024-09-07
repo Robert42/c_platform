@@ -1,28 +1,20 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
+#ifdef __linux__
+#include <errno.h>
+#endif
+#if ENV_COMPILER != COMPILER_TCC
+#include <stdio.h>
+#endif
+
 #if !ENV_STATIC_ANALYSIS
 usize __assert_capture__ = 0;
 usize __assert_caught__ = 0;
 #endif
 
-// TODO: move to a header
-int str_cmp(str x, str y);
-const char* str_fmt(str x);
-char* cstr_fmt(Mem_Region* region, const char* fmt, ...);
-
-static void __assert_failed__()
-{
-#if !ENV_STATIC_ANALYSIS
-  if(__assert_capture__)
-  {
-    __assert_caught__++;
-    return;
-  }
-#endif
-
-  printf("%s==== ASSERT ====%s\n", TERM.red, TERM.normal);
-  abort();
-}
+const char* TERM_STYLE_RED = "";
+const char* TERM_STYLE_RED_BOLD = "";
+const char* TERM_STYLE_RESET = "";
 
 static void __bin_assert_failed__(const char* condition, const char* lhs, const char* rhs, const char* file, int line)
 {
@@ -34,14 +26,14 @@ static void __bin_assert_failed__(const char* condition, const char* lhs, const 
   }
 #endif
 
-  printf("%s==== ASSERT ====%s\n", TERM.red, TERM.normal);
+  printf("%s==== ASSERT ====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
   printf("%s\n", condition);
   printf("\n");
   printf("lhs: %s\n", lhs);
   printf("rhs: %s\n", rhs);
   printf("\n");
   printf("%s:%i", file, line);
-  printf("%s====%s\n", TERM.red, TERM.normal);
+  printf("%s====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
   abort();
 }
 
@@ -55,7 +47,7 @@ static void __ter_assert_failed__(const char* condition, const char* lhs, const 
   }
 #endif
 
-  printf("%s==== ASSERT ====%s\n", TERM.red, TERM.normal);
+  printf("%s==== ASSERT ====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
   printf("%s\n", condition);
   printf("\n");
   printf("lhs: %s\n", lhs);
@@ -63,7 +55,7 @@ static void __ter_assert_failed__(const char* condition, const char* lhs, const 
   printf("rhs: %s\n", rhs);
   printf("\n");
   printf("%s:%i", file, line);
-  printf("%s====%s\n", TERM.red, TERM.normal);
+  printf("%s====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
   abort();
 }
 
@@ -72,7 +64,7 @@ static const char* fmt_bool(bool x)
   return x ? "true" : "false";
 }
 
-#include "assert.c"
+#include "assert.generated.c"
 
 // ==== env ====
 
@@ -88,13 +80,6 @@ static inline const char* dev_env_compiler_name(int compiler_id)
 #undef CASE
 }
 
-void dev_env_demo()
-{
-  printf("ENV_DEBUG: %i\n", ENV_DEBUG);
-  printf("ENV_COMPILER: %s\n", dev_env_compiler_name(ENV_COMPILER));
-}
-
-
 #ifdef __linux__
 void __linux_call_failed__(const char* call, const char* file, int line)
 {
@@ -106,9 +91,9 @@ void __linux_call_failed__(const char* call, const char* file, int line)
   }
 #endif
 
-  printf("%s==== ASSERT_LINUX ====%s\n", TERM.red, TERM.red_bold);
+  printf("%s==== ASSERT_LINUX ====%s\n", TERM_STYLE_RED, TERM_STYLE_RED_BOLD);
   perror(call);
-  printf("%s%s:%d\n", TERM.normal, __FILE__, __LINE__);
+  printf("%s%s:%d\n", TERM_STYLE_RESET, file, line);
   abort();
 }
 #endif

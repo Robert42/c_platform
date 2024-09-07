@@ -1,28 +1,13 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #pragma once
 
-#include "dev/env.h"
-
-#define NORETURN __attribute__((noreturn))
-
 #if ENV_COMPILER == COMPILER_TCC
-
-typedef _Bool bool;
-#define true ((bool)1)
-#define false ((bool)0)
-
-NORETURN
-void abort();
-
-#include <tcclib.h>
 
 #ifdef __linux__
 
 #include <sys/types.h> // pid_t
 #include <sys/wait.h> // WIFEXISTED, WEXITSTATUS waitpid
 #include <sys/stat.h>
-#include <fcntl.h> // openat, O_DIRECTORY
-// TODO: don't name header twice
 
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
@@ -45,9 +30,6 @@ int mkdir(const char* path, mode_t mode);
 int pipe(int pipefd[2]);
 #endif
 
-int strcmp(const char* x, const char* y);
-const char* strstr(const char* haystack, const char* needle);
-char* strtok(char* restrict str, const char* restrict delim);
 const char* dirname(const char* path);
 char* realpath(const char* path, char* buffer);
 
@@ -60,18 +42,9 @@ void errx(int eval, const char* fmt, ...);
 
 #else // ENV_COMPILER == COMPILER_TCC
 
-#if ENV_COMPILER == COMPILER_GCC || ENV_COMPILER == COMPILER_CLANG
-#define _GNU_SOURCE
-#endif
-
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <libgen.h>
-#include <fcntl.h>
 #include <err.h>
 #include <sys/wait.h> // waitpid
 #include <sys/stat.h> // mkdir
@@ -80,29 +53,9 @@ void errx(int eval, const char* fmt, ...);
 
 #endif
 
-typedef uint8_t u8;
-typedef  int8_t s8;
-typedef uint16_t u16;
-typedef  int16_t s16;
-typedef uint32_t u32;
-typedef  int32_t s32;
-typedef uint64_t u64;
-typedef  int64_t s64;
-typedef size_t usize;
-typedef ssize_t ssize;
-
-struct _utils_str;
-typedef struct _utils_str str;
-
-struct _utils_str
-{
-  const char* begin;
-  const char* end;
-};
-
 #ifdef __linux__
 #include <time.h>
-#include <errno.h>
+#include <fcntl.h> // openat, O_DIRECTORY
 
 // source:` man getdents(2)`
 struct linux_dirent64

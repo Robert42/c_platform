@@ -5,7 +5,7 @@
 
 // ==== mempry regions ====
 
-typedef struct _platform_mem_Region
+struct _platform_mem_Region
 {
   unsigned char* begin;
   unsigned char* end;
@@ -16,7 +16,7 @@ typedef struct _platform_mem_Region
 
   ssize bytes_available;
 #endif
-} Mem_Region;
+};
 
 /*@ predicate mem_region_valid(Mem_Region region) =
   \valid(region.full_range_begin + (0 .. region.full_range_len-1))

@@ -57,6 +57,7 @@ int main(int argc, const char** argv)
   printf("%s", TERM.clear);
   fflush(stdout);
 
+#if 0 // ISSUE_FRAMA_C: decide, whether to keep frama-c
   printf("%s==== static analysis ====%s\n", TERM_HEADER, TERM.normal);
 
   Path frama_c_prev_stage;
@@ -139,6 +140,7 @@ int main(int argc, const char** argv)
     frama_c_prev_stage = frama_c_eva_sav;
 #undef EVA_WARNINGS
   }
+  #endif
 
   printf("%s==== compilers ====%s\n", TERM_HEADER, TERM.normal);
   for(int cc_idx=0; cc_idx<CC_COUNT; ++cc_idx)
@@ -155,35 +157,33 @@ int main(int argc, const char** argv)
       const Path output_file = src_bin_path(src_idx);
       const Path c_file = src_c_path(src_idx);
       
+      char* const cmd_compile_tcc[] = {"tcc",
+        "-Wall",
+        c_file.cstr,
+        "-o", output_file.cstr,
+        NULL};
+      char* const cmd_compile_gcc[] = {"gcc",
+        "-std=c99",
+        GCC_WARNING_OPTIONS
+        c_file.cstr,
+        "-o", output_file.cstr,
+        NULL};
+      char* const cmd_compile_clang[] = {"clang",
+        "-std=c99",
+        GCC_WARNING_OPTIONS
+        c_file.cstr,
+        "-o", output_file.cstr,
+        NULL};
+
+      char* const * cmd_compile[] = {
+        [CC_TCC] = cmd_compile_tcc,
+        [CC_GCC] = cmd_compile_gcc,
+        [CC_CLANG] = cmd_compile_clang,
+      };
+
       {
-        char* const cmd_compile_tcc[] = {"tcc",
-          "-Wall",
-          c_file.cstr,
-          "-o", output_file.cstr,
-          NULL};
-        char* const cmd_compile_gcc[] = {"gcc",
-          "-std=c99",
-          "-Wall",
-          "-pedantic",
-          c_file.cstr,
-          "-o", output_file.cstr,
-          NULL};
-        char* const cmd_compile_clang[] = {"clang",
-          "-std=c99",
-          "-Wall",
-          "-pedantic",
-          c_file.cstr,
-          "-o", output_file.cstr,
-          NULL};
-
-        char* const * cmd_compile[] = {
-          [CC_TCC] = cmd_compile_tcc,
-          [CC_GCC] = cmd_compile_gcc,
-          [CC_CLANG] = cmd_compile_clang,
-        };
-
         struct Cmd cmd = {
-          .name = cstr_fmt(&SCRATCH, "%s (compile)", SRC_BASENAME[src_idx]),
+          .name = cstr_fmt(&SCRATCH, "%s (compile with %s)", SRC_BASENAME[src_idx], cmd_compile[cc][0]),
           .cmd = cmd_compile[cc],
           .err_text = "error:",
           .warning_text = "warning:",
@@ -194,7 +194,7 @@ int main(int argc, const char** argv)
       {
         char* const cmd_test[] = {output_file.cstr, NULL};
         struct Cmd cmd = {
-          .name = SRC_BASENAME[src_idx],
+          .name = cstr_fmt(&SCRATCH, "%s (%s)", SRC_BASENAME[src_idx], cmd_compile[cc][0]),
           .cmd = cmd_test,
         };
         cmd_exec(cmd);
@@ -238,9 +238,11 @@ static void cmd_exec(struct Cmd cmd)
   const bool ok =
     result.exit_code == EXIT_SUCCESS
     && (cmd.log_err == NULL || _file_size(cmd.log_err)<=0)
+    && (cmd.err_text == NULL || !strstr(result.captured_stderr, cmd.err_text))
     && (cmd.err_text == NULL || !strstr(result.captured_stdout, cmd.err_text));
   const bool warning =
        (cmd.log_warn != NULL && _file_size(cmd.log_warn)>0)
+    || (cmd.warning_text != NULL && strstr(result.captured_stderr, cmd.warning_text))
     || (cmd.warning_text != NULL && strstr(result.captured_stdout, cmd.warning_text));
 
   const char* const duration = time_format_short_duration(time_end-time_begin, &SCRATCH);

@@ -14,18 +14,6 @@ str str_from_cstr_len(const char* s, usize len)
   return (str){s, s+len};
 }
 
-// TODO move elsewhere
-/*@
-  assigns \nothing;
-  ensures \result <= x;
-  ensures \result <= y;
-  ensures \result==x || \result==y;
-*/
-usize min_usize(usize x, usize y)
-{
-  return x < y ? x : y;
-}
-
 int str_cmp(str x, str y)
 {
   const usize x_len = str_len(x);
@@ -33,20 +21,34 @@ int str_cmp(str x, str y)
   const usize len = min_usize(x_len, y_len);
 
   /*@
-    loop assigns \nothing;
+    loop assigns i;
+    loop invariant 0 <= i <= len;
+    loop invariant x.begin[0 .. i-1] == y.begin[0 .. i-1];
+    loop variant len - i;
   */
   for(usize i=0; i<len; ++i)
-    if(x.begin[i] != y.begin[i])
-      return x.begin[i] - y.begin[i];
+  {
+    const char x_char = x.begin[i];
+    const char y_char = y.begin[i];
+    if(x_char != y_char)
+    {
+      //@ assert x_char - y_char != 0;
+      //@ assert x.begin[0 .. i-1] == y.begin[0 .. i-1];
+      return x_char - y_char;
+    }
+  }
 
-  return x_len - y_len;
+  //@ assert x.begin[0 .. len-1] == y.begin[0 .. len-1];
+  if(x_len < y_len) return -1;
+  if(x_len > y_len) return 1;
+  return 0;
 }
 
-#ifndef __FRAMAC__ // TODO
+#ifndef __FRAMAC__ // ISSUE_FRAMA_C
 const char* str_fmt(str x)
 {
   usize len = str_len(x);
-  char* const copy = mem_region_alloc_bytes_unaligned(&SCRATCH, len+1);
+  char* const copy = (char*)mem_region_alloc_bytes_unaligned(&SCRATCH, len+1);
   copy[len] = 0;
   memcpy(copy, x.begin, len);
   return copy;
@@ -74,4 +76,5 @@ char* cstr_fmt_va(Mem_Region* region, const char* fmt, va_list args)
   region->begin += (usize)actual_len + 1;
   return begin;
 }
-#endif // __FRAMA_C__ // TODO
+#endif // __FRAMA_C__ // ISSUE_FRAMA_C
+

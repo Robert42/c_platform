@@ -2,9 +2,5 @@
 #pragma once
 
 #include "system_header.h"
-#include "mem/mem.h"
-#include "dev/dev.h"
 
-// TODO use intrinsic
-#define LIKELY(X) X
-
+#include "io/path.h"

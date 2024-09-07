@@ -1,4 +1,5 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
+#pragma once
 
 typedef struct _utils_Fmt
 {
@@ -31,5 +32,5 @@ typedef struct _utils_Fmt
 */
 
 Fmt fmt_new(char* buffer, usize capacity);
-void fmt_write(Fmt* f, const char* text, ...);
+void fmt_write(Fmt* f, const char* text, ...) ATT_PRINTF(2, 3);
 
