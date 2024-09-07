@@ -8,8 +8,6 @@
 #include <sys/types.h> // pid_t
 #include <sys/wait.h> // WIFEXISTED, WEXITSTATUS waitpid
 #include <sys/stat.h>
-#include <fcntl.h> // openat, O_DIRECTORY
-// TODO: don't name header twice
 
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
@@ -47,7 +45,6 @@ void errx(int eval, const char* fmt, ...);
 #include <stdio.h>
 #include <unistd.h>
 #include <libgen.h>
-#include <fcntl.h>
 #include <err.h>
 #include <sys/wait.h> // waitpid
 #include <sys/stat.h> // mkdir
@@ -58,6 +55,7 @@ void errx(int eval, const char* fmt, ...);
 
 #ifdef __linux__
 #include <time.h>
+#include <fcntl.h> // openat, O_DIRECTORY
 
 // source:` man getdents(2)`
 struct linux_dirent64
