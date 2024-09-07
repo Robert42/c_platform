@@ -40,10 +40,7 @@ char* time_format_date_time_now(Mem_Region* region)
   struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, settings);
   LINUX_ASSERT_EQ(result.exit_code, EXIT_SUCCESS);
 
-  // TODO: add util to trim linebraks
-  usize i = strlen(result.captured_stdout);
-  if(i>0 && result.captured_stdout[i-1] == '\n')
-    result.captured_stdout[i-1] = 0;
+  cstr_trim_right(result.captured_stdout);
 
   return result.captured_stdout;
 }

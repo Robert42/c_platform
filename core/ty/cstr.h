@@ -17,3 +17,5 @@ char* strtok(char* restrict str, const char* restrict delim);
 
 #endif // ENV_COMPILER == COMPILER_TCC
 
+void cstr_trim_right(char* x);
+
