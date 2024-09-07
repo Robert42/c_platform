@@ -4,6 +4,8 @@ bool char_is_ws(char x)
 {
   switch(x)
   {
+  case ' ':
+  case '\t':
   case '\n':
     return true;
   default: return false;
@@ -13,6 +15,6 @@ bool char_is_ws(char x)
 void cstr_trim_right(char* xs)
 {
   usize i = strlen(xs);
-  if(char_is_ws(xs[i-1]))
-     xs[i-1] = 0;
+  while(char_is_ws(xs[i-1]))
+     xs[--i] = 0;
 }

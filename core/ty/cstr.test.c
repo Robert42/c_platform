@@ -23,9 +23,16 @@ void cstr_test()
     assert_cstr_eq(xs, "xyz");
   }
 
+  // trim multiple chars
+  {
+    char xs[] = "xyz\n\n\n\n\n";
+    cstr_trim_right(xs);
+    assert_cstr_eq(xs, "xyz");
+  }
+
   // recognize newlines, tabs and regular spaces as whitespace
   {
-    char xs[] = "xyz\n";
+    char xs[] = "xyz\n\t \n\t ";
     cstr_trim_right(xs);
     assert_cstr_eq(xs, "xyz");
   }
