@@ -66,56 +66,56 @@ void __assert_ssize_eq__(ssize x, ssize y, const char* condition, const char* fi
   if(LIKELY(x == y))
     return;
   else
-  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zs", x), cstr_fmt(&PANIC_REGION, "%zs", y), file, line);
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zd", x), cstr_fmt(&PANIC_REGION, "%zd", y), file, line);
 }
 void __assert_ssize_ne__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x != y))
     return;
   else
-  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zs", x), cstr_fmt(&PANIC_REGION, "%zs", y), file, line);
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zd", x), cstr_fmt(&PANIC_REGION, "%zd", y), file, line);
 }
 void __assert_ssize_lt__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x < y))
     return;
   else
-  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zs", x), cstr_fmt(&PANIC_REGION, "%zs", y), file, line);
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zd", x), cstr_fmt(&PANIC_REGION, "%zd", y), file, line);
 }
 void __assert_ssize_lte__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y))
     return;
   else
-  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zs", x), cstr_fmt(&PANIC_REGION, "%zs", y), file, line);
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zd", x), cstr_fmt(&PANIC_REGION, "%zd", y), file, line);
 }
 void __assert_ssize_gt__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x > y))
     return;
   else
-  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zs", x), cstr_fmt(&PANIC_REGION, "%zs", y), file, line);
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zd", x), cstr_fmt(&PANIC_REGION, "%zd", y), file, line);
 }
 void __assert_ssize_gte__(ssize x, ssize y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x >= y))
     return;
   else
-  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zs", x), cstr_fmt(&PANIC_REGION, "%zs", y), file, line);
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zd", x), cstr_fmt(&PANIC_REGION, "%zd", y), file, line);
 }
 void __assert_ssize_lte_lte__(ssize x, ssize y, ssize z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y <= z))
     return;
   else
-  __ter_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zs", x), cstr_fmt(&PANIC_REGION, "%zs", y), cstr_fmt(&PANIC_REGION, "%zs", z), file, line);
+  __ter_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zd", x), cstr_fmt(&PANIC_REGION, "%zd", y), cstr_fmt(&PANIC_REGION, "%zd", z), file, line);
 }
 void __assert_ssize_lte_lt__(ssize x, ssize y, ssize z, const char* condition, const char* file, int line)
 {
   if(LIKELY(x <= y && y < z))
     return;
   else
-  __ter_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zs", x), cstr_fmt(&PANIC_REGION, "%zs", y), cstr_fmt(&PANIC_REGION, "%zs", z), file, line);
+  __ter_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%zd", x), cstr_fmt(&PANIC_REGION, "%zd", y), cstr_fmt(&PANIC_REGION, "%zd", z), file, line);
 }
 
 // ==== int ====

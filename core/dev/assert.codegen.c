@@ -2,7 +2,7 @@
 
 #define X_MACRO_ASSERT_NUM_CMP_BIN(X) \
   X(usize, usize, "%zu", /*no cast*/) \
-  X(ssize, ssize, "%zs", /*no cast*/) \
+  X(ssize, ssize, "%zd", /*no cast*/) \
   X(int, int, "%i", /*no cast*/) \
   X(ptr, const void*, "%p", /*cast*/(usize) ) \
 
