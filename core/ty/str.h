@@ -36,26 +36,13 @@ str str_from_cstr_len(const char* s, usize len);
 /*@
   requires str_valid(x) && str_valid(y);
   assigns \nothing;
-  behavior eq:
-    requires str_len(x) == str_len(y);
-    requires x.begin[0 .. str_len(x)-1] == y.begin[0 .. str_len(y)-1];
-    ensures \result == 0;
-  behavior lt_content:
-    requires \exists usize n; n<str_len(x) && n<str_len(y) ==> x.begin[0 .. n-1] == y.begin[0 .. n-1] && x.begin[n] < y.begin[n];
-    ensures \result < 0;
-  behavior lt_len:
-    requires str_len(x) < str_len(y);
-    requires x.begin[0 .. str_len(x)-1] == y.begin[0 .. str_len(x)-1];
-    ensures \result < 0;
-  behavior gt_content:
-    requires \exists usize n; n<str_len(x) && n<str_len(y) ==> x.begin[0 .. n-1] == y.begin[0 .. n-1] && x.begin[n] > y.begin[n];
-    ensures \result > 0;
-  behavior gt_len:
-    requires str_len(x) > str_len(y);
-    requires x.begin[0 .. str_len(y)-1] == y.begin[0 .. str_len(y)-1];
-    ensures \result > 0;
-  complete behaviors;
-  disjoint behaviors;
+  ensures \result == 0 ==> str_len(x) == str_len(y) && x.begin[0 .. str_len(x)-1] == y.begin[0 .. str_len(y)-1];
+  ensures \result < 0 ==>
+    (str_len(x) < str_len(y) && x.begin[0 .. str_len(x)-1] == y.begin[0 .. str_len(x)-1]) ||
+    (\exists usize i; 0 <= i < str_len(x)-1 && 0 <= i < str_len(y)-1 ==> x.begin[0 .. i-1] == y.begin[0 .. i-1] && x.begin[i] < y.begin[i]);
+  ensures \result > 0 ==>
+    (str_len(x) > str_len(y) && x.begin[0 .. str_len(y)-1] == y.begin[0 .. str_len(y)-1]) ||
+    (\exists usize i; 0 <= i < str_len(x)-1 && 0 <= i < str_len(y)-1 ==> x.begin[0 .. i-1] == y.begin[0 .. i-1] && x.begin[i] > y.begin[i]);
 */
 int str_cmp(str x, str y);
 
