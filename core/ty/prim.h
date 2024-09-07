@@ -9,7 +9,14 @@ typedef _Bool bool;
 
 #include <tcclib.h>
 
-#else // ENV_COMPILER == COMPILER_TCC
+#elif ENV_COMPILER == COMPILER_FRAMAC
+
+#include <stdbool.h>
+#include <stdint.h>
+#include <__fc_define_ssize_t.h>
+#include <__fc_define_size_t.h>
+
+#else // gcc/clang/...
 
 #if ENV_COMPILER == COMPILER_GCC || ENV_COMPILER == COMPILER_CLANG
 #define _GNU_SOURCE
