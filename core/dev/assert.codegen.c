@@ -46,10 +46,10 @@ static void platform_codegen_assertions()
 {
   const Mem_Region _prev_stack = STACK;
 
-  const Path platform_dir = path_parent(path_realpath(path_from_cstr(__FILE__)));
+  const Path core_dir = path_parent(path_parent(path_realpath(path_from_cstr(__FILE__))));
 
-  const Path assert_h = path_join(platform_dir, path_from_cstr("dev/assert.generated.h"));
-  const Path assert_c = path_join(platform_dir, path_from_cstr("dev/assert.generated.c"));
+  const Path assert_h = path_join(core_dir, path_from_cstr("dev/assert.generated.h"));
+  const Path assert_c = path_join(core_dir, path_from_cstr("dev/assert.generated.c"));
 
   char gen_h[32 * 1024] = {0};
   char gen_c[32 * 1024] = {0};
