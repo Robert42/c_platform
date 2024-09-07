@@ -23,7 +23,7 @@ extern usize __assert_caught__;
 #undef EXPECT_ASSERT
 #define EXPECT_ASSERT(...) {}
 #define EXPECT_DEBUG_ASSERT(...) {}
-#define UNREACHABLE() abort() // TODO is there a builtin for that?
+#define UNREACHABLE() abort()
 
 #elif ENV_DEBUG
 
@@ -43,7 +43,7 @@ void __linux_call_failed__(const char* call, const char* file, int line);
 #define LINUX_ASSERT_NE(CALL, FAILURE) do{ if((CALL) == (FAILURE)) {__linux_call_failed__(#CALL, __FILE__, __LINE__); } } while(0)
 #endif
 
-// TODO think about which assertions to keep, now that I am using frama_c
+// ISSUE_FRAMA_C think about which assertions to keep, now that I am using frama_c
 // - pro:
 //   - frama_c is a analysis of all possible states
 //   - less code to compile

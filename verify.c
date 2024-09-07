@@ -57,7 +57,7 @@ int main(int argc, const char** argv)
   printf("%s", TERM.clear);
   fflush(stdout);
 
-#if 0 // TODO: decide, whether to keep frama-c
+#if 0 // ISSUE_FRAMA_C: decide, whether to keep frama-c
   printf("%s==== static analysis ====%s\n", TERM_HEADER, TERM.normal);
 
   Path frama_c_prev_stage;

@@ -44,7 +44,7 @@ int str_cmp(str x, str y)
   return 0;
 }
 
-#ifndef __FRAMAC__ // TODO
+#ifndef __FRAMAC__ // ISSUE_FRAMA_C
 const char* str_fmt(str x)
 {
   usize len = str_len(x);
@@ -76,4 +76,5 @@ char* cstr_fmt_va(Mem_Region* region, const char* fmt, va_list args)
   region->begin += (usize)actual_len + 1;
   return begin;
 }
-#endif // __FRAMA_C__ // TODO
+#endif // __FRAMA_C__ // ISSUE_FRAMA_C
+
