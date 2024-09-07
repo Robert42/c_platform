@@ -16,11 +16,7 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
   {
     char* const args_compile[] = {"gcc",
       "-std=c99",
-      "-Wall",
-      "-Werror",
-      "-Werror=vla",
-      "-Wno-error=unused-function",
-      "-pedantic",
+      GCC_WARNING_OPTIONS
       c_file.cstr,
       "-o", output_file.cstr,
       NULL};
@@ -33,10 +29,8 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
   {
     char* const args_compile[] = {"clang",
       "-std=c99",
-      "-Wall",
-      "-Werror",
-      "-Werror=vla",
-      "-pedantic", c_file.cstr,
+      GCC_WARNING_OPTIONS
+      c_file.cstr,
       "-o", output_file.cstr,
       NULL};
     char* const args_test[] = {output_file.cstr, NULL};

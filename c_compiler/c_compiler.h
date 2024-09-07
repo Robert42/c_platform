@@ -17,3 +17,13 @@ enum C_Compiler cc_fastest_available();
 enum C_Compiler cc_best_optimizer_available();
 bool cc_compiler_is_available(enum C_Compiler cc);
 
+#define GCC_WARNING_OPTIONS \
+  "-Wall", \
+  "-Wextra", \
+  "-Werror", \
+  "-Wno-error=unused-parameter", \
+  "-Wno-error=unused-variable", \
+  "-Wno-error=sign-compare", \
+  "-Werror=vla", \
+  "-pedantic", \
+

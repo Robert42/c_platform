@@ -164,27 +164,13 @@ int main(int argc, const char** argv)
         NULL};
       char* const cmd_compile_gcc[] = {"gcc",
         "-std=c99",
-        "-Wall",
-        "-Wextra",
-        "-Werror",
-        "-Wno-error=unused-parameter",
-        "-Wno-error=unused-variable",
-        "-Wno-error=sign-compare",
-        "-Werror=vla",
-        "-pedantic",
+        GCC_WARNING_OPTIONS
         c_file.cstr,
         "-o", output_file.cstr,
         NULL};
       char* const cmd_compile_clang[] = {"clang",
         "-std=c99",
-        "-Wall",
-        "-Wextra",
-        "-Werror",
-        "-Wno-error=unused-parameter",
-        "-Wno-error=unused-variable",
-        "-Wno-error=sign-compare",
-        "-Werror=vla",
-        "-pedantic",
+        GCC_WARNING_OPTIONS
         c_file.cstr,
         "-o", output_file.cstr,
         NULL};
