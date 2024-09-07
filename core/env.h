@@ -18,6 +18,7 @@
 #define COMPILER_TCC 1
 #define COMPILER_GCC 2
 #define COMPILER_CLANG 3
+#define COMPILER_FRAMAC 4
 
 #define ARCH_AARCH64 1
 #define ARCH_X86_16 2
@@ -26,6 +27,8 @@
 
 #if defined(__TINYC__)
 #define ENV_COMPILER COMPILER_TCC
+#elif defined(__FRAMAC__)
+#define ENV_COMPILER COMPILER_FRAMAC
 #elif defined(__clang__)
 #define ENV_COMPILER COMPILER_CLANG
 #elif defined(__GNUC__)
