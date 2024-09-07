@@ -15,7 +15,7 @@ struct _platform_io_Bytes_Mut
   predicate bytes_mut_valid(Bytes_Mut s) = 
     s.begin <= s.end &&
     (usize)(s.end - s.begin) == s.end - s.begin &&
-    \valid(s.begin + (0 .. str_len(s)-1));
+    \valid(s.begin + (0 .. bytes_mut_len(s)-1));
 */
 
 /*@
