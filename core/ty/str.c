@@ -21,12 +21,24 @@ int str_cmp(str x, str y)
   const usize len = min_usize(x_len, y_len);
 
   /*@
-    loop assigns \nothing;
+    loop assigns i;
+    loop invariant 0 <= i <= len;
+    loop invariant x.begin[0 .. i-1] == y.begin[0 .. i-1];
+    loop variant len - i;
   */
   for(usize i=0; i<len; ++i)
-    if(x.begin[i] != y.begin[i])
-      return x.begin[i] - y.begin[i];
+  {
+    const char x_char = x.begin[i];
+    const char y_char = y.begin[i];
+    if(x_char != y_char)
+    {
+      //@ assert x_char - y_char != 0;
+      //@ assert x.begin[0 .. i-1] == y.begin[0 .. i-1];
+      return x_char - y_char;
+    }
+  }
 
+  //@ assert x.begin[0 .. len-1] == y.begin[0 .. len-1];
   return x_len - y_len;
 }
 
