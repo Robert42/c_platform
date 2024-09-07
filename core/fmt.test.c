@@ -13,4 +13,18 @@ void fmt_test()
     fmt_write(&f, ".pos");
     assert_cstr_eq(f.begin, "player.pos");
   }
+
+  {
+    char BUFFER[42] = {37};
+    Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
+
+    Fmt f = fmt_new_from_region(&region, 32);
+    assert_usize_eq(mem_region_available_bytes(region), 10);
+
+    assert_cstr_eq(f.begin, "");
+
+    fmt_write(&f, "player");
+    fmt_write(&f, ".pos");
+    assert_cstr_eq(f.begin, "player.pos");
+  }
 }

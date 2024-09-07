@@ -35,6 +35,13 @@ Fmt fmt_new(char* buffer, usize capacity)
   return f;
 }
 
+Fmt fmt_new_from_region(Mem_Region* region, usize capacity)
+{
+  u8* const bytes = mem_region_alloc_bytes_unaligned(region, capacity);
+  Fmt f = fmt_new(bytes, capacity);
+  return f;
+}
+
 /*@ requires valid_fmt: \valid(f) && fmt_valid(*f);
     assigns f->end \from f->end, f->available_bytes;
     assigns f->end[0..f->available_bytes-1];
