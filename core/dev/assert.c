@@ -59,6 +59,14 @@ static void __ter_assert_failed__(const char* condition, const char* lhs, const 
   abort();
 }
 
+void __panic__(const char* title, const char* file, int line)
+{
+  printf("%s==== %s ====%s\n", TERM_STYLE_RED, title, TERM_STYLE_RESET);
+  printf("%s:%i", file, line);
+  printf("%s====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
+  abort();
+}
+
 static const char* fmt_bool(bool x)
 {
   return x ? "true" : "false";
