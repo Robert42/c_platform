@@ -188,6 +188,9 @@ int main(int argc, const char** argv)
         [CC_GCC] = true,
         [CC_CLANG] = true,
       };
+      bool incompatible_to_valgrind[CC_COUNT] = {
+        [CC_TCC] = ENV_ARCH==ARCH_AARCH64,
+      };
 
       {
         struct Cmd cmd = {
@@ -231,6 +234,7 @@ int main(int argc, const char** argv)
         }
       }
 
+      if(!incompatible_to_valgrind[cc])
       {
         char* const cmd_test[] = {"valgrind", output_file.cstr, NULL};
         struct Cmd cmd = {
