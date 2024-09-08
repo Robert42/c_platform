@@ -11,6 +11,7 @@ void mem_test()
   Mem_Region region = MEM_REGION_FROM_ARRAY(abc);
   assert_ptr_eq(region.begin, &abc[0]);
   assert_ptr_eq(region.end, &abc[LEN]);
+  assert_usize_eq(mem_region_available_bytes(region), LEN);
 #undef LEN
 
   void* bytes_1 = mem_region_alloc_bytes_unaligned(&region, 4);
