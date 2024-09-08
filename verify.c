@@ -236,7 +236,11 @@ int main(int argc, const char** argv)
 
       if(!incompatible_to_valgrind[cc])
       {
-        char* const cmd_test[] = {"valgrind", output_file.cstr, NULL};
+        char* const cmd_test[] = {"valgrind",
+          "--leak-check=full",
+          "--error-exitcode=1",
+          output_file.cstr,
+          NULL};
         struct Cmd cmd = {
           .name = cstr_fmt(&SCRATCH, "valgrind %s (%s)", SRC_BASENAME[src_idx], cmd_compile[cc][0]),
           .cmd = cmd_test,
