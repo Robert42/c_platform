@@ -178,12 +178,12 @@ int main(int argc, const char** argv)
         "-o", output_file.cstr,
         NULL};
 
-      char* const * cmd_compile[] = {
+      char* const * cmd_compile[CC_COUNT] = {
         [CC_TCC] = cmd_compile_tcc,
         [CC_GCC] = cmd_compile_gcc,
         [CC_CLANG] = cmd_compile_clang,
       };
-      bool has_sanitizer[] = {
+      bool has_sanitizer[CC_COUNT] = {
         [CC_TCC] = false,
         [CC_GCC] = true,
         [CC_CLANG] = true,
