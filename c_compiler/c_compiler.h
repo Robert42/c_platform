@@ -30,4 +30,5 @@ bool cc_compiler_is_available(enum C_Compiler cc);
 #define GCC_SANITIZER_OPTIONS \
   "-fsanitize=address", \
   "-fsanitize=undefined", \
+  "-fsanitize-address-use-after-scope", \
 
