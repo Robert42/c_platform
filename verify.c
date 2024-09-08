@@ -239,6 +239,7 @@ int main(int argc, const char** argv)
         char* const cmd_test[] = {"valgrind",
           "--leak-check=full",
           "--error-exitcode=1",
+          "--track-origins=yes",
           output_file.cstr,
           NULL};
         struct Cmd cmd = {
