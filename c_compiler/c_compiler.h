@@ -27,3 +27,6 @@ bool cc_compiler_is_available(enum C_Compiler cc);
   "-Werror=vla", \
   "-pedantic", \
 
+#define GCC_SANITIZER_OPTIONS \
+  "-fsanitize=address", \
+

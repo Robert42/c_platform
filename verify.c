@@ -164,13 +164,17 @@ int main(int argc, const char** argv)
         NULL};
       char* const cmd_compile_gcc[] = {"gcc",
         "-std=c99",
+        "-g,
         GCC_WARNING_OPTIONS
+        GCC_SANITIZER_OPTIONS
         c_file.cstr,
         "-o", output_file.cstr,
         NULL};
       char* const cmd_compile_clang[] = {"clang",
         "-std=c99",
+        "-g,
         GCC_WARNING_OPTIONS
+        GCC_SANITIZER_OPTIONS
         c_file.cstr,
         "-o", output_file.cstr,
         NULL};
