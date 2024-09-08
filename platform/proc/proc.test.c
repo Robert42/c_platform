@@ -37,8 +37,8 @@ void proc_test()
   // assert when buffer way too small
   EXPECT_ASSERT(
   {
-    u8 BUFFER[4];
-    Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
+    u8 BUFFER[5];
+    Mem_Region region = _mem_region_from(BUFFER, 4); // Let's pretend, the buffer was only fource bytes large.
 
     char* const args[] = {"echo", "-n", "more than four bytes", NULL};
     const struct Proc_Exec_Blocking_Settings too_small_buffer = {.capture_stdout=true, .region_stdout=&region};
