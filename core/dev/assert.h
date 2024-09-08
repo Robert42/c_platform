@@ -18,6 +18,12 @@ extern usize __assert_caught__;
   assert_usize_lt(__prev__, __assert_caught__); \
 }
 
+NORETURN
+void __panic__(const char* title, const char* file, int line);
+
+#define UNIMPLEMENTED() __panic__("UNIMPLEMENTED", __FILE__, __LINE__)
+#define TODO() __panic__("TODO", __FILE__, __LINE__)
+
 #if ENV_STATIC_ANALYSIS
 
 #undef EXPECT_ASSERT

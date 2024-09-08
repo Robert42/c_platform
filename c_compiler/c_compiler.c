@@ -1,6 +1,10 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "c_compiler.h"
 
+#ifndef DISABLE_SANITIZER
+#define DISABLE_SANITIZER 0
+#endif
+
 #if ENV_DEBUG
 bool _CC_INIT_CALLED = false;
 #endif
@@ -12,7 +16,7 @@ void cc_init()
   _CC_INIT_CALLED = true;
 #endif
 
-  const char* ASAN_OPTIONS = "ASAN_OPTIONS=detect_stack_use_after_return=1,detect_invalid_pointer_pairs=2";
+  char ASAN_OPTIONS[] = "ASAN_OPTIONS=detect_stack_use_after_return=1,detect_invalid_pointer_pairs=2";
 
   const int putenv_result = putenv(ASAN_OPTIONS);
 #ifdef __linux__
@@ -40,7 +44,10 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
     char* const args_compile[] = {"gcc",
       "-std=c99",
       GCC_WARNING_OPTIONS
-      "-g", GCC_SANITIZER_OPTIONS
+      "-g",
+#if !DISABLE_SANITIZER
+      GCC_SANITIZER_OPTIONS
+#endif
       c_file.cstr,
       "-o", output_file.cstr,
       NULL};
@@ -54,7 +61,10 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
     char* const args_compile[] = {"clang",
       "-std=c99",
       GCC_WARNING_OPTIONS
-      "-g", GCC_SANITIZER_OPTIONS
+      "-g",
+#if !DISABLE_SANITIZER
+      GCC_SANITIZER_OPTIONS
+#endif
       c_file.cstr,
       "-o", output_file.cstr,
       NULL};

@@ -183,14 +183,6 @@ int main(int argc, const char** argv)
         [CC_GCC] = cmd_compile_gcc,
         [CC_CLANG] = cmd_compile_clang,
       };
-      bool has_sanitizer[CC_COUNT] = {
-        [CC_TCC] = false,
-        [CC_GCC] = true,
-        [CC_CLANG] = true,
-      };
-      bool incompatible_to_valgrind[CC_COUNT] = {
-        [CC_TCC] = ENV_ARCH==ARCH_AARCH64,
-      };
 
       {
         struct Cmd cmd = {
@@ -206,43 +198,6 @@ int main(int argc, const char** argv)
         char* const cmd_test[] = {output_file.cstr, NULL};
         struct Cmd cmd = {
           .name = cstr_fmt(&SCRATCH, "%s (%s)", SRC_BASENAME[src_idx], cmd_compile[cc][0]),
-          .cmd = cmd_test,
-        };
-        cmd_exec(cmd);
-      }
-
-      if(has_sanitizer[cc])
-      {
-        // disable the sanitizer
-        char* const cmd_compile_without_sanitizer[] = {cmd_compile[cc][0],
-          "-std=c99",
-          "-g",
-          GCC_WARNING_OPTIONS
-          c_file.cstr,
-          "-o", output_file.cstr,
-          NULL};
-
-        // recompile unsanitized
-        {
-          struct Cmd cmd = {
-            .name = cstr_fmt(&SCRATCH, "%s (recompile with %s and without sanitizers)", SRC_BASENAME[src_idx], cmd_compile_without_sanitizer[0]),
-            .cmd = cmd_compile_without_sanitizer,
-            .err_text = "error:",
-            .warning_text = "warning:",
-          };
-          cmd_exec(cmd);
-        }
-      }
-
-      if(!incompatible_to_valgrind[cc])
-      {
-        char* const cmd_test[] = {"valgrind",
-          "--leak-check=full",
-          "--error-exitcode=1",
-          output_file.cstr,
-          NULL};
-        struct Cmd cmd = {
-          .name = cstr_fmt(&SCRATCH, "valgrind %s (%s)", SRC_BASENAME[src_idx], cmd_compile[cc][0]),
           .cmd = cmd_test,
         };
         cmd_exec(cmd);

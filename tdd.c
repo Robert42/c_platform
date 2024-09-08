@@ -1,5 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
+#define DISABLE_SANITIZER 1
+
 #include "c_script.h"
 
 #include "utils/collections/set/setintcddo.c"

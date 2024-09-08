@@ -32,7 +32,7 @@ static void __bin_assert_failed__(const char* condition, const char* lhs, const 
   printf("lhs: %s\n", lhs);
   printf("rhs: %s\n", rhs);
   printf("\n");
-  printf("%s:%i", file, line);
+  printf("%s:%i\n", file, line);
   printf("%s====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
   abort();
 }
@@ -54,7 +54,15 @@ static void __ter_assert_failed__(const char* condition, const char* lhs, const 
   printf("mid: %s\n", mid);
   printf("rhs: %s\n", rhs);
   printf("\n");
-  printf("%s:%i", file, line);
+  printf("%s:%i\n", file, line);
+  printf("%s====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
+  abort();
+}
+
+void __panic__(const char* title, const char* file, int line)
+{
+  printf("%s==== %s ====%s\n", TERM_STYLE_RED, title, TERM_STYLE_RESET);
+  printf("%s:%i\n", file, line);
   printf("%s====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
   abort();
 }
