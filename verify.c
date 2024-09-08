@@ -244,6 +244,7 @@ int main(int argc, const char** argv)
         struct Cmd cmd = {
           .name = cstr_fmt(&SCRATCH, "valgrind %s (%s)", SRC_BASENAME[src_idx], cmd_compile[cc][0]),
           .cmd = cmd_test,
+          .warning_text = "WARNING:",
         };
         cmd_exec(cmd);
       }
