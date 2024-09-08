@@ -31,4 +31,5 @@ bool cc_compiler_is_available(enum C_Compiler cc);
   "-fsanitize=address", \
   "-fsanitize=undefined", \
   "-fsanitize-address-use-after-scope", \
+  "-fstack-protector-all", \
 
