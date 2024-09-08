@@ -37,7 +37,7 @@ Fmt fmt_new(char* buffer, usize capacity)
 
 Fmt fmt_new_from_region(Mem_Region* region, usize capacity)
 {
-  u8* const bytes = mem_region_alloc_bytes_unaligned(region, capacity);
+  char* const bytes = (char*)mem_region_alloc_bytes_unaligned(region, capacity);
   Fmt f = fmt_new(bytes, capacity);
   return f;
 }
