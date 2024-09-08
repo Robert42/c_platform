@@ -25,6 +25,7 @@ int dup2(int oldfd, int newfd);
 ssize_t read(int fd, void* buffer, size_t num_bytes);
 ssize_t write(int fd, const void* buffer, size_t num_bytes);
 int mkdir(const char* path, mode_t mode);
+int putenv(const char* env);
 
 #if ENV_ARCH==ARCH_AARCH64 || ENV_ARCH==ARCH_X86_64 || ENV_ARCH==ARCH_X86_32 || ENV_ARCH==ARCH_X86_16
 int pipe(int pipefd[2]);

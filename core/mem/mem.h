@@ -42,7 +42,7 @@ Mem_Region _mem_region_from(unsigned char* begin, usize len);
 */
 static inline usize mem_region_available_bytes(const Mem_Region r)
 {
-  const ssize diff = r.end - r.begin;
+  const ssize diff = (ssize)r.end - (ssize)r.begin;
   //@ assert CorrectDiff: r.bytes_available == diff;
   //@ assert NonNegative: r.bytes_available >= 0;
   return diff;

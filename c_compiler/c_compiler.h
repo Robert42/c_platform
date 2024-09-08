@@ -24,6 +24,17 @@ bool cc_compiler_is_available(enum C_Compiler cc);
   "-Wno-error=unused-parameter", \
   "-Wno-error=unused-variable", \
   "-Wno-error=sign-compare", \
+  "-Wno-error=uninitialized", \
   "-Werror=vla", \
   "-pedantic", \
+
+#define GCC_SANITIZER_OPTIONS \
+  "-fsanitize=address", \
+  "-fsanitize=pointer-compare", \
+  "-fsanitize=pointer-subtract", \
+  "-fsanitize=undefined", \
+  "-fsanitize-address-use-after-scope", \
+  "-fstack-protector-all", \
+
+void cc_init();
 

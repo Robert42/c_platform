@@ -15,7 +15,7 @@ void fmt_test()
   }
 
   {
-    char BUFFER[42] = {37};
+    u8 BUFFER[42] = {37};
     Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
 
     Fmt f = fmt_new_from_region(&region, 32);
