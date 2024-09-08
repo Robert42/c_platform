@@ -1,6 +1,10 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "c_compiler.h"
 
+#ifndef DISABLE_SANITIZER
+#define DISABLE_SANITIZER 0
+#endif
+
 #if ENV_DEBUG
 bool _CC_INIT_CALLED = false;
 #endif
@@ -40,7 +44,10 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
     char* const args_compile[] = {"gcc",
       "-std=c99",
       GCC_WARNING_OPTIONS
-      "-g", GCC_SANITIZER_OPTIONS
+      "-g",
+#if !DISABLE_SANITIZER
+      GCC_SANITIZER_OPTIONS
+#endif
       c_file.cstr,
       "-o", output_file.cstr,
       NULL};
@@ -54,7 +61,10 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
     char* const args_compile[] = {"clang",
       "-std=c99",
       GCC_WARNING_OPTIONS
-      "-g", GCC_SANITIZER_OPTIONS
+      "-g",
+#if !DISABLE_SANITIZER
+      GCC_SANITIZER_OPTIONS
+#endif
       c_file.cstr,
       "-o", output_file.cstr,
       NULL};
