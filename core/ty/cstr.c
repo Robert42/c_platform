@@ -15,6 +15,6 @@ bool char_is_ws(char x)
 void cstr_trim_right(char* xs)
 {
   usize i = strlen(xs);
-  while(char_is_ws(xs[i-1]))
+  while(i>0 && char_is_ws(xs[i-1]))
      xs[--i] = 0;
 }
