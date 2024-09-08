@@ -30,6 +30,7 @@ bool cc_compiler_is_available(enum C_Compiler cc);
 #define GCC_SANITIZER_OPTIONS \
   "-fsanitize=address", \
   "-fsanitize=pointer-compare", \
+  "-fsanitize=pointer-subtract", \
   "-fsanitize=undefined", \
   "-fsanitize-address-use-after-scope", \
   "-fstack-protector-all", \
