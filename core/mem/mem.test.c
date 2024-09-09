@@ -65,4 +65,9 @@ void mem_test()
     assert_ptr_eq(scratch.begin, TEST_SCRATCH_1);
     assert_ptr_eq(scratch.end, TEST_SCRATCH_1 + ARRAY_LEN(TEST_SCRATCH_1));
   }
+
+  // alignof
+  {
+    assert_usize_eq(sizeof(int), alignof(int));
+  }
 }
