@@ -9,7 +9,7 @@ void mem_page_uncommit(u8* addr_begin, usize num_bytes);
 
 void mem_page_init(void);
 
-bool mem_page_is_aligned(const void* ptr);
-bool is_multiple_of_pagesize(usize x);
-usize ceil_multiple_of_pagesize(usize x);
+bool mem_page_is_aligned_ptr(const void* ptr);
+bool mem_page_is_aligned_usize(usize x);
+usize mem_page_ceil_multiple_usize(usize x);
 

@@ -2,32 +2,32 @@
 
 void mem_page_test()
 {
-  // is_multiple_of_pagesize
+  // mem_page_is_aligned_usize
   {
-    assert_bool_eq(is_multiple_of_pagesize(1), false);
-    assert_bool_eq(is_multiple_of_pagesize(MEM_PAGE_SIZE), true);
-    assert_bool_eq(is_multiple_of_pagesize(MEM_PAGE_SIZE+1), false);
-    assert_bool_eq(is_multiple_of_pagesize(2*MEM_PAGE_SIZE-1), false);
-    assert_bool_eq(is_multiple_of_pagesize(2*MEM_PAGE_SIZE), true);
-    assert_bool_eq(is_multiple_of_pagesize(2*MEM_PAGE_SIZE+1), false);
+    assert_bool_eq(mem_page_is_aligned_usize(1), false);
+    assert_bool_eq(mem_page_is_aligned_usize(MEM_PAGE_SIZE), true);
+    assert_bool_eq(mem_page_is_aligned_usize(MEM_PAGE_SIZE+1), false);
+    assert_bool_eq(mem_page_is_aligned_usize(2*MEM_PAGE_SIZE-1), false);
+    assert_bool_eq(mem_page_is_aligned_usize(2*MEM_PAGE_SIZE), true);
+    assert_bool_eq(mem_page_is_aligned_usize(2*MEM_PAGE_SIZE+1), false);
   }
 
-  // ceil_multiple_of_pagesize
+  // mem_page_ceil_multiple_usize
   {
-    assert_usize_eq(ceil_multiple_of_pagesize(0), 0);
-    assert_usize_eq(ceil_multiple_of_pagesize(1), MEM_PAGE_SIZE);
-    assert_usize_eq(ceil_multiple_of_pagesize(2), MEM_PAGE_SIZE);
-    assert_usize_eq(ceil_multiple_of_pagesize(MEM_PAGE_SIZE-1), MEM_PAGE_SIZE);
-    assert_usize_eq(ceil_multiple_of_pagesize(MEM_PAGE_SIZE), MEM_PAGE_SIZE);
-    assert_usize_eq(ceil_multiple_of_pagesize(MEM_PAGE_SIZE+1), 2*MEM_PAGE_SIZE);
-    assert_usize_eq(ceil_multiple_of_pagesize(MEM_PAGE_SIZE+2), 2*MEM_PAGE_SIZE);
+    assert_usize_eq(mem_page_ceil_multiple_usize(0), 0);
+    assert_usize_eq(mem_page_ceil_multiple_usize(1), MEM_PAGE_SIZE);
+    assert_usize_eq(mem_page_ceil_multiple_usize(2), MEM_PAGE_SIZE);
+    assert_usize_eq(mem_page_ceil_multiple_usize(MEM_PAGE_SIZE-1), MEM_PAGE_SIZE);
+    assert_usize_eq(mem_page_ceil_multiple_usize(MEM_PAGE_SIZE), MEM_PAGE_SIZE);
+    assert_usize_eq(mem_page_ceil_multiple_usize(MEM_PAGE_SIZE+1), 2*MEM_PAGE_SIZE);
+    assert_usize_eq(mem_page_ceil_multiple_usize(MEM_PAGE_SIZE+2), 2*MEM_PAGE_SIZE);
   }
 
   {
     const usize size = 4*MEM_PAGE_SIZE;
     u8* pages_begin = mem_page_reserve(size);
     // pages_begin[0] = 42; // would crash
-    assert(mem_page_is_aligned(pages_begin));
+    assert(mem_page_is_aligned_ptr(pages_begin));
 
     mem_page_commit(pages_begin, MEM_PAGE_SIZE);
     pages_begin[0] = 42;
