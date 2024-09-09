@@ -4,6 +4,17 @@
 
 void mem_test()
 {
+  // size constants
+  {
+    assert_usize_eq(1024, KiB);
+    assert_usize_eq(1024*KiB, MiB);
+    assert_usize_eq(1024*MiB, GiB);
+    assert_usize_eq(2*GiB, ((usize)2) << 30);
+#if ENV_PTR_BITS >= 64
+    assert_usize_eq(8*GiB, ((usize)8) << 30);
+#endif
+  }
+
 #define LEN 20
   u8 abc[LEN];
   assert_usize_eq(ARRAY_LEN(abc), LEN);

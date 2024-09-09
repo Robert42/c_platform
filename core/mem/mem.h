@@ -3,6 +3,10 @@
 
 #define ARRAY_LEN(XS) (sizeof (XS) / sizeof (XS)[0])
 
+#define KiB ((usize)1024)
+#define MiB (1024 * KiB)
+#define GiB (1024 * MiB)
+
 // ==== mempry regions ====
 
 struct _platform_mem_Region
