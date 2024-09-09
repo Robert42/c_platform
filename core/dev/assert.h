@@ -10,6 +10,12 @@ extern usize __assert_caught__;
 
 #include "assert.generated.h"
 
+#ifdef assert
+#undef assert
+#endif
+#define assert(X) assert_bool_eq(X, true)
+#define debug_assert(X) debug_assert_bool_eq(X, true)
+
 #define EXPECT_ASSERT(...) { \
   const usize __prev__ = __assert_caught__; \
   __assert_capture__++; \

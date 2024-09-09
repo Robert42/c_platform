@@ -15,15 +15,19 @@ void platform_init()
 
   term_init();
   timer_init();
+  mem_page_init();
 }
 
 #include "io/terminal.c"
 #include "io/path.c"
 #include "io/file.c"
 #include "time/timer.c"
+#include "mem/mem_page.c"
 
 #ifdef __linux__
 #include "io/file.linux.c"
 #include "proc/proc.linux.c" // depends on "io/file.linux.c"
 #include "time/timer.linux.c"
+#include "mem/mem_page.linux.c"
 #endif
+

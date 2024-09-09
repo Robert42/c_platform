@@ -36,6 +36,8 @@ char* realpath(const char* path, char* buffer);
 
 int memcmp(const void* s1, const void* s2, size_t n);
 
+int getpagesize(void);
+
 NORETURN
 void errx(int eval, const char* fmt, ...);
 
@@ -57,6 +59,7 @@ void errx(int eval, const char* fmt, ...);
 #ifdef __linux__
 #include <time.h>
 #include <fcntl.h> // openat, O_DIRECTORY
+#include <sys/mman.h>
 
 // source:` man getdents(2)`
 struct linux_dirent64

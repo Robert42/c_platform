@@ -43,4 +43,15 @@
 #error unsupported
 #endif
 
+#if ENV_ARCH==ARCH_AARCH64 || \
+  ENV_ARCH==ARCH_X86_64
+#define ENV_PTR_BITS 64
+#elif ENV_ARCH==ARCH_X86_32
+#define ENV_PTR_BITS 32
+#elif ENV_ARCH==ARCH_X86_16
+#define ENV_PTR_BITS 16
+#else
+#error unsupported
+#endif
+
 void dev_env_demo();
