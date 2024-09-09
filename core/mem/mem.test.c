@@ -6,12 +6,20 @@ void mem_test()
 {
   // size constants
   {
+    assert_usize_eq(KiB, ((usize)1) << 10);
+    assert_usize_eq(MiB, ((usize)1) << 20);
+    assert_usize_eq(GiB, ((usize)1) << 30);
+    assert_usize_eq(TiB, ((usize)1) << 40);
     assert_usize_eq(1024, KiB);
+    assert_usize_eq(1024, ((usize)1) << 10);
     assert_usize_eq(1024*KiB, MiB);
+    assert_usize_eq(MiB, ((usize)1) << 20);
+    assert_usize_eq(1024*KiB, ((usize)1) << 20);
     assert_usize_eq(1024*MiB, GiB);
     assert_usize_eq(2*GiB, ((usize)2) << 30);
 #if ENV_PTR_BITS >= 64
     assert_usize_eq(8*GiB, ((usize)8) << 30);
+    assert_usize_eq(2*TiB, ((usize)2) << 40);
 #endif
   }
 
