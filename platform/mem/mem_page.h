@@ -13,3 +13,5 @@ bool mem_page_is_aligned_ptr(const void* ptr);
 bool mem_page_is_aligned_usize(usize x);
 usize mem_page_ceil_multiple_usize(usize x);
 
+// The result is always aligned to alignment.
+void* mem_pages_from_pre_reserved(usize num_bytes, usize alignment);
