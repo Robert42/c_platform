@@ -10,3 +10,12 @@ bool is_multiple_of_pagesize(usize x)
   return result;
 }
 
+usize ceil_multiple_of_pagesize(usize x)
+{
+  const usize nonzero_bits = x & (MEM_PAGE_SIZE-1);
+  const usize missing_to_next = 1 + (~nonzero_bits & (MEM_PAGE_SIZE-1));
+  const usize result = nonzero_bits ? x + missing_to_next : x;
+  debug_assert_bool_eq(ceil_multiple_of(x, MEM_PAGE_SIZE), result);
+
+  return result;
+}
