@@ -16,4 +16,4 @@ usize mem_page_ceil_multiple_usize(usize x);
 // The result is always aligned to alignment.
 // The resulting address range always needs a call to `mem_page_commit` (or
 // similar) before accessing its data
-void* mem_pages_from_pre_reserved(usize num_bytes, usize alignment);
+u8* mem_pages_from_pre_reserved(usize num_bytes, usize alignment);

@@ -33,7 +33,7 @@ void mem_page_init()
   _MEM_PAGE_HUGE_PRE_RESERVE_AVAILABLE = _MEM_PAGE_HUGE_PRE_RESERVE_FULL;
 }
 
-void* mem_pages_from_pre_reserved(usize num_bytes, usize alignment)
+u8* mem_pages_from_pre_reserved(usize num_bytes, usize alignment)
 {
   debug_assert_usize_gt(alignment, 0);
   debug_assert(is_power_of_two_or_zero_usize(alignment));
@@ -46,7 +46,7 @@ void* mem_pages_from_pre_reserved(usize num_bytes, usize alignment)
 
   num_bytes = mem_page_ceil_multiple_usize(num_bytes);
 
-  void* addr = (void*)mem_region_alloc_bytes_unaligned(&_MEM_PAGE_HUGE_PRE_RESERVE_AVAILABLE, num_bytes);
+  u8* addr = mem_region_alloc_bytes_unaligned(&_MEM_PAGE_HUGE_PRE_RESERVE_AVAILABLE, num_bytes);
 
   debug_assert(mem_page_is_aligned_ptr(addr));
   debug_assert(mem_page_is_aligned_ptr(_MEM_PAGE_HUGE_PRE_RESERVE_AVAILABLE.begin));
