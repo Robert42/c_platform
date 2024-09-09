@@ -17,7 +17,12 @@ usize ceil_multiple_of_power_of_two_usize(usize x, usize y)
 {
   debug_assert(is_power_of_two_or_zero_usize(y));
   debug_assert_usize_gt(y, 0);
-  const usize result = ceil_multiple_of(x, y);
+
+  const usize nonzero_bits = x & (y-1);
+  const usize missing_to_next = 1 + (~nonzero_bits & (y-1));
+  const usize result = nonzero_bits ? x + missing_to_next : x;
+  debug_assert_bool_eq(ceil_multiple_of(x, y), result);
+
   return result;
 }
 
