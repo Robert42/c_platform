@@ -12,7 +12,7 @@ u8* mem_page_reserve(usize num_bytes)
 
 void mem_page_free(u8* addr_begin, usize num_bytes)
 {
-  // TODO: add assertion for addr_begin being mem_page alogned
+  debug_assert(mem_page_is_aligned(addr_begin));
   debug_assert(is_multiple_of_pagesize(num_bytes));
   debug_assert_ptr_ne(addr_begin, NULL);
 
@@ -21,7 +21,7 @@ void mem_page_free(u8* addr_begin, usize num_bytes)
 
 void mem_page_commit(u8* addr_begin, usize num_bytes)
 {
-  // TODO: add assertion for addr_begin being mem_page alogned
+  debug_assert(mem_page_is_aligned(addr_begin));
   debug_assert(is_multiple_of_pagesize(num_bytes));
   debug_assert_ptr_ne(addr_begin, NULL);
 
@@ -30,12 +30,17 @@ void mem_page_commit(u8* addr_begin, usize num_bytes)
 
 void mem_page_uncommit(u8* addr_begin, usize num_bytes)
 {
-  // TODO: add assertion for addr_begin being mem_page alogned
+  debug_assert(mem_page_is_aligned(addr_begin));
   debug_assert(is_multiple_of_pagesize(num_bytes));
   debug_assert_ptr_ne(addr_begin, NULL);
 
   void* addr = mmap(addr_begin, num_bytes, PROT_NONE, MAP_FIXED|MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
   LINUX_ASSERT_EQ(addr, addr_begin);
+}
+
+bool mem_page_is_aligned(const void* ptr)
+{
+  return is_multiple_of_pagesize((usize)ptr);
 }
 
 bool is_multiple_of_pagesize(usize x)
