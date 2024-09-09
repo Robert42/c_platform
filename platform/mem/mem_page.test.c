@@ -27,6 +27,7 @@ void mem_page_test()
     const usize size = 4*MEM_PAGE_SIZE;
     u8* pages_begin = mem_page_reserve(size);
     // pages_begin[0] = 42; // would crash
+    assert(mem_page_is_aligned(pages_begin));
 
     mem_page_commit(pages_begin, MEM_PAGE_SIZE);
     pages_begin[0] = 42;
