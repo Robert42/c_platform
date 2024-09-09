@@ -33,5 +33,14 @@ void math_round_test()
   assert_usize_eq(ceil_multiple_of(6, 7), 7);
   assert_usize_eq(ceil_multiple_of(7, 7), 7);
   assert_usize_eq(ceil_multiple_of(8, 7), 14);
+
+  // ceil_multiple_of_power_of_two_usize
+  assert_usize_eq(ceil_multiple_of_power_of_two_usize(0, 8), 0);
+  assert_usize_eq(ceil_multiple_of_power_of_two_usize(1, 8), 8);
+  assert_usize_eq(ceil_multiple_of_power_of_two_usize(2, 8), 8);
+  assert_usize_eq(ceil_multiple_of_power_of_two_usize(6, 8), 8);
+  assert_usize_eq(ceil_multiple_of_power_of_two_usize(7, 8), 8);
+  assert_usize_eq(ceil_multiple_of_power_of_two_usize(8, 8), 8);
+  assert_usize_eq(ceil_multiple_of_power_of_two_usize(9, 8), 16);
 }
 
