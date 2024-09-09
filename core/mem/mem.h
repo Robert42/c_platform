@@ -6,6 +6,7 @@
 #define KiB ((usize)1024)
 #define MiB (1024 * KiB)
 #define GiB (1024 * MiB)
+#define TiB (1024 * GiB)
 
 // ==== mempry regions ====
 

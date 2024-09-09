@@ -55,3 +55,5 @@
 #endif
 
 void dev_env_demo();
+
+#define alignof __alignof__
