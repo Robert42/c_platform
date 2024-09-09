@@ -37,56 +37,56 @@ void mem_huge_array_test()
 
   // not increasing capacity ==> nothing to do
   assert_huge_array_commit_eq(
-    _huge_array_calc_addr_range_to_commit(0, huge_array, meta_data),
+    _huge_array_calc_addr_range_to_commit(0, &huge_array, meta_data),
     ((struct Huge_Array_Commit){.commit_begin = block_begin+0, .num_bytes=0})
   );
 
   // not allocating one item ==> commit to one memory page
   assert_huge_array_commit_eq(
-    _huge_array_calc_addr_range_to_commit(1, huge_array, meta_data),
+    _huge_array_calc_addr_range_to_commit(1, &huge_array, meta_data),
     ((struct Huge_Array_Commit){.commit_begin = block_begin+0, .num_bytes=1024})
   );
-  huge_array.capacity = 1;
+  assert_usize_eq(huge_array.capacity, 1);
 
   // not increasing capacity ==> nothing to do
   assert_huge_array_commit_eq(
-    _huge_array_calc_addr_range_to_commit(1, huge_array, meta_data),
+    _huge_array_calc_addr_range_to_commit(1, &huge_array, meta_data),
     ((struct Huge_Array_Commit){.commit_begin = block_begin+0, .num_bytes=0})
   );
 
   // increasing but still within same memory page ==> nothing to do
   assert_huge_array_commit_eq(
-    _huge_array_calc_addr_range_to_commit(2, huge_array, meta_data),
+    _huge_array_calc_addr_range_to_commit(2, &huge_array, meta_data),
     ((struct Huge_Array_Commit){.commit_begin = block_begin+1024, .num_bytes=0})
   );
-  huge_array.capacity = 2;
+  assert_usize_eq(huge_array.capacity, 2);
 
   // increasing but still within same memory page ==> nothing to do
   assert_huge_array_commit_eq(
-    _huge_array_calc_addr_range_to_commit(42, huge_array, meta_data),
+    _huge_array_calc_addr_range_to_commit(42, &huge_array, meta_data),
     ((struct Huge_Array_Commit){.commit_begin = block_begin+1024, .num_bytes=0})
   );
-  huge_array.capacity = 42;
+  assert_usize_eq(huge_array.capacity, 42);
 
   // not increasing capacity ==> nothing to do
   assert_huge_array_commit_eq(
-    _huge_array_calc_addr_range_to_commit(37, huge_array, meta_data),
+    _huge_array_calc_addr_range_to_commit(37, &huge_array, meta_data),
     ((struct Huge_Array_Commit){.commit_begin = block_begin+0, .num_bytes=0})
   );
 
   // increasing exceeding memory page ==> allocate one more page
   assert_huge_array_commit_eq(
-    _huge_array_calc_addr_range_to_commit(43, huge_array, meta_data),
+    _huge_array_calc_addr_range_to_commit(43, &huge_array, meta_data),
     ((struct Huge_Array_Commit){.commit_begin = block_begin+1024, .num_bytes=1024})
   );
-  huge_array.capacity = 43;
+  assert_usize_eq(huge_array.capacity, 43);
 
   // increasing exceeding memory page ==> allocate one more page
   assert_huge_array_commit_eq(
-    _huge_array_calc_addr_range_to_commit(200, huge_array, meta_data),
+    _huge_array_calc_addr_range_to_commit(200, &huge_array, meta_data),
     ((struct Huge_Array_Commit){.commit_begin = block_begin+2048, .num_bytes=3072})
   );
-  huge_array.capacity = 43;
+  assert_usize_eq(huge_array.capacity, 200);
 
   MEM_PAGE_SIZE = _real_page_size; // restore the real memory page size
 }

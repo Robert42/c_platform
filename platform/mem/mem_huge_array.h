@@ -6,9 +6,9 @@ struct Huge_Array;
 struct Huge_Commit;
 
 struct Huge_Array huge_array_reserve(struct Huge_Array_Meta_Data meta_data);
-struct Huge_Array huge_array_capacity_commit(usize new_capacity, struct Huge_Array array, struct Huge_Array_Meta_Data meta_data);
+void huge_array_capacity_commit(usize new_capacity, struct Huge_Array* array, struct Huge_Array_Meta_Data meta_data);
 
-struct Huge_Array_Commit _huge_array_calc_addr_range_to_commit(usize new_capacity, struct Huge_Array array, struct Huge_Array_Meta_Data meta_data); // internal
+struct Huge_Array_Commit _huge_array_calc_addr_range_to_commit(usize new_capacity, struct Huge_Array* array, struct Huge_Array_Meta_Data meta_data); // internal
 
 struct Huge_Array_Meta_Data
 {
