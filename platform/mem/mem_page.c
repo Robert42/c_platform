@@ -50,7 +50,7 @@ void* mem_pages_from_pre_reserved(usize num_bytes, usize alignment)
 
   debug_assert(mem_page_is_aligned_ptr(addr));
   debug_assert(mem_page_is_aligned_ptr(_MEM_PAGE_HUGE_PRE_RESERVE_AVAILABLE.begin));
-  debug_assert(is_multiple_of_power_of_two_usize((usize)addr, num_bytes));
+  debug_assert(is_multiple_of_power_of_two_usize((usize)addr, alignment));
 
   return addr;
 }
