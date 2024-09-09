@@ -41,11 +41,6 @@ void mem_page_uncommit(u8* addr_begin, usize num_bytes)
   LINUX_ASSERT_EQ(addr, addr_begin);
 }
 
-bool mem_page_is_aligned_ptr(const void* ptr)
-{
-  return mem_page_is_aligned_usize((usize)ptr);
-}
-
 void mem_page_init(void)
 {
   MEM_PAGE_SIZE = getpagesize();

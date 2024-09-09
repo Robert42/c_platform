@@ -25,6 +25,17 @@ void math_round_test()
   assert_bool_eq(is_power_of_two_or_zero_usize(19), false);
   assert_bool_eq(is_power_of_two_or_zero_usize(20), false);
   assert_bool_eq(is_power_of_two_or_zero_usize(26), false);
+  
+  assert_bool_eq(is_multiple_of_power_of_two_usize(0, 4), true);
+  assert_bool_eq(is_multiple_of_power_of_two_usize(1, 4), false);
+  assert_bool_eq(is_multiple_of_power_of_two_usize(2, 4), false);
+  assert_bool_eq(is_multiple_of_power_of_two_usize(3, 4), false);
+  assert_bool_eq(is_multiple_of_power_of_two_usize(4, 4), true);
+  assert_bool_eq(is_multiple_of_power_of_two_usize(5, 4), false);
+  assert_bool_eq(is_multiple_of_power_of_two_usize(6, 4), false);
+  assert_bool_eq(is_multiple_of_power_of_two_usize(7, 4), false);
+  assert_bool_eq(is_multiple_of_power_of_two_usize(8, 4), true);
+  assert_bool_eq(is_multiple_of_power_of_two_usize(9, 4), false);
 
   // ceil_multiple_of
   assert_usize_eq(ceil_multiple_of_usize(0, 7), 0);
