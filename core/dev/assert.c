@@ -16,6 +16,27 @@ const char* TERM_STYLE_RED = "";
 const char* TERM_STYLE_RED_BOLD = "";
 const char* TERM_STYLE_RESET = "";
 
+static void __bool_assert__(bool condition, const char* condition_code, const char* file, int line)
+{
+  if(LIKELY(condition))
+    return;
+
+#if !ENV_STATIC_ANALYSIS
+  if(__assert_capture__)
+  {
+    __assert_caught__++;
+    return;
+  }
+#endif
+
+  printf("%s==== ASSERT ====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
+  printf("%s\n", condition_code);
+  printf("\n");
+  printf("%s:%i\n", file, line);
+  printf("%s====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
+  abort();
+}
+
 static void __bin_assert_failed__(const char* condition, const char* lhs, const char* rhs, const char* file, int line)
 {
 #if !ENV_STATIC_ANALYSIS

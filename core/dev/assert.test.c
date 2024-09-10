@@ -83,4 +83,15 @@ void assert_test()
   EXPECT_DEBUG_ASSERT(
   );
   );
+
+  EXPECT_DEBUG_ASSERT(
+  debug_assert(false);
+  );
+  EXPECT_ASSERT(
+  assert(false);
+  );
+  debug_assert(true);
+  assert(true);
+  
+  // assert(false); // prints `false` instead of `((_Bool)0)`
 }

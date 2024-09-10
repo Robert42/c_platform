@@ -13,8 +13,8 @@ extern usize __assert_caught__;
 #ifdef assert
 #undef assert
 #endif
-#define assert(X) assert_bool_eq(X, true)
-#define debug_assert(X) debug_assert_bool_eq(X, true)
+#define assert(X) __bool_assert__((X), #X, __FILE__, __LINE__)
+#define debug_assert(X) __bool_assert__((X), #X, __FILE__, __LINE__)
 
 #define EXPECT_ASSERT(...) { \
   const usize __prev__ = __assert_caught__; \
