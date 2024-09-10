@@ -13,9 +13,6 @@ Fmt fmt_new(char* buffer, usize capacity)
     .begin = buffer,
     .buffer_capacity = capacity,
     .end = buffer,
-#if GHOST
-    .available_bytes = capacity,
-#endif
   };
 
   f.end[0] = 0;
@@ -42,8 +39,5 @@ void fmt_write(Fmt* f, const char* text, ...)
   assert_usize_lt(bytes_written, avail); // out of memory
 
   f->end += bytes_written;
-#if GHOST
-  f->available_bytes -= bytes_written;
-#endif
 }
 
