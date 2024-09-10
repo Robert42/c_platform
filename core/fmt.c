@@ -31,7 +31,7 @@ void fmt_write(Fmt* f, const char* text, ...)
 {
   usize avail = _fmt_available_chars(*f);
 
-  if(f->indent>0 && f->begin < f->end && f->end[-1]=='\n')
+  if(f->indent>0 && f->begin < f->end && f->end[-1]=='\n' && text[0]!='\n')
   {
     const usize spaces_per_tab = 2;
     const usize num_spaces = spaces_per_tab * f->indent;

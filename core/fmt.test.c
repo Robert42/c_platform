@@ -38,9 +38,11 @@ void fmt_test()
     fmt_write(&f, "{\n");
     f.indent++;
     fmt_write(&f, "puts(msg);\n");
+    fmt_write(&f, "\n");
+    fmt_write(&f, "return 0;\n");
     f.indent--;
     fmt_write(&f, "}\n");
 
-    assert_cstr_eq(f.begin, "void main()\n{\n  puts(msg);\n}\n");
+    assert_cstr_eq(f.begin, "void main()\n{\n  puts(msg);\n\n  return 0;\n}\n");
   }
 }
