@@ -23,7 +23,6 @@ void platform_init()
 #include "io/file.c"
 #include "time/timer.c"
 #include "mem/mem_page.c"
-#include "mem/mem_huge_array.c"
 
 #ifdef __linux__
 #include "io/file.linux.c"
