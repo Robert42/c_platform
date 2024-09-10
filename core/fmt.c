@@ -52,3 +52,10 @@ void fmt_write(Fmt* f, const char* text, ...)
   f->end += bytes_written;
 }
 
+void fmt_clear(Fmt* f)
+{
+  debug_assert_usize_lt(0, f->buffer_capacity);
+  f->end = f->begin;
+  f->end[0] = 0;
+}
+
