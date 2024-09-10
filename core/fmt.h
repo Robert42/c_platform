@@ -6,6 +6,8 @@ typedef struct _utils_Fmt
   char* begin; // also the beginning of the buffer
   usize buffer_capacity;
   char* end;
+
+  usize indent;
 } Fmt;
 
 Fmt fmt_new(char* buffer, usize capacity);

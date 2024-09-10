@@ -31,6 +31,17 @@ void fmt_write(Fmt* f, const char* text, ...)
 {
   usize avail = _fmt_available_chars(*f);
 
+  if(f->indent>0 && f->begin < f->end && f->end[-1]=='\n')
+  {
+    const usize spaces_per_tab = 2;
+    const usize num_spaces = spaces_per_tab * f->indent;
+    assert_usize_lte(num_spaces, avail);
+    
+    memset(f->end, ' ', num_spaces);
+    avail -= num_spaces;
+    f->end += num_spaces;
+  }
+
   va_list args;
   va_start(args, text);
   ssize bytes_written = vsnprintf(f->end, avail, text, args);
