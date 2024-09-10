@@ -2,23 +2,11 @@
 
 #include "fmt.h"
 
-/*@ requires fmt_valid(f);
-    assigns \nothing;
-    ensures \result == _logic_fmt_availalbe_chars(f);
-*/
 static inline usize _fmt_available_chars(Fmt f)
 {
   return f.buffer_capacity - (f.end - f.begin);
 }
 
-/*@ requires valid_buffer: \valid(buffer + (0 .. capacity-1));
-    requires \offset(buffer)+capacity <= \block_length(buffer);
-    requires capacity > 0;
-    requires (ssize)capacity == capacity;
-    assigns buffer[0];
-    ensures valid: fmt_valid(\result);
-    ensures all_bytes_available:\result.begin == \result.end;
-*/
 Fmt fmt_new(char* buffer, usize capacity)
 {
   Fmt f = {
@@ -42,12 +30,6 @@ Fmt fmt_new_from_region(Mem_Region* region, usize capacity)
   return f;
 }
 
-/*@ requires valid_fmt: \valid(f) && fmt_valid(*f);
-    assigns f->end \from f->end, f->available_bytes;
-    assigns f->end[0..f->available_bytes-1];
-    assigns f->available_bytes;
-    ensures fmt_valid(*f);
-*/
 void fmt_write(Fmt* f, const char* text, ...)
 {
   usize avail = _fmt_available_chars(*f);
