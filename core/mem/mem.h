@@ -54,3 +54,4 @@ static inline usize mem_region_available_bytes(const Mem_Region r)
 }
 
 unsigned char* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_bytes);
+void mem_region_align(Mem_Region* region, usize alignment);

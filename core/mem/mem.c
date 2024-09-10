@@ -72,3 +72,11 @@ unsigned char* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_by
 
   return bytes;
 }
+
+void mem_region_align(Mem_Region* region, usize alignment)
+{
+  region->begin = (u8*)ceil_multiple_of_power_of_two_usize((usize)region->begin, alignment);
+
+  assert_ptr_lte(region->begin, region->end);
+}
+

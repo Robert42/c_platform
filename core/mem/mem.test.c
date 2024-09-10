@@ -23,6 +23,7 @@ void mem_test()
 #endif
   }
 
+  {
 #define LEN 20
   u8 abc[LEN];
   assert_usize_eq(ARRAY_LEN(abc), LEN);
@@ -43,6 +44,7 @@ void mem_test()
   EXPECT_DEBUG_ASSERT(
   mem_region_alloc_bytes_unaligned(&region, 4);
   );
+  }
 
   // swap scratch
   {
@@ -66,8 +68,26 @@ void mem_test()
     assert_ptr_eq(scratch.end, TEST_SCRATCH_1 + ARRAY_LEN(TEST_SCRATCH_1));
   }
 
-  // alignof
+  // alignof macro
   {
     assert_usize_eq(sizeof(int), alignof(int));
+  }
+
+  // align region
+  {
+    u8 BUFFER[256];
+    Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
+
+    mem_region_align(&region, 8);
+    assert_usize_eq((usize)region.begin % 8, 0);
+
+    mem_region_alloc_bytes_unaligned(&region, 1);
+    assert_usize_eq((usize)region.begin % 8, 1);
+
+    mem_region_alloc_bytes_unaligned(&region, 5);
+    assert_usize_eq((usize)region.begin % 8, 6);
+
+    mem_region_align(&region, 8);
+    assert_usize_eq((usize)region.begin % 8, 0);
   }
 }
