@@ -90,4 +90,25 @@ void mem_test()
     mem_region_align(&region, 8);
     assert_usize_eq((usize)region.begin % 8, 0);
   }
+
+  // `mem_region_copy_to_region`
+  {
+    u8 BUFFER[256] = {0};
+    Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
+
+    mem_region_align(&region, alignof(int));
+    mem_region_alloc_bytes_unaligned(&region, 1);
+    assert_usize_eq((usize)region.begin % alignof(int), 1);
+
+    void* const expected_ptr = region.begin + alignof(int) - 1;
+
+    int xs[3] = {42, 37, 137};
+    int* ys = MEM_REGION_COPY_ARRAY(&region, int, xs, ARRAY_LEN(xs));
+    assert_ptr_eq(ys, expected_ptr);
+    assert_ptr_eq(region.begin, ys + 3);
+
+    assert_int_eq(ys[0], 42);
+    assert_int_eq(ys[1], 37);
+    assert_int_eq(ys[2], 137);
+  }
 }

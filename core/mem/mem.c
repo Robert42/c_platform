@@ -80,3 +80,11 @@ void mem_region_align(Mem_Region* region, usize alignment)
   assert_ptr_lte(region->begin, region->end);
 }
 
+u8* mem_region_copy_to_region(Mem_Region* region, const void* src, usize size, usize align)
+{
+  mem_region_align(region, align);
+  u8* dst = mem_region_alloc_bytes_unaligned(region, size);
+  memcpy(dst, src, size);
+  return dst;
+}
+
