@@ -56,6 +56,9 @@ static inline usize mem_region_available_bytes(const Mem_Region r)
 unsigned char* mem_region_alloc_bytes_unaligned(Mem_Region* region, usize num_bytes);
 void mem_region_align(Mem_Region* region, usize alignment);
 
+u8* mem_region_alloc(Mem_Region* region, usize size, usize align);
+#define MEM_REGION_ALLOC(REGION, T) (T*)mem_region_alloc((REGION), sizeof(T), alignof(T))
+
 u8* mem_region_copy_to_region(Mem_Region* region, const void* src, usize size, usize align);
 #define MEM_REGION_COPY_ARRAY(REGION, T, SRC, N) (T*)mem_region_copy_to_region((REGION), &(SRC)[0], sizeof(T) * (N), alignof(T))
 

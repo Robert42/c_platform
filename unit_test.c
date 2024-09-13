@@ -3,10 +3,12 @@
 #include "core/core.c"
 #include "platform/platform.c"
 #include "utils/utils.c"
+#include "ui/ui.c"
 
 #include "core/test.c"
 #include "platform/test.c"
 #include "utils/test.c"
+#include "ui/test.c"
 
 #define PRINT_ENV 0
 
@@ -36,6 +38,7 @@ int main(UNUSED int argc, UNUSED const char** argv)
   core_test();
   platform_test();
   utils_test();
+  ui_test();
 
   printf("%s==== DONE ====%s\n", TERM.green_bold, TERM.normal);
 
