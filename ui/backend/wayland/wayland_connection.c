@@ -21,7 +21,7 @@ void wayland_connect()
     }
 
     struct sockaddr* addr = MEM_REGION_ALLOC(&STACK, struct sockaddr);
-    MEM_REGION_ALLOC(&STACK, PATH_LEN_MAX+1); // allcoate enough additional bytes to store the path
+    mem_region_alloc_bytes_unaligned(&STACK, PATH_LEN_MAX+1); // allcoate enough additional bytes to store the path
 
     addr->sa_family = AF_UNIX;
     strcpy(addr->sa_data, path.cstr);
