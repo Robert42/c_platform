@@ -52,7 +52,7 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
       "-o", output_file.cstr,
       NULL};
     char* const args_test[] = {output_file.cstr, NULL};
-    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).exit_code == EXIT_SUCCESS)
+    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success)
       proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0});
     break;
   }
@@ -69,7 +69,7 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
       "-o", output_file.cstr,
       NULL};
     char* const args_test[] = {output_file.cstr, NULL};
-    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).exit_code == EXIT_SUCCESS)
+    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success)
       proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0});
     break;
   }
@@ -147,6 +147,6 @@ bool cc_compiler_is_available(enum C_Compiler cc)
   case CC_CLANG: args = args_clang; break;
   }
 
-  return proc_exec_blocking(args, suppress_output).exit_code == EXIT_SUCCESS;
+  return proc_exec_blocking(args, suppress_output).success;
 }
 

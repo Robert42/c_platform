@@ -20,6 +20,8 @@ void proc_test()
 
     assert_cstr_eq(result.captured_stdout, msg);
     assert_int_eq(result.exit_code, EXIT_SUCCESS);
+    assert(result.exit_normal);
+    assert(result.success);
     debug_assert_ptr_eq(region.begin, BUFFER + ARRAY_LEN(msg));
   }
 
@@ -32,6 +34,8 @@ void proc_test()
     assert_cstr_eq(result.captured_stderr, expected);
     debug_assert_ptr_eq(region.begin, BUFFER + strlen(expected)+1);
     assert_int_ne(result.exit_code, EXIT_SUCCESS);
+    assert(result.exit_normal);
+    assert(!result.success);
   }
 
   // assert when buffer way too small

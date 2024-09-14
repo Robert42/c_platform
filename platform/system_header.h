@@ -41,6 +41,8 @@ int getpagesize(void);
 NORETURN
 void errx(int eval, const char* fmt, ...);
 
+const char* secure_getenv(const char* name);
+
 #endif // __linux__
 
 #else // ENV_COMPILER == COMPILER_TCC
@@ -60,6 +62,7 @@ void errx(int eval, const char* fmt, ...);
 #include <time.h>
 #include <fcntl.h> // openat, O_DIRECTORY
 #include <sys/mman.h>
+#include <sys/socket.h> // wayland
 
 // source:` man getdents(2)`
 struct linux_dirent64

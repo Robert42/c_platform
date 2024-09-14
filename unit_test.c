@@ -3,10 +3,12 @@
 #include "core/core.c"
 #include "platform/platform.c"
 #include "utils/utils.c"
+#include "ui/ui.c"
 
 #include "core/test.c"
 #include "platform/test.c"
 #include "utils/test.c"
+#include "ui/test.c"
 
 #define PRINT_ENV 0
 
@@ -22,6 +24,7 @@ Mem_Region STACK = {0};
 int main(UNUSED int argc, UNUSED const char** argv)
 {
   platform_init();
+  ui_init();
 
   SCRATCH = MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1);
   STACK = MEM_REGION_FROM_ARRAY(_STACK_BUFFER);
@@ -36,6 +39,7 @@ int main(UNUSED int argc, UNUSED const char** argv)
   core_test();
   platform_test();
   utils_test();
+  ui_test();
 
   printf("%s==== DONE ====%s\n", TERM.green_bold, TERM.normal);
 
