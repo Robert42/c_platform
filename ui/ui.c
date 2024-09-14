@@ -11,6 +11,8 @@ void ui_init()
   const char* session_type = getenv_or_panic("XDG_SESSION_TYPE");
   if(strcmp(session_type, "wayland") == 0)
     DESKTOP_SESSION_TYPE = DST_WAYLAND;
+  else if(strcmp(session_type, "x11") == 0)
+    DESKTOP_SESSION_TYPE = DST_X11;
   else
     PANIC("Unknown desktop session type `%s`\n", session_type);
 #endif
