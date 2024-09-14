@@ -11,6 +11,7 @@ const char* const BANNER =
 ;
 
 #include "core/dev/assert.codegen.c"
+#include "ui/ui.codegen.c"
 
 
 int main(int argc, char** argv)
@@ -18,6 +19,7 @@ int main(int argc, char** argv)
   c_script_init();
 
   assert_codegen();
+  ui_codegen();
 
   printf("%s==== DONE ====%s\n", TERM.green_bold, TERM.normal);
 
