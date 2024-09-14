@@ -41,7 +41,7 @@ int getpagesize(void);
 NORETURN
 void errx(int eval, const char* fmt, ...);
 
-const char* getenv(const char* name);
+const char* secure_getenv(const char* name);
 
 #endif // __linux__
 

@@ -9,8 +9,8 @@ void wayland_connect()
   {
     Mem_Region _prev_stack = STACK;
 
-    const char* wayland_socket_dir = getenv("XDG_RUNTIME_DIR");
-    const char* wayland_socket_name = getenv("WAYLAND_DISPLAY");
+    const char* wayland_socket_dir = secure_getenv("XDG_RUNTIME_DIR");
+    const char* wayland_socket_name = secure_getenv("WAYLAND_DISPLAY");
     LINUX_ASSERT_NE(wayland_socket_dir, NULL);
     LINUX_ASSERT_NE(wayland_socket_name, NULL);
 
