@@ -2,6 +2,7 @@
 
 void wayland_connect()
 {
+  debug_assert(DESKTOP_SESSION_TYPE == DST_WAYLAND);
 
   const int fd = socket(AF_UNIX, SOCK_STREAM, 0);
   LINUX_ASSERT_NE(fd, -1);

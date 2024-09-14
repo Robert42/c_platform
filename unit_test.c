@@ -24,6 +24,7 @@ Mem_Region STACK = {0};
 int main(UNUSED int argc, UNUSED const char** argv)
 {
   platform_init();
+  ui_init();
 
   SCRATCH = MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1);
   STACK = MEM_REGION_FROM_ARRAY(_STACK_BUFFER);
