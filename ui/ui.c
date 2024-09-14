@@ -8,7 +8,7 @@ enum Desktop_Session_Type DESKTOP_SESSION_TYPE = DST_UNKNOWN;
 void ui_init()
 {
 #ifdef __linux__
-  const char* session_type = secure_getenv("XDG_SESSION_TYPE") ?: "";
+  const char* session_type = getenv_or_panic("XDG_SESSION_TYPE");
   if(strcmp(session_type, "wayland") == 0)
     DESKTOP_SESSION_TYPE = DST_WAYLAND;
   else
