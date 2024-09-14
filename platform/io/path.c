@@ -99,11 +99,15 @@ Path path_join(Path a, Path b)
 #ifdef __linux__
 Path path_realpath(Path p)
 {
-  char* maybe_path = realpath(p.cstr, NULL);
+  const Mem_Region _stack_restore = STACK;
+  char* buffer = (char*)mem_region_alloc_bytes_unaligned(&STACK, MAXPATHLEN);
+
+  char* maybe_path = realpath(p.cstr, buffer);
   LINUX_ASSERT_NE(maybe_path, NULL);
 
   p = path_from_cstr(maybe_path);
-  free(maybe_path);
+
+  STACK = _stack_restore;
 
   return p;
 }

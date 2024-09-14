@@ -63,6 +63,7 @@ const char* secure_getenv(const char* name);
 #include <fcntl.h> // openat, O_DIRECTORY
 #include <sys/mman.h>
 #include <sys/socket.h> // wayland
+#include <sys/param.h> // MAXPATHLEN
 
 // source:` man getdents(2)`
 struct linux_dirent64
