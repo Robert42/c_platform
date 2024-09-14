@@ -25,10 +25,12 @@ extern usize __assert_caught__;
 }
 
 NORETURN
-void __panic__(const char* title, const char* file, int line);
+void __panic__(const char* title, const char* file, int line, const char* msg, ...);
 
-#define UNIMPLEMENTED() __panic__("UNIMPLEMENTED", __FILE__, __LINE__)
-#define TODO() __panic__("TODO", __FILE__, __LINE__)
+#define PANIC_X(TITLE, ...) __panic__(TITLE, __FILE__, __LINE__, "" __VA_ARGS__)
+#define PANIC(...) PANIC_X("PANIC", __VA_ARGS__)
+#define UNIMPLEMENTED(...) PANIC_X("UNIMPLEMENTED", __VA_ARGS__)
+#define TODO(...) PANIC_X("TODO", __VA_ARGS__)
 
 #if ENV_STATIC_ANALYSIS
 

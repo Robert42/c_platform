@@ -80,9 +80,17 @@ static void __ter_assert_failed__(const char* condition, const char* lhs, const 
   abort();
 }
 
-void __panic__(const char* title, const char* file, int line)
+void __panic__(const char* title, const char* file, int line, const char* msg, ...)
 {
   printf("%s==== %s ====%s\n", TERM_STYLE_RED, title, TERM_STYLE_RESET);
+  if(msg != NULL && msg[0]!=0)
+  {
+    va_list args;
+    va_start(args, msg);
+    vprintf(msg, args);
+    va_end(args);
+    printf("\n");
+  }
   printf("%s:%i\n", file, line);
   printf("%s====%s\n", TERM_STYLE_RED, TERM_STYLE_RESET);
   abort();
