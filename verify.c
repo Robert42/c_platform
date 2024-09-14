@@ -239,7 +239,7 @@ static void cmd_exec(struct Cmd cmd)
   struct Proc_Exec_Blocking_Result result = proc_exec_blocking(cmd.cmd, capture_everything);
   const u64 time_end = timer_now();
   const bool ok =
-    result.exit_code == EXIT_SUCCESS
+    result.success
     && (cmd.log_err == NULL || _file_size(cmd.log_err)<=0)
     && (cmd.err_text == NULL || !strstr(result.captured_stderr, cmd.err_text))
     && (cmd.err_text == NULL || !strstr(result.captured_stdout, cmd.err_text));

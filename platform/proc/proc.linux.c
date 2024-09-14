@@ -42,7 +42,9 @@ struct Proc_Exec_Blocking_Result proc_exec_blocking(char* const args[], struct P
 
   struct Proc_Exec_Blocking_Result result = {
     .exit_code = WEXITSTATUS(wstatus),
+    .exit_normal = WIFEXITED(wstatus),
   };
+  result.success = result.exit_code==EXIT_SUCCESS && result.exit_normal;
 
   if(settings.capture_stdout)
   {

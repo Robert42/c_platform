@@ -18,7 +18,7 @@ Path wayland_protocol_dir()
     .region_stdout = &region,
   };
   struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, settings);
-  assert_int_eq(result.exit_code, 0);
+  assert(result.success);
 
   cstr_trim_right(result_path.cstr);
   result_path.len = strlen(result_path.cstr);
