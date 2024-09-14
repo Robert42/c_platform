@@ -12,6 +12,6 @@ void ui_init()
   if(strcmp(session_type, "wayland") == 0)
     DESKTOP_SESSION_TYPE = DST_WAYLAND;
   else
-    printf("Unknown session type `%s`\n", session_type);
+    PANIC("Unknown desktop session type `%s`\n", session_type);
 #endif
 }
