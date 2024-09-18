@@ -16,7 +16,6 @@
 #include "core/env.demo.c"
 #endif
 
-static u8 _SCRATCH_BUFFER_1[1024*1024] = {0};
 Mem_Region SCRATCH = {0};
 Mem_Region STACK = {0};
 
@@ -25,7 +24,7 @@ int main(UNUSED int argc, UNUSED const char** argv)
   platform_init();
   ui_init();
 
-  SCRATCH = MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1);
+  SCRATCH = mem_region_from_pre_reserved(1*MiB);
   STACK = mem_region_from_pre_reserved(1*GiB);
 
 #if 0
