@@ -52,6 +52,20 @@ void __assert_int_gt__(int x, int y, const char* condition, const char* file, in
 //@ terminates true; assigns \nothing; exits false; admit ensures x >= y;
 void __assert_int_gte__(int x, int y, const char* condition, const char* file, int line);
 
+// ==== char ====
+//@ terminates true; assigns \nothing; exits false; admit ensures x == y;
+void __assert_char_eq__(char x, char y, const char* condition, const char* file, int line);
+//@ terminates true; assigns \nothing; exits false; admit ensures x != y;
+void __assert_char_ne__(char x, char y, const char* condition, const char* file, int line);
+//@ terminates true; assigns \nothing; exits false; admit ensures x < y;
+void __assert_char_lt__(char x, char y, const char* condition, const char* file, int line);
+//@ terminates true; assigns \nothing; exits false; admit ensures x <= y;
+void __assert_char_lte__(char x, char y, const char* condition, const char* file, int line);
+//@ terminates true; assigns \nothing; exits false; admit ensures x > y;
+void __assert_char_gt__(char x, char y, const char* condition, const char* file, int line);
+//@ terminates true; assigns \nothing; exits false; admit ensures x >= y;
+void __assert_char_gte__(char x, char y, const char* condition, const char* file, int line);
+
 // ==== ptr ====
 //@ terminates true; assigns \nothing; exits false; admit ensures x == y;
 void __assert_ptr_eq__(const void* x, const void* y, const char* condition, const char* file, int line);
@@ -113,6 +127,14 @@ void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file,
 #define assert_int_gt(x, y) __assert_int_gt__(x, y, #x " > " #y, __FILE__, __LINE__)
 #define assert_int_gte(x, y) __assert_int_gte__(x, y, #x " >= " #y, __FILE__, __LINE__)
 
+// ==== char ====
+#define assert_char_eq(x, y) __assert_char_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
+#define assert_char_ne(x, y) __assert_char_ne__(x, y, #x " != " #y, __FILE__, __LINE__)
+#define assert_char_lt(x, y) __assert_char_lt__(x, y, #x " < " #y, __FILE__, __LINE__)
+#define assert_char_lte(x, y) __assert_char_lte__(x, y, #x " <= " #y, __FILE__, __LINE__)
+#define assert_char_gt(x, y) __assert_char_gt__(x, y, #x " > " #y, __FILE__, __LINE__)
+#define assert_char_gte(x, y) __assert_char_gte__(x, y, #x " >= " #y, __FILE__, __LINE__)
+
 // ==== ptr ====
 #define assert_ptr_eq(x, y) __assert_ptr_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
 #define assert_ptr_ne(x, y) __assert_ptr_ne__(x, y, #x " != " #y, __FILE__, __LINE__)
@@ -164,6 +186,14 @@ void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file,
 #define debug_assert_int_gt(x, y)
 #define debug_assert_int_gte(x, y)
 
+// ==== char ====
+#define debug_assert_char_eq(x, y)
+#define debug_assert_char_ne(x, y)
+#define debug_assert_char_lt(x, y)
+#define debug_assert_char_lte(x, y)
+#define debug_assert_char_gt(x, y)
+#define debug_assert_char_gte(x, y)
+
 // ==== ptr ====
 #define debug_assert_ptr_eq(x, y)
 #define debug_assert_ptr_ne(x, y)
@@ -214,6 +244,14 @@ void __assert_bool_eq__(bool x, bool y, const char* condition, const char* file,
 #define debug_assert_int_lte(x, y) __assert_int_lte__(x, y, #x " <= " #y, __FILE__, __LINE__)
 #define debug_assert_int_gt(x, y) __assert_int_gt__(x, y, #x " > " #y, __FILE__, __LINE__)
 #define debug_assert_int_gte(x, y) __assert_int_gte__(x, y, #x " >= " #y, __FILE__, __LINE__)
+
+// ==== char ====
+#define debug_assert_char_eq(x, y) __assert_char_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
+#define debug_assert_char_ne(x, y) __assert_char_ne__(x, y, #x " != " #y, __FILE__, __LINE__)
+#define debug_assert_char_lt(x, y) __assert_char_lt__(x, y, #x " < " #y, __FILE__, __LINE__)
+#define debug_assert_char_lte(x, y) __assert_char_lte__(x, y, #x " <= " #y, __FILE__, __LINE__)
+#define debug_assert_char_gt(x, y) __assert_char_gt__(x, y, #x " > " #y, __FILE__, __LINE__)
+#define debug_assert_char_gte(x, y) __assert_char_gte__(x, y, #x " >= " #y, __FILE__, __LINE__)
 
 // ==== ptr ====
 #define debug_assert_ptr_eq(x, y) __assert_ptr_eq__(x, y, #x " == " #y, __FILE__, __LINE__)

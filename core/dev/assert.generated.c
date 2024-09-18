@@ -162,6 +162,50 @@ void __assert_int_gte__(int x, int y, const char* condition, const char* file, i
   __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "%i", x), cstr_fmt(&PANIC_REGION, "%i", y), file, line);
 }
 
+// ==== char ====
+void __assert_char_eq__(char x, char y, const char* condition, const char* file, int line)
+{
+  if(LIKELY(x == y))
+    return;
+  else
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "'%c'", x), cstr_fmt(&PANIC_REGION, "'%c'", y), file, line);
+}
+void __assert_char_ne__(char x, char y, const char* condition, const char* file, int line)
+{
+  if(LIKELY(x != y))
+    return;
+  else
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "'%c'", x), cstr_fmt(&PANIC_REGION, "'%c'", y), file, line);
+}
+void __assert_char_lt__(char x, char y, const char* condition, const char* file, int line)
+{
+  if(LIKELY(x < y))
+    return;
+  else
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "'%c'", x), cstr_fmt(&PANIC_REGION, "'%c'", y), file, line);
+}
+void __assert_char_lte__(char x, char y, const char* condition, const char* file, int line)
+{
+  if(LIKELY(x <= y))
+    return;
+  else
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "'%c'", x), cstr_fmt(&PANIC_REGION, "'%c'", y), file, line);
+}
+void __assert_char_gt__(char x, char y, const char* condition, const char* file, int line)
+{
+  if(LIKELY(x > y))
+    return;
+  else
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "'%c'", x), cstr_fmt(&PANIC_REGION, "'%c'", y), file, line);
+}
+void __assert_char_gte__(char x, char y, const char* condition, const char* file, int line)
+{
+  if(LIKELY(x >= y))
+    return;
+  else
+  __bin_assert_failed__(condition, cstr_fmt(&PANIC_REGION, "'%c'", x), cstr_fmt(&PANIC_REGION, "'%c'", y), file, line);
+}
+
 // ==== ptr ====
 void __assert_ptr_eq__(const void* x, const void* y, const char* condition, const char* file, int line)
 {

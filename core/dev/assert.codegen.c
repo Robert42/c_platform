@@ -4,6 +4,7 @@
   X(usize, usize, "%zu", /*no cast*/) \
   X(ssize, ssize, "%zd", /*no cast*/) \
   X(int, int, "%i", /*no cast*/) \
+  X(char, char, "'%c'", /*no cast*/) \
   X(ptr, const void*, "%p", /*cast*/(usize) ) \
 
 // ISSUE_FRAMA_C: add to contract of cstr_eq: ensure, that both strings are equal
