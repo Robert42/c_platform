@@ -24,6 +24,14 @@ void gen_adt_test()
     .name = "Entity",
   };
 
-  assert_cstr_eq(test_autogen_adt_fmt(&STACK, adt), "\n/*<< *.h >>*/\n\n/*<< *.c >>*/\n");
+  assert_cstr_eq(test_autogen_adt_fmt(&STACK, adt),
+    "// ${BANNER}\n"
+    "\n"
+    "/*<< *.h >>*/\n"
+    "// ${BANNER}\n"
+    "\n"
+    "/*<< *.c >>*/\n"
+    "// ${BANNER}\n"
+  );
   STACK = _prev_stack;
 }

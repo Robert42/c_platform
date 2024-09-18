@@ -2,10 +2,13 @@
 
 #include "gen_adt.h"
 
-extern const char* const BANNER;
+const char* const BANNER = "// ${BANNER}\n";
 
 void _autogen_adt_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Adt adt)
 {
+  fmt_write(f_h_decl, "%s", BANNER);
+  fmt_write(f_h, "%s", BANNER);
+  fmt_write(f_c, "%s", BANNER);
 }
 
 void autogen_adt(Path dir, struct Autogen_Adt adt)
