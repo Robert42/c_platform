@@ -6,4 +6,5 @@
 #include "io/env.h"
 #include "io/path.h"
 #include "mem/mem_page.h"
+#include "mem/mem_huge_array.h"
 
