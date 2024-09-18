@@ -2,6 +2,8 @@
 
 void cstr_test()
 {
+  const Mem_Region _prev = STACK;
+
   // empty string => do nothing
   {
     char xs[1] = {0};
@@ -36,4 +38,25 @@ void cstr_test()
     cstr_trim_right(xs);
     assert_cstr_eq(xs, "xyz");
   }
+
+#define MIXED " !.\n?@ABYZ[\\_`abyz{|}~"
+#define UPPER " !.\n?@ABYZ[\\_`ABYZ{|}~"
+#define LOWER " !.\n?@abyz[\\_`abyz{|}~"
+  {
+    char xs[] = MIXED;
+    convert_cstr_to_lower(xs);
+    assert_cstr_eq(xs, LOWER);
+    assert_cstr_eq(cstr_to_lower(&STACK, MIXED), LOWER);
+  }
+  {
+    char xs[] = MIXED;
+    convert_cstr_to_upper(xs);
+    assert_cstr_eq(xs, UPPER);
+    assert_cstr_eq(cstr_to_upper(&STACK, MIXED), UPPER);
+  }
+#undef MIXED
+#undef UPPER
+#undef LOWER
+
+  STACK = _prev;
 }
