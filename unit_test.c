@@ -17,7 +17,7 @@
 #endif
 
 static u8 _SCRATCH_BUFFER_1[1024*1024] = {0};
-static u8 _STACK_BUFFER[1024*1024] = {0};
+static u8 _STACK_BUFFER[256*1024*1024] = {0};
 Mem_Region SCRATCH = {0};
 Mem_Region STACK = {0};
 

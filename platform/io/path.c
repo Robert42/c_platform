@@ -96,6 +96,11 @@ Path path_join(Path a, Path b)
   return path_concat(a, b);
 }
 
+Path path_join_cstr_append_cstr(Path dir, const char* name_1, const char* name_2)
+{
+  return path_join(dir, path_append_cstr(path_from_cstr(name_1), name_2));
+}
+
 #ifdef __linux__
 Path path_realpath(Path p)
 {
