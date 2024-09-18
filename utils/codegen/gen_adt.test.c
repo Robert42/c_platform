@@ -26,6 +26,9 @@ void gen_adt_test()
 
   assert_cstr_eq(test_autogen_adt_fmt(&STACK, adt),
     "// ${BANNER}\n"
+    "enum Entity_Variant;\n"
+    "struct Entity_ID;\n"
+    "struct Entity;\n"
     "\n"
     "/*<< *.h >>*/\n"
     "// ${BANNER}\n"

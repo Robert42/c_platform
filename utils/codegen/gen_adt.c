@@ -9,6 +9,10 @@ void _autogen_adt_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Adt adt)
   fmt_write(f_h_decl, "%s", BANNER);
   fmt_write(f_h, "%s", BANNER);
   fmt_write(f_c, "%s", BANNER);
+
+  fmt_write(f_h_decl, "enum %s_Variant;\n", adt.name);
+  fmt_write(f_h_decl, "struct %s_ID;\n", adt.name);
+  fmt_write(f_h_decl, "struct %s;\n", adt.name);
 }
 
 void autogen_adt(Path dir, struct Autogen_Adt adt)
