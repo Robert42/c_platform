@@ -141,6 +141,26 @@ int main(int argc, const char** argv)
   }
   #endif
 
+  printf("%s==== tcc ====%s\n", TERM_HEADER, TERM.normal);
+  {
+    for(int src_idx=0; src_idx<SRC_COUNT; ++src_idx)
+    {
+      const Path c_file = src_c_path(src_idx);
+      char* const cmd_run_tcc[] = {"tcc",
+        "-Wall",
+        "-run",
+        c_file.cstr,
+        NULL};
+      struct Cmd cmd = {
+        .name = cstr_fmt(&SCRATCH, "%s (run with tcc)", SRC_BASENAME[src_idx]),
+        .cmd = cmd_run_tcc,
+        .err_text = "error:",
+        .warning_text = "warning:",
+      };
+      cmd_exec(cmd);
+    }
+  }
+
   printf("%s==== compilers ====%s\n", TERM_HEADER, TERM.normal);
   for(int cc_idx=0; cc_idx<CC_COUNT; ++cc_idx)
   {
@@ -148,6 +168,11 @@ int main(int argc, const char** argv)
     const char* const compiler_name = cc_compiler_name(cc);
     if(!cc_compiler_is_available(cc))
       continue;
+
+#if 1 // Binaries compiled with tcc version 0.9.27 (AArch64 Linux) suddenly crash for some reason
+    if(cc == CC_TCC)
+      continue;
+#endif
 
     printf("%s== %s%s\n", TERM_HEADER, compiler_name, TERM.normal);
     
