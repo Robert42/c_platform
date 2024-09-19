@@ -38,5 +38,7 @@ bool cc_compiler_is_available(enum C_Compiler cc);
   "-fsanitize-address-use-after-scope", \
   "-fstack-protector-all", \
 
+#define C_STANDARD "-std=c99"
+
 void cc_init();
 

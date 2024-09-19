@@ -42,7 +42,7 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
   case CC_GCC:
   {
     char* const args_compile[] = {"gcc",
-      "-std=c99",
+      C_STANDARD,
       GCC_WARNING_OPTIONS
       "-g",
 #if !DISABLE_SANITIZER
@@ -59,7 +59,7 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
   case CC_CLANG:
   {
     char* const args_compile[] = {"clang",
-      "-std=c99",
+      C_STANDARD,
       GCC_WARNING_OPTIONS
       "-g",
 #if !DISABLE_SANITIZER
