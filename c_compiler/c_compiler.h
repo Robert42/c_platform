@@ -26,6 +26,7 @@ bool cc_compiler_is_available(enum C_Compiler cc);
   "-Wno-error=unused-function", \
   "-Wno-error=sign-compare", \
   "-Wno-error=uninitialized", \
+  "-Wno-error=pedantic", \
   "-Werror=vla", \
   "-pedantic", \
 
