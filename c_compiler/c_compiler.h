@@ -28,7 +28,6 @@ bool cc_compiler_is_available(enum C_Compiler cc);
   "-Wno-error=uninitialized", \
   "-Wno-error=pedantic", \
   "-Werror=vla", \
-  "-pedantic", \
 
 #define GCC_SANITIZER_OPTIONS \
   "-fsanitize=address", \
@@ -38,7 +37,7 @@ bool cc_compiler_is_available(enum C_Compiler cc);
   "-fsanitize-address-use-after-scope", \
   "-fstack-protector-all", \
 
-#define C_STANDARD "-std=c99"
+#define C_STANDARD "-std=c99", "-pedantic"
 
 void cc_init();
 
