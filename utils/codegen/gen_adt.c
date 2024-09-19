@@ -4,7 +4,7 @@
 
 const char* const BANNER = "// ${BANNER}\n";
 
-void _autogen_adt_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Adt adt)
+void _autogen_adt_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_ADT adt)
 {
   fmt_write(f_h_decl, "%s", BANNER);
   fmt_write(f_h, "%s", BANNER);
@@ -15,7 +15,7 @@ void _autogen_adt_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Adt adt)
   fmt_write(f_h_decl, "struct %s;\n", adt.name);
 }
 
-void autogen_adt(Path dir, struct Autogen_Adt adt)
+void autogen_adt(Path dir, struct Autogen_ADT adt)
 {
   const Mem_Region _prev_stack = STACK;
 

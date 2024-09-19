@@ -2,7 +2,7 @@
 
 #include "gen_adt.h"
 
-const char* test_autogen_adt_fmt(Mem_Region* region, struct Autogen_Adt adt)
+const char* test_autogen_adt_fmt(Mem_Region* region, struct Autogen_ADT adt)
 {
   Fmt f_h_decl = fmt_new_from_region(region, 15*MiB);
   Fmt f_h = fmt_new_from_region(region, 5*MiB);
@@ -20,7 +20,7 @@ void gen_adt_test()
 {
   const Mem_Region _prev_stack = STACK;
 
-  struct Autogen_Adt adt = {
+  struct Autogen_ADT adt = {
     .name = "Entity",
   };
 
