@@ -5,15 +5,19 @@ struct Autogen_Table_Column;
 struct Autogen_Table;
 struct Autogen_Multi_Table;
 
+// A Multitable is a collection of tables.
+// The tables shared the ID type, and can can have both distinct and shared columns.
 struct Autogen_Multi_Table
 {
   const char* name;
 
   struct Autogen_Table* distinct_tables;
-  usize num_variants;
+  u32 num_distinct;
 
-  usize num_metadata;
-  struct Autogen_Table* metadata_tables;
+  u32 num_shared;
+  struct Autogen_Table* shared_tables;
+
+  u32 shared_is_metadata; // bitfield indexing shared_tables
 };
 
 struct Autogen_Table
