@@ -17,15 +17,15 @@ struct Autogen_Multi_Table
   u32 num_shared;
   struct Autogen_Table* shared_tables;
 
-  u32 shared_is_metadata; // bitfield indexing shared_tables
+  u32 shared_is_metadata; // bitfield indexing shared_tables (meaning it will be excluded when table rows for equality)
 };
 
 struct Autogen_Table
 {
   const char* name;
 
-  struct Autogen_Table_Column* fields;
-  usize num_fields;
+  struct Autogen_Table_Column* columns;
+  u32 num_columns;
 };
 
 struct Autogen_Table_Column

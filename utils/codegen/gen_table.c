@@ -13,6 +13,23 @@ void _autogen_multi_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_
   fmt_write(f_h_decl, "enum %s_Variant;\n", multi_table.name);
   fmt_write(f_h_decl, "typedef struct _struct_%s_ID %s_ID;\n", multi_table.name, multi_table.name);
   fmt_write(f_h_decl, "struct %s;\n", multi_table.name);
+
+  for(usize idx_d=0; idx_d<multi_table.num_distinct; ++idx_d)
+  {
+    const struct Autogen_Table t = multi_table.distinct_tables[idx_d];
+
+    fmt_write(f_h_decl, "struct %s_%s;\n", multi_table.name, t.name);
+    fmt_write(f_h, "struct %s_%s\n", multi_table.name, t.name);
+    fmt_write(f_h, "{\n");
+    f_h->indent++;
+    for(usize idx_c=0; idx_c<t.num_columns; ++idx_c)
+    {
+      const struct Autogen_Table_Column c = t.columns[idx_c];
+      fmt_write(f_h, "%s %s;\n", c.type, c.name);
+    }
+    f_h->indent--;
+    fmt_write(f_h, "};\n");
+  }
 }
 
 void autogen_multi_table(Path dir, struct Autogen_Multi_Table multi_table)

@@ -20,8 +20,24 @@ void gen_table_test()
 {
   const Mem_Region _prev_stack = STACK;
 
+  struct Autogen_Table_Column expr_bin_table_columns[] = {
+    { .type = "enum Op_Bin", .name = "op", },
+    { .type = "Expr_ID", .name = "x", },
+    { .type = "Expr_ID", .name = "y", },
+  };
+
+  struct Autogen_Table distinct_tables[] = {
+    {
+      .name = "Bin",
+      .columns = expr_bin_table_columns,
+      .num_columns = ARRAY_LEN(expr_bin_table_columns),
+    },
+  };
   struct Autogen_Multi_Table multi_table = {
     .name = "Expr",
+
+    .distinct_tables = distinct_tables,
+    .num_distinct = ARRAY_LEN(distinct_tables),
   };
 
   assert_cstr_eq(test_autogen_multi_table_fmt(&STACK, multi_table),
@@ -29,9 +45,16 @@ void gen_table_test()
     "enum Expr_Variant;\n"
     "typedef struct _struct_Expr_ID Expr_ID;\n"
     "struct Expr;\n"
+    "struct Expr_Bin;\n"
     "\n"
     "/*<< *.h >>*/\n"
     "// ${BANNER}\n"
+    "struct Expr_Bin\n"
+    "{\n"
+    "  enum Op_Bin op;\n"
+    "  Expr_ID x;\n"
+    "  Expr_ID y;\n"
+    "};\n"
     "\n"
     "/*<< *.c >>*/\n"
     "// ${BANNER}\n"
