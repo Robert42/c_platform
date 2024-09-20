@@ -9,6 +9,13 @@ void _autogen_multi_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_
   const Mem_Region _prev_stack = STACK;
   const char* NAME = cstr_to_upper(&STACK, multi_table.name);
 
+  const char** DISTINCT_NAME = MEM_REGION_ALLOC_ARRAY(&STACK, const char*, multi_table.num_distinct);
+  for(usize idx_d=0; idx_d<multi_table.num_distinct; ++idx_d)
+  {
+    const struct Autogen_Table t = multi_table.distinct_tables[idx_d];
+    DISTINCT_NAME[idx_d] = cstr_to_upper(&STACK, t.name);
+  }
+
   fmt_write(f_h_decl, "%s", BANNER);
   fmt_write(f_h, "%s", BANNER);
   fmt_write(f_c, "%s", BANNER);
@@ -18,14 +25,7 @@ void _autogen_multi_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_
   fmt_write(f_h, "{\n");
   f_h->indent++;
   for(usize idx_d=0; idx_d<multi_table.num_distinct; ++idx_d)
-  {
-    const struct Autogen_Table t = multi_table.distinct_tables[idx_d];
-    const Mem_Region _prev_stack = STACK;
-
-    fmt_write(f_h, "%s_%s,\n", NAME, cstr_to_upper(&STACK, t.name));
-
-    STACK = _prev_stack;
-  }
+    fmt_write(f_h, "%s_%s,\n", NAME, DISTINCT_NAME[idx_d]);
   f_h->indent--;
   fmt_write(f_h, "};\n");
   fmt_write(f_h, "\n");
