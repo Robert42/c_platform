@@ -9,7 +9,7 @@ void print_cstr_diff(const char* x, const char* y)
   file_text_create_from_cstr(x_path, x);
   file_text_create_from_cstr(y_path, y);
   char* const args[] = {
-    "diff",
+    "sdiff",
     x_path.cstr,
     y_path.cstr,
     NULL,
