@@ -46,13 +46,21 @@ void cstr_test()
     char xs[] = MIXED;
     convert_cstr_to_lower(xs);
     assert_cstr_eq(xs, LOWER);
-    assert_cstr_eq(cstr_to_lower(&STACK, MIXED), LOWER);
+    STACK.begin[strlen(xs)] = 'x'; // this is, where the nulltermiantor will be
+    const char* ys = cstr_to_lower(&STACK, MIXED);
+    assert_cstr_eq(ys, LOWER);
+    assert_ptr_eq(STACK.begin, ys+strlen(ys)+1);
+    assert_char_eq(ys[strlen(ys)], 0);
   }
   {
     char xs[] = MIXED;
     convert_cstr_to_upper(xs);
     assert_cstr_eq(xs, UPPER);
-    assert_cstr_eq(cstr_to_upper(&STACK, MIXED), UPPER);
+    STACK.begin[strlen(xs)] = 'x'; // this is, where the nulltermiantor will be
+    const char* ys = cstr_to_upper(&STACK, MIXED);
+    assert_cstr_eq(ys, UPPER);
+    assert_ptr_eq(STACK.begin, ys+strlen(ys)+1);
+    assert_char_eq(ys[strlen(ys)], 0);
   }
 #undef MIXED
 #undef UPPER
