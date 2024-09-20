@@ -21,14 +21,14 @@ void gen_table_test()
   const Mem_Region _prev_stack = STACK;
 
   struct Autogen_Multi_Table multi_table = {
-    .name = "Entity",
+    .name = "Expr",
   };
 
   assert_cstr_eq(test_autogen_multi_table_fmt(&STACK, multi_table),
     "// ${BANNER}\n"
-    "enum Entity_Variant;\n"
-    "struct Entity_ID;\n"
-    "struct Entity;\n"
+    "enum Expr_Variant;\n"
+    "struct Expr_ID;\n"
+    "struct Expr;\n"
     "\n"
     "/*<< *.h >>*/\n"
     "// ${BANNER}\n"
