@@ -27,7 +27,7 @@ void gen_table_test()
   assert_cstr_eq(test_autogen_multi_table_fmt(&STACK, multi_table),
     "// ${BANNER}\n"
     "enum Expr_Variant;\n"
-    "struct Expr_ID;\n"
+    "typedef struct _struct_Expr_ID Expr_ID;\n"
     "struct Expr;\n"
     "\n"
     "/*<< *.h >>*/\n"
