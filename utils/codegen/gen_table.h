@@ -1,38 +1,30 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #pragma once
 
-struct Autogen_Table_Column_Field;
 struct Autogen_Table_Column;
+struct Autogen_Table;
 struct Autogen_Multi_Table;
 
 struct Autogen_Multi_Table
 {
   const char* name;
 
-  struct Autogen_Table_Variant* variants;
+  struct Autogen_Table* distinct_tables;
   usize num_variants;
 
-  struct Autogen_Table_MetaData* metadata;
   usize num_metadata;
+  struct Autogen_Table* metadata_tables;
 };
 
-struct Autogen_Table_Variant
+struct Autogen_Table
 {
   const char* name;
 
-  struct Autogen_Table_Field* fields;
+  struct Autogen_Table_Column* fields;
   usize num_fields;
 };
 
-struct Autogen_Table_MetaData
-{
-  const char* name;
-
-  struct Autogen_Table_Field* fields;
-  usize num_fields;
-};
-
-struct Autogen_Table_Field
+struct Autogen_Table_Column
 {
   const char* type;
   const char* name;
