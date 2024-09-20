@@ -6,6 +6,9 @@ const char* const BANNER = "// ${BANNER}\n";
 
 void _autogen_multi_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Multi_Table multi_table)
 {
+  const Mem_Region _prev_stack = STACK;
+  const char* NAME = cstr_to_upper(&STACK, multi_table.name);
+
   fmt_write(f_h_decl, "%s", BANNER);
   fmt_write(f_h, "%s", BANNER);
   fmt_write(f_c, "%s", BANNER);
@@ -13,28 +16,44 @@ void _autogen_multi_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_
   fmt_write(f_h_decl, "enum %s_Variant;\n", multi_table.name);
   fmt_write(f_h, "enum %s_Variant\n", multi_table.name);
   fmt_write(f_h, "{\n");
-  // TODO
+  f_h->indent++;
+  for(usize idx_d=0; idx_d<multi_table.num_distinct; ++idx_d)
+  {
+    const struct Autogen_Table t = multi_table.distinct_tables[idx_d];
+    const Mem_Region _prev_stack = STACK;
+
+    fmt_write(f_h, "%s_%s,\n", NAME, cstr_to_upper(&STACK, t.name));
+
+    STACK = _prev_stack;
+  }
+  f_h->indent--;
   fmt_write(f_h, "};\n");
   fmt_write(f_h, "\n");
 
   fmt_write(f_h_decl, "typedef struct _struct_%s_ID %s_ID;\n", multi_table.name, multi_table.name);
   fmt_write(f_h, "struct _struct_%s_ID\n", multi_table.name);
   fmt_write(f_h, "{\n");
+  f_h->indent++;
   // TODO
+  f_h->indent--;
   fmt_write(f_h, "};\n");
   fmt_write(f_h, "\n");
 
   fmt_write(f_h_decl, "struct %s_Table;\n", multi_table.name);
   fmt_write(f_h, "struct %s_Table\n", multi_table.name);
   fmt_write(f_h, "{\n");
+  f_h->indent++;
   // TODO
+  f_h->indent--;
   fmt_write(f_h, "};\n");
   fmt_write(f_h, "\n");
 
   fmt_write(f_h_decl, "struct %s;\n", multi_table.name);
   fmt_write(f_h, "struct %s\n", multi_table.name);
   fmt_write(f_h, "{\n");
+  f_h->indent++;
   // TODO
+  f_h->indent--;
   fmt_write(f_h, "};\n");
   fmt_write(f_h, "\n");
 
@@ -54,6 +73,8 @@ void _autogen_multi_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_
     f_h->indent--;
     fmt_write(f_h, "};\n");
   }
+
+  STACK = _prev_stack;
 }
 
 void autogen_multi_table(Path dir, struct Autogen_Multi_Table multi_table)

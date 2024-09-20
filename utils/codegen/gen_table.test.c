@@ -52,6 +52,7 @@ void gen_table_test()
     "// ${BANNER}\n"
     "enum Expr_Variant\n"
     "{\n"
+    "  EXPR_BIN,\n"
     "};\n"
     "\n"
     "struct _struct_Expr_ID\n"
