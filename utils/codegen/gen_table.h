@@ -44,6 +44,6 @@ struct Autogen_Table_Field
   } layout;
 };
 
-void _autogen_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Table adt);
-void autogen_table(Path dir, struct Autogen_Table adt);
+void _autogen_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Table table);
+void autogen_table(Path dir, struct Autogen_Table table);
 
