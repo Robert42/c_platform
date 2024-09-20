@@ -7,6 +7,9 @@
 extern usize __assert_capture__;
 extern usize __assert_caught__;
 #endif
+#ifndef ASSERT_SHOW_DIFF
+#define ASSERT_SHOW_DIFF 0
+#endif
 
 #include "assert.generated.h"
 
@@ -56,6 +59,9 @@ void __linux_call_failed__(const char* call, const char* file, int line);
 #define LINUX_ASSERT_EQ(CALL, SUCCESS) do{ if((CALL) != (SUCCESS)) {__linux_call_failed__(#CALL, __FILE__, __LINE__); } } while(0)
 #define LINUX_ASSERT_NE(CALL, FAILURE) do{ if((CALL) == (FAILURE)) {__linux_call_failed__(#CALL, __FILE__, __LINE__); } } while(0)
 #endif
+
+void print_cstr_diff(const char* x, const char* y);
+void print_str_diff(str x, str y);
 
 // ISSUE_FRAMA_C think about which assertions to keep, now that I am using frama_c
 // - pro:

@@ -2,7 +2,7 @@
 
 #include "gen_table.h"
 
-const char* const BANNER = "// ${BANNER}\n";
+extern const char* const BANNER;
 
 void _autogen_multi_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Multi_Table multi_table)
 {

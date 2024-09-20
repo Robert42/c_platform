@@ -270,7 +270,11 @@ void __assert_cstr_eq__(const char* x, const char* y, const char* condition, con
   if(LIKELY((strcmp(x,y) == 0)))
     return;
   else
+  {
+    if(ASSERT_SHOW_DIFF && !__assert_capture__)
+      print_cstr_diff(x, y);
   __bin_assert_failed__(condition, (x), (y), file, line);
+  }
 }
 
 // ==== str_eq ====
@@ -279,7 +283,11 @@ void __assert_str_eq__(str x, str y, const char* condition, const char* file, in
   if(LIKELY((str_cmp(x,y) == 0)))
     return;
   else
+  {
+    if(ASSERT_SHOW_DIFF && !__assert_capture__)
+      print_str_diff(x, y);
   __bin_assert_failed__(condition, str_fmt(x), str_fmt(y), file, line);
+  }
 }
 
 // ==== bool_eq ====

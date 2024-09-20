@@ -1,5 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
+#define ASSERT_SHOW_DIFF 1
+
 #include "core/core.c"
 #include "platform/platform.c"
 #include "utils/utils.c"
