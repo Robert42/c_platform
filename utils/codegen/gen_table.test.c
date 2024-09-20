@@ -1,6 +1,6 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
-#include "gen_adt.h"
+#include "gen_table.h"
 
 const char* test_autogen_adt_fmt(Mem_Region* region, struct Autogen_ADT adt)
 {

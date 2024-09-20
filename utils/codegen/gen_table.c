@@ -1,6 +1,6 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
-#include "gen_adt.h"
+#include "gen_table.h"
 
 const char* const BANNER = "// ${BANNER}\n";
 
