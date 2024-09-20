@@ -11,8 +11,32 @@ void _autogen_multi_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_
   fmt_write(f_c, "%s", BANNER);
 
   fmt_write(f_h_decl, "enum %s_Variant;\n", multi_table.name);
+  fmt_write(f_h, "enum %s_Variant\n", multi_table.name);
+  fmt_write(f_h, "{\n");
+  // TODO
+  fmt_write(f_h, "};\n");
+  fmt_write(f_h, "\n");
+
   fmt_write(f_h_decl, "typedef struct _struct_%s_ID %s_ID;\n", multi_table.name, multi_table.name);
+  fmt_write(f_h, "struct _struct_%s_ID\n", multi_table.name);
+  fmt_write(f_h, "{\n");
+  // TODO
+  fmt_write(f_h, "};\n");
+  fmt_write(f_h, "\n");
+
+  fmt_write(f_h_decl, "struct %s_Table;\n", multi_table.name);
+  fmt_write(f_h, "struct %s_Table\n", multi_table.name);
+  fmt_write(f_h, "{\n");
+  // TODO
+  fmt_write(f_h, "};\n");
+  fmt_write(f_h, "\n");
+
   fmt_write(f_h_decl, "struct %s;\n", multi_table.name);
+  fmt_write(f_h, "struct %s\n", multi_table.name);
+  fmt_write(f_h, "{\n");
+  // TODO
+  fmt_write(f_h, "};\n");
+  fmt_write(f_h, "\n");
 
   for(usize idx_d=0; idx_d<multi_table.num_distinct; ++idx_d)
   {
