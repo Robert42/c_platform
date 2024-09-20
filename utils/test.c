@@ -6,6 +6,6 @@
 
 void utils_test()
 {
-  gen_adt_test();
+  gen_table_test();
   setintcddo_test();
 }

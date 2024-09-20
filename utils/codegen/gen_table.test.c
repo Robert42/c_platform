@@ -16,7 +16,7 @@ const char* test_autogen_table_fmt(Mem_Region* region, struct Autogen_Table adt)
   return f_h_decl.begin;
 }
 
-void gen_adt_test()
+void gen_table_test()
 {
   const Mem_Region _prev_stack = STACK;
 
