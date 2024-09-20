@@ -3,9 +3,9 @@
 
 struct Autogen_Table_Column_Field;
 struct Autogen_Table_Column;
-struct Autogen_Table;
+struct Autogen_Multi_Table;
 
-struct Autogen_Table
+struct Autogen_Multi_Table
 {
   const char* name;
 
@@ -44,6 +44,6 @@ struct Autogen_Table_Field
   } layout;
 };
 
-void _autogen_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Table table);
-void autogen_table(Path dir, struct Autogen_Table table);
+void _autogen_multi_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, struct Autogen_Multi_Table multi_table);
+void autogen_multi_table(Path dir, struct Autogen_Multi_Table multi_table);
 

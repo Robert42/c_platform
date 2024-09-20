@@ -2,13 +2,13 @@
 
 #include "gen_table.h"
 
-const char* test_autogen_table_fmt(Mem_Region* region, struct Autogen_Table table)
+const char* test_autogen_multi_table_fmt(Mem_Region* region, struct Autogen_Multi_Table multi_table)
 {
   Fmt f_h_decl = fmt_new_from_region(region, 15*MiB);
   Fmt f_h = fmt_new_from_region(region, 5*MiB);
   Fmt f_c = fmt_new_from_region(region, 5*MiB);
 
-  _autogen_table_fmt(&f_h_decl, &f_h, &f_c, table);
+  _autogen_multi_table_fmt(&f_h_decl, &f_h, &f_c, multi_table);
 
   fmt_write(&f_h_decl, "\n/*<< *.h >>*/\n%s", f_h.begin);
   fmt_write(&f_h_decl, "\n/*<< *.c >>*/\n%s", f_c.begin);
@@ -20,11 +20,11 @@ void gen_table_test()
 {
   const Mem_Region _prev_stack = STACK;
 
-  struct Autogen_Table table = {
+  struct Autogen_Multi_Table multi_table = {
     .name = "Entity",
   };
 
-  assert_cstr_eq(test_autogen_table_fmt(&STACK, table),
+  assert_cstr_eq(test_autogen_multi_table_fmt(&STACK, multi_table),
     "// ${BANNER}\n"
     "enum Entity_Variant;\n"
     "struct Entity_ID;\n"
