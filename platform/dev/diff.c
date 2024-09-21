@@ -4,8 +4,8 @@ void print_cstr_diff(const char* x, const char* y)
 {
 #if __linux__
   // TODO: function to create a temp dir?
-  const Path x_path = path_from_cstr("/tmp/diff_x");
-  const Path y_path = path_from_cstr("/tmp/diff_y");
+  Path x_path = path_from_cstr("/tmp/diff_x");
+  Path y_path = path_from_cstr("/tmp/diff_y");
   file_text_create_from_cstr(x_path, x);
   file_text_create_from_cstr(y_path, y);
   char* const args[] = {
