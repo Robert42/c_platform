@@ -21,5 +21,7 @@ void print_cstr_diff(const char* x, const char* y)
 
 void print_str_diff(str x, str y)
 {
+  (void)x;
+  (void)y;
   TODO();
 }
