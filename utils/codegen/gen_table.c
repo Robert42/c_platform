@@ -120,11 +120,7 @@ void _autogen_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, const struct Autogen_
     .table = table,
   };
 
-  // TODO: mobe nanners to autogen_table
-  fmt_write(ctx.f_h_decl, "%s", BANNER);
-  fmt_write(ctx.f_h, "%s", BANNER);
-  fmt_write(ctx.f_c, "%s", BANNER);
-
+  // TODO:
   // _autogen_table_fmt_node(ctx, root_idx);
 }
 
@@ -135,6 +131,11 @@ void autogen_table(Path dir, const struct Autogen_Table* table, u32 root_idx)
   Fmt f_h_decl = fmt_new_from_region(&STACK, 5*MiB);
   Fmt f_h = fmt_new_from_region(&STACK, 5*MiB);
   Fmt f_c = fmt_new_from_region(&STACK, 5*MiB);
+
+  fmt_write(&f_h_decl, "%s", BANNER);
+  fmt_write(&f_h, "%s", BANNER);
+  fmt_write(&f_c, "%s", BANNER);
+
   _autogen_table_fmt(&f_h_decl, &f_h, &f_c, table, root_idx);
 
   const char* name_lower = cstr_to_lower(&STACK, table->nodes[root_idx].name);
