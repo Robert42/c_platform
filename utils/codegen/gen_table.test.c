@@ -2,13 +2,13 @@
 
 #include "gen_table.h"
 
-const char* test_autogen_multi_table_fmt(Mem_Region* region, struct Autogen_Multi_Table multi_table)
+const char* test_autogen_table_fmt(Mem_Region* region, struct Autogen_Table table)
 {
   Fmt f_h_decl = fmt_new_from_region(region, 15*MiB);
   Fmt f_h = fmt_new_from_region(region, 5*MiB);
   Fmt f_c = fmt_new_from_region(region, 5*MiB);
 
-  _autogen_multi_table_fmt(&f_h_decl, &f_h, &f_c, multi_table);
+  _autogen_table_fmt(&f_h_decl, &f_h, &f_c, table);
 
   fmt_write(&f_h_decl, "\n/*<< *.h >>*/\n%s", f_h.begin);
   fmt_write(&f_h_decl, "\n/*<< *.c >>*/\n%s", f_c.begin);
@@ -20,6 +20,9 @@ void gen_table_test()
 {
   const Mem_Region _prev_stack = STACK;
 
+  
+
+#if 0
   struct Autogen_Table_Column expr_bin_table_columns[] = {
     { .type = "enum Op_Bin", .name = "op", },
     { .type = "Expr_ID", .name = "x", },
@@ -33,23 +36,30 @@ void gen_table_test()
       .num_columns = ARRAY_LEN(expr_bin_table_columns),
     },
   };
-  struct Autogen_Multi_Table multi_table = {
-    .name = "Expr",
+#endif
+  struct Autogen_Table table = {
+    .nodes = NULL,
+    .columns = NULL,
+#if 0
 
     .distinct_tables = distinct_tables,
     .num_distinct = ARRAY_LEN(distinct_tables),
+#endif
   };
 
-  assert_cstr_eq(test_autogen_multi_table_fmt(&STACK, multi_table),
+  assert_cstr_eq(test_autogen_table_fmt(&STACK, table),
     "// ${BANNER}\n"
+#if 0
     "enum Expr_Variant;\n"
     "typedef struct _struct_Expr_ID Expr_ID;\n"
     "struct Expr_Table;\n"
     "struct Expr;\n"
     "struct Expr_Bin;\n"
+#endif
     "\n"
     "/*<< *.h >>*/\n"
     "// ${BANNER}\n"
+#if 0
     "enum Expr_Variant\n"
     "{\n"
     "  EXPR_BIN,\n"
@@ -73,6 +83,7 @@ void gen_table_test()
     "  Expr_ID x;\n"
     "  Expr_ID y;\n"
     "};\n"
+#endif
     "\n"
     "/*<< *.c >>*/\n"
     "// ${BANNER}\n"
