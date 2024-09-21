@@ -28,14 +28,6 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
   fmt_write(ctx.catname, "%s_", ctx.table->nodes[node_idx].name);
   fmt_write(ctx.catname_upper, "%s_", ctx.names_upper[node_idx]);
 
-  const bool is_root = prev_catname_len == 0;
-  if(is_root)
-  {
-    fmt_write(ctx.f_h_decl, "typedef struct {u32 id;} %s_ID;\n", name);
-    fmt_write(ctx.f_h_decl, "struct %s_Table;\n", name);
-  }
-    
-
   switch(ctx.table->nodes[node_idx].variant)
   {
   case AGTISNV_LEAF:
@@ -151,6 +143,10 @@ void _autogen_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, const struct Autogen_
     const struct Autogen_Table_ID_Space_Node n = table->nodes[idx_n];
     ctx.names_upper[idx_n] = cstr_to_upper(&STACK, n.name);
   }
+
+  const char* root_name = table->nodes[root_idx].name;
+  fmt_write(ctx.f_h_decl, "typedef struct {u32 id;} %s_ID;\n", root_name);
+  fmt_write(ctx.f_h_decl, "struct %s_Table;\n", root_name);
 
   _autogen_table_fmt_node(ctx, root_idx);
 
