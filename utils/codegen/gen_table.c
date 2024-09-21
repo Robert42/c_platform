@@ -30,7 +30,10 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
 
   const bool is_root = prev_catname_len == 0;
   if(is_root)
+  {
     fmt_write(ctx.f_h_decl, "typedef struct {u32 id;} %s_ID;\n", name);
+    fmt_write(ctx.f_h_decl, "struct %s_Table;\n", name);
+  }
     
 
   switch(ctx.table->nodes[node_idx].variant)

@@ -75,9 +75,9 @@ void gen_table_test()
 
   assert_cstr_eq(test_autogen_table_fmt(&STACK, &autogen_table, TTGE_NODE_EXPR),
     "typedef struct {u32 id;} Expr_ID;\n"
+    "struct Expr_Table;\n"
     "enum Expr_Variant;\n"
 #if 0
-    "struct Expr_Table;\n"
     "struct Expr;\n"
     "struct Expr_Bin;\n"
 #endif
