@@ -12,11 +12,18 @@ struct Autogen_Table_Fmt_Context
   const struct Autogen_Table* table;
   
   const char** names_upper;
+
+  Fmt* catname;
+  Fmt* catname_upper;
 };
 
 void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
 {
   debug_assert_usize_lt(node_idx, ctx.table->node_count);
+
+  const usize prev_catname_len = ctx.catname_upper->end - ctx.catname_upper->begin;
+  fmt_write(ctx.catname, "%s_", ctx.table->nodes[node_idx].name);
+  fmt_write(ctx.catname_upper, "%s_", ctx.names_upper[node_idx]);
 
   switch(ctx.table->nodes[node_idx].variant)
   {
@@ -38,9 +45,12 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
     u32 sub_nodes_end = sub_nodes_begin + ctx.table->nodes[node_idx].node.num_subnodes;
     for(u32 sub_idx=sub_nodes_begin; sub_idx<sub_nodes_end; ++sub_idx)
     {
-      // TODO: stack names? EXPR_LIT_INT where we have a variant Lit and a secondaru variant Int, ...
-      fmt_write(ctx.f_h, "%s_%s,\n", ctx.names_upper[node_idx], ctx.names_upper[sub_idx]);
-      // ctx.table->nodes[node_idx].name
+      const usize prev_catname_len = ctx.catname_upper->end - ctx.catname_upper->begin;
+      fmt_write(ctx.catname_upper, "%s", ctx.names_upper[sub_idx]);
+
+      fmt_write(ctx.f_h, "%s,\n", ctx.catname_upper->begin);
+
+      fmt_trunc(ctx.catname_upper, prev_catname_len);
     }
 
     ctx.f_h->indent--;
@@ -55,6 +65,9 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
     TODO();
     break;
   }
+
+  fmt_trunc(ctx.catname, prev_catname_len);
+  fmt_trunc(ctx.catname_upper, prev_catname_len);
 }
 
 #if 0 // TODO
@@ -110,11 +123,16 @@ void _autogen_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, const struct Autogen_
 {
   const Mem_Region _prev_stack = STACK;
 
+  Fmt catname = fmt_new_from_region(&STACK, 80);
+  Fmt catname_upper = fmt_new_from_region(&STACK, 80);
+
   struct Autogen_Table_Fmt_Context ctx = {
     .f_h_decl = f_h_decl,
     .f_h = f_h,
     .f_c = f_c,
     .table = table,
+    .catname = &catname,
+    .catname_upper = &catname_upper,
   };
 
   ctx.names_upper = MEM_REGION_ALLOC_ARRAY(&STACK, const char*, table->node_count);
