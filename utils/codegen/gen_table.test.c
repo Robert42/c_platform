@@ -2,13 +2,13 @@
 
 #include "gen_table.h"
 
-const char* test_autogen_table_fmt(Mem_Region* region, struct Autogen_Table table)
+const char* test_autogen_table_fmt(Mem_Region* region, const struct Autogen_Table* table, u32 root_idx)
 {
   Fmt f_h_decl = fmt_new_from_region(region, 15*MiB);
   Fmt f_h = fmt_new_from_region(region, 5*MiB);
   Fmt f_c = fmt_new_from_region(region, 5*MiB);
 
-  _autogen_table_fmt(&f_h_decl, &f_h, &f_c, table);
+  _autogen_table_fmt(&f_h_decl, &f_h, &f_c, table, root_idx);
 
   fmt_write(&f_h_decl, "\n/*<< *.h >>*/\n%s", f_h.begin);
   fmt_write(&f_h_decl, "\n/*<< *.c >>*/\n%s", f_c.begin);
@@ -16,11 +16,39 @@ const char* test_autogen_table_fmt(Mem_Region* region, struct Autogen_Table tabl
   return f_h_decl.begin;
 }
 
+enum Test_Table_Gen_Node_Expr
+{
+  TTGE_NODE_EXPR,
+
+
+  _TTGE_NODE_EXPR_COUNT,
+};
+
+enum Test_Table_Gen_Expr_Leaf
+{
+  TTGE_EXPR_BIN,
+  TTGE_EXPR_END,
+
+  _TTGE_EXPR_TOTAL_COUNT = TTGE_EXPR_END,
+};
+
 void gen_table_test()
 {
   const Mem_Region _prev_stack = STACK;
 
-  
+  struct Autogen_Table autogen_table = {
+    .node_count = _TTGE_NODE_EXPR_COUNT,
+    .column_count = _TTGE_EXPR_TOTAL_COUNT,
+  };
+  autogen_table_alloc(&STACK, &autogen_table);
+
+  autogen_table.nodes[TTGE_NODE_EXPR] = (struct Autogen_Table_ID_Space_Node){
+    .name = "Expr",
+    .variant = AGTISNV_VARIANTS,
+    .payload = TTGE_EXPR_BIN,
+    .node.num_subnodes = TTGE_EXPR_END - TTGE_EXPR_BIN,
+    .node.first_sub_node = TTGE_EXPR_BIN,
+  };
 
 #if 0
   struct Autogen_Table_Column expr_bin_table_columns[] = {
@@ -37,17 +65,8 @@ void gen_table_test()
     },
   };
 #endif
-  struct Autogen_Table table = {
-    .nodes = NULL,
-    .columns = NULL,
-#if 0
 
-    .distinct_tables = distinct_tables,
-    .num_distinct = ARRAY_LEN(distinct_tables),
-#endif
-  };
-
-  assert_cstr_eq(test_autogen_table_fmt(&STACK, table),
+  assert_cstr_eq(test_autogen_table_fmt(&STACK, &autogen_table, TTGE_NODE_EXPR),
     "// ${BANNER}\n"
 #if 0
     "enum Expr_Variant;\n"
