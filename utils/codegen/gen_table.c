@@ -13,6 +13,7 @@ struct Autogen_Table_Fmt_Context
   
   const char** names_upper;
 
+  // concatenated names of all parent nodes
   Fmt* catname;
   Fmt* catname_upper;
 };
@@ -21,9 +22,16 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
 {
   debug_assert_usize_lt(node_idx, ctx.table->node_count);
 
+  const char* name = ctx.table->nodes[node_idx].name;
+
   const usize prev_catname_len = ctx.catname_upper->end - ctx.catname_upper->begin;
   fmt_write(ctx.catname, "%s_", ctx.table->nodes[node_idx].name);
   fmt_write(ctx.catname_upper, "%s_", ctx.names_upper[node_idx]);
+
+  const bool is_root = prev_catname_len == 0;
+  if(is_root)
+    fmt_write(ctx.f_h_decl, "typedef struct {u32 id;} %s_ID;\n", name);
+    
 
   switch(ctx.table->nodes[node_idx].variant)
   {
@@ -35,7 +43,6 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
     break;
   case AGTISNV_VARIANTS:
   {
-    const char* name = ctx.table->nodes[node_idx].name;
     fmt_write(ctx.f_h_decl, "enum %s_Variant;\n", name);
     fmt_write(ctx.f_h, "enum %s_Variant\n", name);
     fmt_write(ctx.f_h, "{\n");
