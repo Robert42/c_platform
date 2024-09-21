@@ -14,7 +14,6 @@ struct Autogen_Table_Fmt_Context
   const char* names_upper;
 };
 
-#if 0
 void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
 {
   debug_assert_usize_lt(node_idx, ctx.table->node_count);
@@ -28,7 +27,7 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
     TODO();
     break;
   case AGTISNV_VARIANTS:
-    TODO();
+    fmt_write(ctx.f_h_decl, "enum %s_Variant;\n", ctx.table->nodes[node_idx].name);
     break;
   case AGTISNV_META_DATA:
     TODO();
@@ -39,6 +38,7 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
   }
 }
 
+#if 0 // TODO
 void _autogen_table_fmt(struct Autogen_Table_Fmt_Context ctx, const struct Autogen_Table* table)
 {
   const Mem_Region _prev_stack = STACK;
@@ -52,7 +52,6 @@ void _autogen_table_fmt(struct Autogen_Table_Fmt_Context ctx, const struct Autog
 
   _autogen_table_fmt_node(ctx, 0);
 #if 0
-  fmt_write(ctx.f_h_decl, "enum %s_Variant;\n", table.name);
   fmt_write(ctx.f_h, "enum %s_Variant\n", table.name);
   fmt_write(ctx.f_h, "{\n");
   f_h->indent++;
@@ -120,8 +119,7 @@ void _autogen_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, const struct Autogen_
     .table = table,
   };
 
-  // TODO:
-  // _autogen_table_fmt_node(ctx, root_idx);
+  _autogen_table_fmt_node(ctx, root_idx);
 }
 
 void autogen_table(Path dir, const struct Autogen_Table* table, u32 root_idx)
