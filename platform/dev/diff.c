@@ -16,6 +16,7 @@ void print_cstr_diff(const char* x, const char* y)
   };
   struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, (struct Proc_Exec_Blocking_Settings){0});
   assert(result.exit_normal);
+  printf("\n");
 #endif
 }
 
