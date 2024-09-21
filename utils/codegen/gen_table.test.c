@@ -20,8 +20,11 @@ enum Test_Table_Gen_Node_Expr
 {
   TTGE_NODE_EXPR,
 
+  TTGE_NODE_EXPR_BEGIN,
+  TTGE_NODE_BIN = TTGE_NODE_EXPR_BEGIN,
+  TTGE_NODE_EXPR_END,
 
-  _TTGE_NODE_EXPR_COUNT,
+  _TTGE_NODE_EXPR_COUNT = TTGE_NODE_EXPR_END,
 };
 
 enum Test_Table_Gen_Expr_Leaf
@@ -46,8 +49,12 @@ void gen_table_test()
     .name = "Expr",
     .variant = AGTISNV_VARIANTS,
     .payload = TTGE_EXPR_BIN,
-    .node.num_subnodes = TTGE_EXPR_END - TTGE_EXPR_BIN,
-    .node.first_sub_node = TTGE_EXPR_BIN,
+    .node.num_subnodes = TTGE_NODE_EXPR_END - TTGE_NODE_EXPR_BEGIN,
+    .node.first_sub_node = TTGE_NODE_EXPR_BEGIN,
+  };
+  autogen_table.nodes[TTGE_NODE_BIN] = (struct Autogen_Table_ID_Space_Node){
+    .name = "Bin",
+    .variant = AGTISNV_LEAF,
   };
 
 #if 0
@@ -76,12 +83,12 @@ void gen_table_test()
 #endif
     "\n"
     "/*<< *.h >>*/\n"
-#if 0
     "enum Expr_Variant\n"
     "{\n"
     "  EXPR_BIN,\n"
     "};\n"
     "\n"
+#if 0
     "struct _struct_Expr_ID\n"
     "{\n"
     "};\n"

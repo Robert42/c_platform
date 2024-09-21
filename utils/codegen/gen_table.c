@@ -11,7 +11,7 @@ struct Autogen_Table_Fmt_Context
   Fmt* f_c;
   const struct Autogen_Table* table;
   
-  const char* names_upper;
+  const char** names_upper;
 };
 
 void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
@@ -27,8 +27,27 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
     TODO();
     break;
   case AGTISNV_VARIANTS:
-    fmt_write(ctx.f_h_decl, "enum %s_Variant;\n", ctx.table->nodes[node_idx].name);
+  {
+    const char* name = ctx.table->nodes[node_idx].name;
+    fmt_write(ctx.f_h_decl, "enum %s_Variant;\n", name);
+    fmt_write(ctx.f_h, "enum %s_Variant\n", name);
+    fmt_write(ctx.f_h, "{\n");
+    ctx.f_h->indent++;
+
+    u32 sub_nodes_begin = ctx.table->nodes[node_idx].node.first_sub_node;
+    u32 sub_nodes_end = sub_nodes_begin + ctx.table->nodes[node_idx].node.num_subnodes;
+    for(u32 sub_idx=sub_nodes_begin; sub_idx<sub_nodes_end; ++sub_idx)
+    {
+      // TODO: stack names? EXPR_LIT_INT where we have a variant Lit and a secondaru variant Int, ...
+      fmt_write(ctx.f_h, "%s_%s,\n", ctx.names_upper[node_idx], ctx.names_upper[sub_idx]);
+      // ctx.table->nodes[node_idx].name
+    }
+
+    ctx.f_h->indent--;
+    fmt_write(ctx.f_h, "};\n");
+    fmt_write(ctx.f_h, "\n");
     break;
+  }
   case AGTISNV_META_DATA:
     TODO();
     break;
@@ -41,26 +60,6 @@ void _autogen_table_fmt_node(struct Autogen_Table_Fmt_Context ctx, u32 node_idx)
 #if 0 // TODO
 void _autogen_table_fmt(struct Autogen_Table_Fmt_Context ctx, const struct Autogen_Table* table)
 {
-  const Mem_Region _prev_stack = STACK;
-
-  const char** NAMES = MEM_REGION_ALLOC_ARRAY(&STACK, const char*, table->node_count);
-  for(usize idx_n=0; idx_n<table->node_count; ++idx_n)
-  {
-    const struct Autogen_Table_ID_Space_Node n = table->nodes[idx_n];
-    NAMES[idx_n] = cstr_to_upper(&STACK, n.name);
-  }
-
-  _autogen_table_fmt_node(ctx, 0);
-#if 0
-  fmt_write(ctx.f_h, "enum %s_Variant\n", table.name);
-  fmt_write(ctx.f_h, "{\n");
-  f_h->indent++;
-  for(usize idx_n=0; idx_n<table.node_count; ++idx_n)
-    fmt_write(ctx.f_h, "%s_%s,\n", NAME, NAMES[idx_n]);
-  f_h->indent--;
-  fmt_write(ctx.f_h, "};\n");
-  fmt_write(ctx.f_h, "\n");
-
   fmt_write(ctx.f_h_decl, "typedef struct _struct_%s_ID %s_ID;\n", table.name, table.name);
   fmt_write(ctx.f_h, "struct _struct_%s_ID\n", table.name);
   fmt_write(ctx.f_h, "{\n");
@@ -104,14 +103,13 @@ void _autogen_table_fmt(struct Autogen_Table_Fmt_Context ctx, const struct Autog
     f_h->indent--;
     fmt_write(ctx.f_h, "};\n");
   }
-#endif
-
-  STACK = _prev_stack;
 }
 #endif
 
 void _autogen_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, const struct Autogen_Table* table, u32 root_idx)
 {
+  const Mem_Region _prev_stack = STACK;
+
   struct Autogen_Table_Fmt_Context ctx = {
     .f_h_decl = f_h_decl,
     .f_h = f_h,
@@ -119,7 +117,16 @@ void _autogen_table_fmt(Fmt* f_h_decl, Fmt* f_h, Fmt* f_c, const struct Autogen_
     .table = table,
   };
 
+  ctx.names_upper = MEM_REGION_ALLOC_ARRAY(&STACK, const char*, table->node_count);
+  for(usize idx_n=0; idx_n<table->node_count; ++idx_n)
+  {
+    const struct Autogen_Table_ID_Space_Node n = table->nodes[idx_n];
+    ctx.names_upper[idx_n] = cstr_to_upper(&STACK, n.name);
+  }
+
   _autogen_table_fmt_node(ctx, root_idx);
+
+  STACK = _prev_stack;
 }
 
 void autogen_table(Path dir, const struct Autogen_Table* table, u32 root_idx)
