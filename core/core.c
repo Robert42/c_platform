@@ -12,6 +12,7 @@ extern Mem_Region PANIC_REGION;
 #include "mem/bytes.c"
 #include "math/cmp.c"
 #include "math/round.c"
+#include "ty/char.c"
 #include "ty/cstr.c"
 #include "ty/str.c"
 #include "fmt.c"

@@ -54,3 +54,12 @@ u8* mem_pages_from_pre_reserved(usize num_bytes, usize alignment)
 
   return addr;
 }
+
+Mem_Region mem_region_from_pre_reserved(usize num_bytes)
+{
+  num_bytes = mem_page_ceil_multiple_usize(num_bytes);
+  u8* buffer = mem_pages_from_pre_reserved(num_bytes, MEM_PAGE_SIZE);
+
+  mem_page_commit(buffer, num_bytes);
+  return _mem_region_from(buffer, num_bytes);
+}

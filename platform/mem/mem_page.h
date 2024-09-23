@@ -17,3 +17,5 @@ usize mem_page_ceil_multiple_usize(usize x);
 // The resulting address range always needs a call to `mem_page_commit` (or
 // similar) before accessing its data
 u8* mem_pages_from_pre_reserved(usize num_bytes, usize alignment);
+Mem_Region mem_region_from_pre_reserved(usize num_bytes);
+

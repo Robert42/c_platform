@@ -13,13 +13,24 @@ void fmt_test()
     fmt_write(&f, ".pos");
     assert_cstr_eq(f.begin, "player.pos");
 
-    // clean
+    // clear
     fmt_clear(&f);
     assert_ptr_eq(f.end, f.begin);
     assert_cstr_eq(f.begin, "");
     fmt_write(&f, "npc");
     fmt_write(&f, ".pos");
     assert_cstr_eq(f.begin, "npc.pos");
+
+    // fmt_trunc
+    fmt_trunc(&f, 4);
+    assert_cstr_eq(f.begin, "npc.");
+    assert_ptr_eq(f.end, f.begin+4);
+    fmt_trunc(&f, 3);
+    assert_cstr_eq(f.begin, "npc");
+    assert_ptr_eq(f.end, f.begin+3);
+    fmt_trunc(&f, 8);
+    assert_cstr_eq(f.begin, "npc");
+    assert_ptr_eq(f.end, f.begin+3);
   }
 
   {

@@ -11,26 +11,27 @@
 
 Mem_Region SCRATCH = {0};
 
-static u8 _SCRATCH_BUFFER_1[1024*1024] = {0};
-static u8 _SCRATCH_BUFFER_2[ARRAY_LEN(_SCRATCH_BUFFER_1)] = {0};
+Mem_Region SCRATCH_1 = {0};
+Mem_Region SCRATCH_2 = {0};
 void scratch_swap()
 {
-  _mem_swap_scratch(&SCRATCH, MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1), MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_2));
+  _mem_swap_scratch(&SCRATCH, SCRATCH_1, SCRATCH_2);
 }
 
 Mem_Region STACK = {0};
-static u8 _STACK_BUFFER[1024*1024] = {0};
 
-static u8 _PERSISTENT_BUFFER[1024*1024] = {0};
 Mem_Region PERSISTENT = {0};
 
 void c_script_init()
 {
   platform_init();
 
-  SCRATCH = MEM_REGION_FROM_ARRAY(_SCRATCH_BUFFER_1);
-  STACK = MEM_REGION_FROM_ARRAY(_STACK_BUFFER);
-  PERSISTENT = MEM_REGION_FROM_ARRAY(_PERSISTENT_BUFFER);
+  SCRATCH_1 = mem_region_from_pre_reserved(1*MiB);
+  SCRATCH_2 = mem_region_from_pre_reserved(1*MiB);
+  SCRATCH = SCRATCH_1;
+
+  STACK = mem_region_from_pre_reserved(1*MiB);
+  PERSISTENT = mem_region_from_pre_reserved(1*MiB);
 
   cc_init();
 }

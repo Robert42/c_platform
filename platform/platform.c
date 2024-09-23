@@ -2,9 +2,11 @@
 
 #include "prelude.h"
 
+#include "io/file.h"
+#include "proc/proc.h"
+
 void term_init(void);
 void timer_init(void);
-
 
 Mem_Region PANIC_REGION;
 static u8 PANIC_BUFFER[16*1024];
@@ -18,6 +20,7 @@ void platform_init()
   mem_page_init();
 }
 
+#include "dev/diff.c"
 #include "io/terminal.c"
 #include "io/env.c"
 #include "io/path.c"

@@ -59,3 +59,9 @@ void fmt_clear(Fmt* f)
   f->end[0] = 0;
 }
 
+void fmt_trunc(Fmt* f, usize new_len)
+{
+  f->end = f->begin + min_usize(new_len, f->end - f->begin);
+  f->end[0] = 0;
+}
+

@@ -1,16 +1,17 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
 #define X_MACRO_ASSERT_NUM_CMP_BIN(X) \
-  X(usize, usize, "%zu", /*no cast*/) \
-  X(ssize, ssize, "%zd", /*no cast*/) \
-  X(int, int, "%i", /*no cast*/) \
-  X(ptr, const void*, "%p", /*cast*/(usize) ) \
+  X(usize, usize, "%zu", /*no cast*/, NULL) \
+  X(ssize, ssize, "%zd", /*no cast*/, NULL) \
+  X(int, int, "%i", /*no cast*/, NULL) \
+  X(char, char, "'%c'", /*no cast*/, NULL) \
+  X(ptr, const void*, "%p", /*cast*/(usize) , NULL) \
 
 // ISSUE_FRAMA_C: add to contract of cstr_eq: ensure, that both strings are equal
 #define X_MACRO_ASSERT_CUSTOM(X) \
-  X(cstr_eq, " == ", "", const char*, (strcmp(x,y) == 0), ) \
-  X(str_eq, " == ", "", str, (str_cmp(x,y) == 0), str_fmt) \
-  X(bool_eq, " == ", " admit ensures x == y;", bool, x == y, fmt_bool) \
+  X(cstr_eq, " == ", "", const char*, (strcmp(x,y) == 0), /*no fmt*/ , "print_cstr_diff(x, y)") \
+  X(str_eq, " == ", "", str, (str_cmp(x,y) == 0), str_fmt, "print_str_diff(x, y)") \
+  X(bool_eq, " == ", " admit ensures x == y;", bool, x == y, fmt_bool, NULL) \
 
 #define X_MACRO_ASSERT_NUM_CMP_RNG(X) \
   X(usize) \
@@ -25,6 +26,7 @@ struct Codegen_Assert
   const char* contract; // "x <= y < z"
   const char* panic; // "__ter_assert_failed__(condition, cstr_fmt(&PANIC_REGION, \"%zu\", x), cstr_fmt(&PANIC_REGION, \"%zu\", y), cstr_fmt(&PANIC_REGION, \"%zu\", z), file, line);"
   const char* pretty_print_comparison[5]; // {"", " <= ", " < ", ""}
+  const char* diff;
   unsigned int num_args : 2; // 3 in case of `assert_usize_lte_lt`
 };
 
@@ -96,7 +98,7 @@ static void assert_codegen()
 #define OR_STRCMP(X) || strcmp(#X, name)==0
 #define CREATE_RANGE(X) (false X(OR_STRCMP))
 
-#define X(NAME, TYPE, FMT_CODE, CAST) { \
+#define X(NAME, TYPE, FMT_CODE, CAST, DIFF) { \
     const char* const name = #NAME; \
     const int first_assert = num_assertions; \
     for(int xy=0; xy<ARRAY_LEN(bin_condition_code); ++xy) \
@@ -125,6 +127,7 @@ static void assert_codegen()
           .contract = cstr_fmt(&STACK, " admit ensures x %s y %s z;", bin_condition_code[xy], bin_condition_code[yz]), \
           .panic = cstr_fmt(&STACK, "__ter_assert_failed__(condition, cstr_fmt(&PANIC_REGION, %s, x), cstr_fmt(&PANIC_REGION, %s, y), cstr_fmt(&PANIC_REGION, %s, z), file, line);\n", #FMT_CODE, #FMT_CODE, #FMT_CODE), \
           .pretty_print_comparison = {NULL, cstr_fmt(&STACK, " %s ", bin_condition_code[xy]), cstr_fmt(&STACK, " %s ", bin_condition_code[yz]), NULL}, \
+          .diff = (DIFF), \
           .num_args = 3, \
         }; \
       } \
@@ -138,7 +141,7 @@ static void assert_codegen()
   X_MACRO_ASSERT_NUM_CMP_BIN(X)
 #undef X
 
-#define X(NAME, PRINT_MID, ENSURES, TYPE, CONDITION, FMT_CODE) { \
+#define X(NAME, PRINT_MID, ENSURES, TYPE, CONDITION, FMT_CODE, DIFF) { \
     const int first_assert = num_assertions; \
     assertions[num_assertions++] = (struct Codegen_Assert){ \
       .name = cstr_fmt(&STACK, "assert_%s", #NAME), \
@@ -147,6 +150,7 @@ static void assert_codegen()
       .contract = ENSURES, \
       .panic = cstr_fmt(&STACK, "__bin_assert_failed__(condition, %s(x), %s(y), file, line);\n", #FMT_CODE, #FMT_CODE), \
       .pretty_print_comparison = {NULL, PRINT_MID, NULL}, \
+      .diff = (DIFF), \
       .num_args = 2, \
     }; \
     assert_group[num_assert_groups++] = (struct Codegen_Assert_Group){ \
@@ -191,6 +195,10 @@ static void assert_codegen()
         printf("  .condition = `%s`\n", a.condition);
         printf("  .contract = `%s`\n", a.contract);
         printf("  .panic = `%s`\n", a.panic);
+        if(a.diff)
+          printf("  .diff = `%s`\n", a.diff);
+        else
+          printf("  .diff = NULL\n");
         printf("  .pretty_print_comparison = {");
         for(int arg_idx=0; arg_idx<=a.num_args; ++arg_idx)
           if(a.pretty_print_comparison[arg_idx])
@@ -214,8 +222,18 @@ static void assert_codegen()
       fmt_write(&fc, "  if(LIKELY(%s))\n", a.condition);
       fmt_write(&fc, "    return;\n");
       fmt_write(&fc, "  else\n");
+      if(a.diff != NULL)
+      {
+        fmt_write(&fc, "  {\n");
+        fmt_write(&fc, "    if(ASSERT_SHOW_DIFF && !__assert_capture__)\n");
+        fmt_write(&fc, "      %s;\n", a.diff);
+      }
       fmt_write(&fc, "  %s", a.panic);
+      if(a.diff != NULL)
+        fmt_write(&fc, "  }\n");
       fmt_write(&fc, "}\n");
+
+      
     }
     fmt_write(&fh, "\n");
     fmt_write(&fc, "\n");

@@ -19,3 +19,9 @@ char* strtok(char* restrict str, const char* restrict delim);
 
 void cstr_trim_right(char* x);
 
+char* cstr_to_lower(Mem_Region* region, const char* s);
+void convert_cstr_to_lower(char* s);
+
+char* cstr_to_upper(Mem_Region* region, const char* s);
+void convert_cstr_to_upper(char* s);
+

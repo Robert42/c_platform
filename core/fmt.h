@@ -15,4 +15,5 @@ Fmt fmt_new_from_region(Mem_Region* region, usize capacity);
 void fmt_write(Fmt* f, const char* text, ...) ATT_PRINTF(2, 3);
 
 void fmt_clear(Fmt* f);
+void fmt_trunc(Fmt* f, usize new_len);
 
