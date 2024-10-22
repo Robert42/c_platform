@@ -21,4 +21,9 @@ void c_tok_test()
 {
   assert_cstr_eq(test_c_tok_parse_str_lit("\"\"", ","), "");
   assert_cstr_eq(test_c_tok_parse_str_lit("\"x\"", ","), "x");
+  assert_cstr_eq(test_c_tok_parse_str_lit("\"xyz\"", ""), "xyz");
+  assert_cstr_eq(test_c_tok_parse_str_lit("\"x y z\"", "\n"), "x y z");
+  assert_cstr_eq(test_c_tok_parse_str_lit("\" \\\" \"", "\n"), " \" ");
+  assert_cstr_eq(test_c_tok_parse_str_lit("\" \\\\ \"", "\n"), " \\ ");
+  assert_cstr_eq(test_c_tok_parse_str_lit("\" \\n \"", "\n"), " \n ");
 }

@@ -17,6 +17,23 @@ char* c_tok_parse_str_lit(Mem_Region* region, const char** code)
     {
     case 0:
       PANIC("Unterminated string literal");
+    case '\\':
+      curr++;
+      switch(*curr)
+      {
+      case '"':
+      case '\\':
+        *MEM_REGION_ALLOC(region, char) = *curr;
+        curr++;
+        break;
+      case 'n':
+        *MEM_REGION_ALLOC(region, char) = '\n';
+        curr++;
+        break;
+      default:
+        UNIMPLEMENTED("Unknown c string escape code");
+      }
+      continue;
     case '"':
     {
       *MEM_REGION_ALLOC(region, char) = 0;
