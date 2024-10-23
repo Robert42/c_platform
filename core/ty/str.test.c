@@ -66,4 +66,12 @@ void str_test()
     
     assert_cstr_eq(cstr_fmt(&region, "Hello, %s!", "World"), "Hello, World!");
   }
+
+  // str_trim_right
+  {
+    assert_str_eq(str_trim_right(STR_LIT("")), STR_LIT(""));
+    assert_str_eq(str_trim_right(STR_LIT("  \n  \t  ")), STR_LIT(""));
+    assert_str_eq(str_trim_right(STR_LIT("xyz")), STR_LIT("xyz"));
+    assert_str_eq(str_trim_right(STR_LIT("xyz  \n  \t  ")), STR_LIT("xyz"));
+  }
 }

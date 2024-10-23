@@ -1,6 +1,8 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "str.h"
 
+bool char_is_ws(char x);
+
 usize str_len(str s)
 {
   debug_assert_ptr_lte(s.begin, s.end);
@@ -42,6 +44,13 @@ int str_cmp(str x, str y)
   if(x_len < y_len) return -1;
   if(x_len > y_len) return 1;
   return 0;
+}
+
+str str_trim_right(str xs)
+{
+  while(xs.begin < xs.end && char_is_ws(xs.end[-1]))
+    xs.end--;
+  return xs;
 }
 
 #ifndef __FRAMAC__ // ISSUE_FRAMA_C

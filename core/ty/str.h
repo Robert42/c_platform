@@ -46,6 +46,8 @@ str str_from_cstr_len(const char* s, usize len);
 */
 int str_cmp(str x, str y);
 
+str str_trim_right(str xs);
+
 const char* str_fmt(str x);
 
 /*@
