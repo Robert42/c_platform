@@ -12,6 +12,13 @@ bool char_is_ws(char x)
   }
 }
 
+const char* cstr_trim_left(const char* x)
+{
+  while(char_is_ws(*x))
+    ++x;
+  return x;
+}
+
 void cstr_trim_right(char* xs)
 {
   usize i = strlen(xs);

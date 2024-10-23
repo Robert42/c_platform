@@ -66,5 +66,11 @@ void cstr_test()
 #undef UPPER
 #undef LOWER
 
+  assert_cstr_eq(cstr_trim_left(""), "");
+  assert_cstr_eq(cstr_trim_left("x"), "x");
+  assert_cstr_eq(cstr_trim_left(" x"), "x");
+  assert_cstr_eq(cstr_trim_left("  \t \n x"), "x");
+  assert_cstr_eq(cstr_trim_left("  \t \n "), "");
+
   STACK = _prev;
 }
