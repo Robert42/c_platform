@@ -8,7 +8,7 @@ struct Ini_Test_Directory
 
   const char* name;
 
-  usize* sub_ids;
+  const char** sub_ids;
   usize num_sub_ids;
 };
 
