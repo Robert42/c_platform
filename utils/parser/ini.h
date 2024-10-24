@@ -38,6 +38,6 @@ struct Ini_Format
   u8 num_sections;
 };
 
-void ini_parse(Mem_Region* region, const struct Ini_Format_Desc* format, const char* code);
-char* ini_fmt(Mem_Region* region, const struct Ini_Format_Desc* format);
+void ini_parse(Mem_Region* region, const struct Ini_Format* format, const char* code);
+char* ini_fmt(Mem_Region* region, const struct Ini_Format* format);
 

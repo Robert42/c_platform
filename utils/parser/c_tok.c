@@ -75,3 +75,22 @@ void c_tok_fmt_str_lit(Fmt* f, const char* content)
   fmt_write(f, "\"");
 }
 
+str tok_skip_ident(const char** code)
+{
+  const char* begin = *code;
+  while(true)
+  {
+    switch(**code)
+    {
+    case '_':
+    case '0' ... '9':
+    case 'A' ... 'Z':
+    case 'a' ... 'z':
+      ++*code;
+      continue;
+    default:
+      return (str){begin, *code};
+    }
+  }
+}
+

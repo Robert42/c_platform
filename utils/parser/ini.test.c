@@ -38,7 +38,7 @@ static struct Ini_Format ini_test_format(struct Ini_Test_Data* data);
 
 void ini_test()
 {
-  struct Ini_Test_Data test_data;
+  struct Ini_Test_Data test_data = {};
 
   struct Ini_Format ini_format = ini_test_format(&test_data);
 
@@ -48,25 +48,27 @@ void ini_test()
     "name = \"answer of life\"\n"
     "sub_ids = 37 137"
     "\n"
-    "[dir]\n"
-    "id = 137\n"
-    "name = \"the fienstructure constant\"\n"
-    "\n"
     "[file]\n"
     "id = 37\n"
     "name = \"most random number (according to polls)\"\n"
     "content = \"Hello, World!\"\n"
     "tags = \"epic drama\" classic \"super\\ncool!\"\n"
-    "read_only = true\n";
-  const char* expected_out =
-    "[dir]\n"
-    "id = 42\n"
-    "name = \"answer of life\"\n"
-    "sub_ids = 37 137"
+    "read_only = true\n"
     "\n"
     "[dir]\n"
     "id = 137\n"
     "name = \"the fienstructure constant\"\n"
+    ;
+  const char* expected_out =
+    "[dir]\n"
+    "id = 42\n"
+    "name = \"answer of life\"\n"
+    "sub_ids = \"37\" \"137\"\n"
+    "\n"
+    "[dir]\n"
+    "id = 137\n"
+    "name = \"the fienstructure constant\"\n"
+    "sub_ids =\n"
     "\n"
     "[file]\n"
     "id = 37\n"
@@ -76,7 +78,8 @@ void ini_test()
     "read_only = true\n"
     "executable = false\n";
   ini_parse(&SCRATCH, &ini_format, in);
-  assert_cstr_eq(ini_fmt(&SCRATCH, &ini_format), expected_out);
+  const char* out = ini_fmt(&SCRATCH, &ini_format);
+  assert_cstr_eq(out, expected_out);
 }
 
 // ==== internal ====
@@ -112,6 +115,7 @@ static struct Ini_Format ini_test_format(struct Ini_Test_Data* data)
       .field_offset = offsetof(struct Ini_Test_Directory, sub_ids),
     };
     ini_format.section_formats[ini_format.num_sections++] = section;
+    ini_format.num_field_types = section.field_end;
   }
   {
     struct Ini_Format_Section section = {
@@ -155,6 +159,7 @@ static struct Ini_Format ini_test_format(struct Ini_Test_Data* data)
       .field_offset = offsetof(struct Ini_Test_File, executable),
     };
     ini_format.section_formats[ini_format.num_sections++] = section;
+    ini_format.num_field_types = section.field_end;
   }
 
   return ini_format;
