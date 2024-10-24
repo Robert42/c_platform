@@ -49,6 +49,7 @@ int str_cstr_cmp(str x, const char* y);
 
 str str_trim_right(str xs);
 
+const char* str_fmt_to_region(Mem_Region* region, str x);
 const char* str_fmt(str x);
 
 /*@

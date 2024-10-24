@@ -57,13 +57,18 @@ str str_trim_right(str xs)
 }
 
 #ifndef __FRAMAC__ // ISSUE_FRAMA_C
-const char* str_fmt(str x)
+const char* str_fmt_to_region(Mem_Region* region, str x)
 {
   usize len = str_len(x);
-  char* const copy = (char*)mem_region_alloc_bytes_unaligned(&SCRATCH, len+1);
+  char* const copy = (char*)mem_region_alloc_bytes_unaligned(region, len+1);
   copy[len] = 0;
   memcpy(copy, x.begin, len);
   return copy;
+}
+
+const char* str_fmt(str x)
+{
+  return str_fmt_to_region(&SCRATCH, x);
 }
 
 char* cstr_fmt(Mem_Region* region, const char* fmt, ...)
