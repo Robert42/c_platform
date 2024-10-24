@@ -89,6 +89,7 @@ static struct Ini_Format ini_test_format(struct Ini_Test_Data* data)
   struct Ini_Format ini_format = {};
 
   {
+    typedef struct Ini_Test_Directory Ini_Section_Struct;
     struct Ini_Format_Section section = {
       .name = "dir",
       .field_begin = ini_format.num_field_types,
@@ -99,25 +100,14 @@ static struct Ini_Format ini_test_format(struct Ini_Test_Data* data)
       .section_data = data->dirs,
       .section_entry_size = sizeof(struct Ini_Test_Directory),
     };
-    ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){
-      .name = "id",
-      .type = INI_FIELD_TYPE_USIZE,
-      .field_offset = offsetof(struct Ini_Test_Directory, id),
-    };
-    ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){
-      .name = "name",
-      .type = INI_FIELD_TYPE_CSTR,
-      .field_offset = offsetof(struct Ini_Test_Directory, name),
-    };
-    ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){
-      .name = "sub_ids",
-      .type = INI_FIELD_TYPE_CSTR_ARRAY,
-      .field_offset = offsetof(struct Ini_Test_Directory, sub_ids),
-    };
+    INI_FORMAT_FIELD(id);
+    INI_FORMAT_FIELD(name);
+    INI_FORMAT_FIELD(sub_ids);
     ini_format.section_formats[ini_format.num_sections++] = section;
     ini_format.num_field_types = section.field_end;
   }
   {
+    typedef struct Ini_Test_File Ini_Section_Struct;
     struct Ini_Format_Section section = {
       .name = "file",
       .field_begin = ini_format.num_field_types,
@@ -128,36 +118,12 @@ static struct Ini_Format ini_test_format(struct Ini_Test_Data* data)
       .section_data = data->files,
       .section_entry_size = sizeof(struct Ini_Test_File),
     };
-    ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){
-      .name = "id",
-      .type = INI_FIELD_TYPE_USIZE,
-      .field_offset = offsetof(struct Ini_Test_File, id),
-    };
-    ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){
-      .name = "name",
-      .type = INI_FIELD_TYPE_CSTR,
-      .field_offset = offsetof(struct Ini_Test_File, name),
-    };
-    ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){
-      .name = "content",
-      .type = INI_FIELD_TYPE_CSTR,
-      .field_offset = offsetof(struct Ini_Test_File, content),
-    };
-    ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){
-      .name = "tags",
-      .type = INI_FIELD_TYPE_CSTR_ARRAY,
-      .field_offset = offsetof(struct Ini_Test_File, tags),
-    };
-    ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){
-      .name = "read_only",
-      .type = INI_FIELD_TYPE_BOOL,
-      .field_offset = offsetof(struct Ini_Test_File, read_only),
-    };
-    ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){
-      .name = "executable",
-      .type = INI_FIELD_TYPE_BOOL,
-      .field_offset = offsetof(struct Ini_Test_File, executable),
-    };
+    INI_FORMAT_FIELD(id);
+    INI_FORMAT_FIELD(name);
+    INI_FORMAT_FIELD(content);
+    INI_FORMAT_FIELD(tags);
+    INI_FORMAT_FIELD(read_only);
+    INI_FORMAT_FIELD(executable);
     ini_format.section_formats[ini_format.num_sections++] = section;
     ini_format.num_field_types = section.field_end;
   }
