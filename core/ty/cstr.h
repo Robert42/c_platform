@@ -7,7 +7,6 @@
 
 int strcmp(const char* x, const char* y);
 const char* strstr(const char* haystack, const char* needle);
-char* strtok(char* restrict str, const char* restrict delim);
 
 #endif // __linux__
 
