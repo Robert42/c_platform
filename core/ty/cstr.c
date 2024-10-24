@@ -64,3 +64,15 @@ void convert_cstr_to_upper(char* s)
     *s = ascii_to_upper(*s);
 }
 
+#if ENV_ARCH == ARCH_AARCH64 || ENV_ARCH == ARCH_X86_64
+usize cstr_to_usize(const char** s)
+{
+  debug_assert_usize_eq(sizeof(unsigned long), sizeof(usize));
+  debug_assert_usize_eq(alignof(unsigned long), alignof(usize));
+
+  const char* begin = *s;
+  return strtoul(begin, (char**)s, 10);
+}
+#else
+#error unimplemented
+#endif

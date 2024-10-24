@@ -27,3 +27,4 @@ void convert_cstr_to_lower(char* s);
 char* cstr_to_upper(Mem_Region* region, const char* s);
 void convert_cstr_to_upper(char* s);
 
+usize cstr_to_usize(const char** s);
