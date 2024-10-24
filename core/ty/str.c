@@ -1,8 +1,6 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "str.h"
 
-bool char_is_ws(char x);
-
 usize str_len(str s)
 {
   debug_assert_ptr_lte(s.begin, s.end);
