@@ -45,6 +45,7 @@ str str_from_cstr_len(const char* s, usize len);
     (\exists usize i; 0 <= i < str_len(x)-1 && 0 <= i < str_len(y)-1 ==> x.begin[0 .. i-1] == y.begin[0 .. i-1] && x.begin[i] > y.begin[i]);
 */
 int str_cmp(str x, str y);
+int str_cstr_cmp(str x, const char* y);
 
 str str_trim_right(str xs);
 

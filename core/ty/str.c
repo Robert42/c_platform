@@ -46,6 +46,11 @@ int str_cmp(str x, str y)
   return 0;
 }
 
+int str_cstr_cmp(str x, const char* y)
+{
+  return str_cmp(x, (str){y, y+strlen(y)});
+}
+
 str str_trim_right(str xs)
 {
   while(xs.begin < xs.end && char_is_ws(xs.end[-1]))
