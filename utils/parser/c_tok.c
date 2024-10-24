@@ -46,6 +46,32 @@ char* c_tok_parse_str_lit(Mem_Region* region, const char** code)
       curr++;
     }
   }
+}
 
+void c_tok_fmt_str_lit(Fmt* f, const char* content)
+{
+  fmt_write(f, "\"");
+  while(*content != 0)
+  {
+    const char x = *(content++);
+    switch(x)
+    {
+    case 0: UNREACHABLE();
+    case '"':
+      fmt_write(f, "\\\"");
+      break;
+    case '\\':
+      fmt_write(f, "\\\\");
+      break;
+    case '\n':
+      fmt_write(f, "\\n");
+      break;
+    default:
+      if(x < 31)
+        UNIMPLEMENTED();
+      fmt_write(f, "%c", x);
+    }
+  }
+  fmt_write(f, "\"");
 }
 
