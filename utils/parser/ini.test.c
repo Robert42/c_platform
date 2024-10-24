@@ -89,43 +89,21 @@ static struct Ini_Format ini_test_format(struct Ini_Test_Data* data)
   struct Ini_Format ini_format = {};
 
   {
-    typedef struct Ini_Test_Directory Ini_Section_Struct;
-    struct Ini_Format_Section section = {
-      .name = "dir",
-      .field_begin = ini_format.num_field_types,
-      .field_end = ini_format.num_field_types,
-
-      .section_data_capacity = ARRAY_LEN(data->dirs),
-      .num_sections_read = &data->dir_count,
-      .section_data = data->dirs,
-      .section_entry_size = sizeof(struct Ini_Test_Directory),
-    };
+    INI_FORMAT_SECTION_BEGIN(struct Ini_Test_Directory, dir, data->dirs, ARRAY_LEN(data->dirs), &data->dir_count);
     INI_FORMAT_FIELD(id);
     INI_FORMAT_FIELD(name);
     INI_FORMAT_FIELD(sub_ids);
-    ini_format.section_formats[ini_format.num_sections++] = section;
-    ini_format.num_field_types = section.field_end;
+    INI_FORMAT_SECTION_END();
   }
   {
-    typedef struct Ini_Test_File Ini_Section_Struct;
-    struct Ini_Format_Section section = {
-      .name = "file",
-      .field_begin = ini_format.num_field_types,
-      .field_end = ini_format.num_field_types,
-
-      .section_data_capacity = ARRAY_LEN(data->files),
-      .num_sections_read = &data->file_count,
-      .section_data = data->files,
-      .section_entry_size = sizeof(struct Ini_Test_File),
-    };
+    INI_FORMAT_SECTION_BEGIN(struct Ini_Test_File, file, data->files, ARRAY_LEN(data->files), &data->file_count);
     INI_FORMAT_FIELD(id);
     INI_FORMAT_FIELD(name);
     INI_FORMAT_FIELD(content);
     INI_FORMAT_FIELD(tags);
     INI_FORMAT_FIELD(read_only);
     INI_FORMAT_FIELD(executable);
-    ini_format.section_formats[ini_format.num_sections++] = section;
-    ini_format.num_field_types = section.field_end;
+    INI_FORMAT_SECTION_END();
   }
 
   return ini_format;

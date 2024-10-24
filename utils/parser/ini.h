@@ -15,6 +15,21 @@ enum Ini_Format_Field_Type
     , const char*: INI_FIELD_TYPE_CSTR \
     , const char**: INI_FIELD_TYPE_CSTR_ARRAY \
   )
+#define INI_FORMAT_SECTION_BEGIN(TYPE, NAME, ARRAY, ARRAY_LEN, COUNT_PTR) \
+  typedef TYPE Ini_Section_Struct; \
+  struct Ini_Format_Section section = { \
+    .name = #NAME, \
+    .field_begin = ini_format.num_field_types, \
+    .field_end = ini_format.num_field_types, \
+ \
+    .section_data_capacity = ARRAY_LEN, \
+    .num_sections_read = COUNT_PTR, \
+    .section_data = ARRAY, \
+    .section_entry_size = sizeof(Ini_Section_Struct), \
+  };
+#define INI_FORMAT_SECTION_END() \
+  ini_format.section_formats[ini_format.num_sections++] = section; \
+  ini_format.num_field_types = section.field_end;
 #define INI_FORMAT_FIELD(NAME) \
   ini_format.field_formats[section.field_end++] = (struct Ini_Format_Field){ \
     .name = #NAME, \
