@@ -44,7 +44,7 @@ static struct Build_System_Data build_system_ini_load(Path ini_file);
 
 static void run_unit_test(struct Config cfg, Path bin_path, Path c_path);
 
-int main(int argc, char** argv)
+int main(int argc, const char** argv)
 {
   c_script_init();
 
