@@ -49,6 +49,15 @@ int str_cstr_cmp(str x, const char* y)
   return str_cmp(x, (str){y, y+strlen(y)});
 }
 
+bool str_ends_with(str haystack, str needle)
+{
+  const usize needle_len = str_len(needle);
+  if(str_len(haystack) < needle_len)
+    return false;
+
+  return str_cmp((str){haystack.end-needle_len, haystack.end}, needle) == 0;
+}
+
 str str_trim_right(str xs)
 {
   while(xs.begin < xs.end && char_is_ws(xs.end[-1]))

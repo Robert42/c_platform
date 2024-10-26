@@ -47,6 +47,8 @@ str str_from_cstr_len(const char* s, usize len);
 int str_cmp(str x, str y);
 int str_cstr_cmp(str x, const char* y);
 
+bool str_ends_with(str haystack, str needle);
+
 str str_trim_right(str xs);
 
 const char* str_fmt_to_region(Mem_Region* region, str x);

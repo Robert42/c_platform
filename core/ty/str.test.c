@@ -91,4 +91,15 @@ void str_test()
     assert_str_eq(str_trim_right(STR_LIT("xyz")), STR_LIT("xyz"));
     assert_str_eq(str_trim_right(STR_LIT("xyz  \n  \t  ")), STR_LIT("xyz"));
   }
+
+  // str_ends_with
+  {
+    assert_bool_eq(str_ends_with(STR_LIT(""), STR_LIT("")), true);
+    assert_bool_eq(str_ends_with(STR_LIT("x"), STR_LIT("")), true);
+    assert_bool_eq(str_ends_with(STR_LIT("x"), STR_LIT("x")), true);
+    assert_bool_eq(str_ends_with(STR_LIT("x"), STR_LIT("y")), false);
+    assert_bool_eq(str_ends_with(STR_LIT("xy"), STR_LIT("x")), false);
+    assert_bool_eq(str_ends_with(STR_LIT("yx"), STR_LIT("x")), true);
+    assert_bool_eq(str_ends_with(STR_LIT("x"), STR_LIT("xx")), false);
+  }
 }
