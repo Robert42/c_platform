@@ -141,7 +141,7 @@ static struct Build_System_Data build_system_ini_load(Path ini_file)
   {
     const Mem_Region _prev = STACK;
     const char* text = file_text_read_to_cstr(ini_file, &STACK);
-    ini_parse(&SCRATCH, &ini_format, text);
+    ini_parse(&PERSISTENT, &ini_format, text);
     STACK = _prev;
   }
 
