@@ -26,7 +26,7 @@ void cc_init()
 #endif
 }
 
-void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
+bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
 {
   debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
 
@@ -36,8 +36,7 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
   case CC_TCC:
   {
     char* const args_compile[] = {"tcc", "-Wall", "-Werror", "-run", c_file.cstr, NULL};
-    proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0});
-    break;
+    return proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success;
   }
   case CC_GCC:
   {
@@ -52,9 +51,9 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
       "-o", output_file.cstr,
       NULL};
     char* const args_test[] = {output_file.cstr, NULL};
-    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success)
-      proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0});
-    break;
+    if(!proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success)
+      return false;
+    return proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0}).success;
   }
   case CC_CLANG:
   {
@@ -69,11 +68,13 @@ void cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
       "-o", output_file.cstr,
       NULL};
     char* const args_test[] = {output_file.cstr, NULL};
-    if(proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success)
-      proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0});
-    break;
+    if(!proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success)
+      return false;
+    return proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0}).success;
   }
   }
+
+  UNREACHABLE();
 }
 
 static const char* _CC_NAMES[CC_COUNT] = {
