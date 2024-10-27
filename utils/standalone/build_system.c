@@ -21,6 +21,7 @@ struct Watch_Files
 struct Unit_Test
 {
   const char* src;
+  const char* bin;
 };
 
 struct Build_System_Data
@@ -72,7 +73,8 @@ int main(int argc, const char** argv)
 #endif
   struct Build_System_Data data = build_system_ini_load(cfg.build_ini_path);
 
-  const Path unit_test_bin_file = path_join(build_path, path_from_cstr("unit_test.exe"));
+  assert_ptr_ne(data.unit_test[0].bin, NULL);
+  assert_ptr_ne(data.unit_test[0].src, NULL);
 
   struct Simple_File_Watcher watcher = simple_file_watcher_init(build_path, (Fn_File_Filter*)&watch_files_filter, &data);
   do
@@ -91,8 +93,9 @@ int main(int argc, const char** argv)
         PANIC("No uni_test to run");
       case 1:
       {
-        const Path bin = unit_test_bin_file;
+        const Path bin = path_join(build_path, path_from_cstr(data.unit_test[0].bin));
         const Path src = path_join(build_path, path_from_cstr(data.unit_test[0].src));
+        mkpath(path_parent(bin));
         run_unit_test(cfg, bin, src);
         break;
       }
@@ -124,6 +127,7 @@ static struct Ini_Format build_system_format(struct Build_System_Data* data)
   {
     INI_FORMAT_SECTION_BEGIN(struct Unit_Test, unit_test, data->unit_test, ARRAY_LEN(data->unit_test), &data->unit_test_count);
     INI_FORMAT_FIELD(src);
+    INI_FORMAT_FIELD(bin);
     INI_FORMAT_SECTION_END();
   }
 
