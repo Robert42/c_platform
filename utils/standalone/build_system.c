@@ -90,8 +90,12 @@ int main(int argc, const char** argv)
       case 0:
         PANIC("No uni_test to run");
       case 1:
-        run_unit_test(cfg, unit_test_bin_file, path_join(build_path, path_from_cstr(data.unit_test[0].src)));
+      {
+        const Path bin = unit_test_bin_file;
+        const Path src = path_join(build_path, path_from_cstr(data.unit_test[0].src));
+        run_unit_test(cfg, bin, src);
         break;
+      }
       default:
         UNIMPLEMENTED("Don't know which unit_test to choose");
       }
