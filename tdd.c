@@ -105,7 +105,7 @@ int main(int argc, char** argv)
   // Actual test loop
   run_tests(cfg, dir);
 
-  struct Simple_File_Watcher watcher = simple_file_watcher_init(dir, path_is_c_file);
+  struct Simple_File_Watcher watcher = simple_file_watcher_init(dir, watch_c_files, NULL);
   while(simple_file_watcher_wait_for_change(&watcher))
   {
     run_tests(cfg, dir);

@@ -14,10 +14,11 @@
 static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher);
 #endif
 
-struct Simple_File_Watcher simple_file_watcher_init(Path root_dir, Fn_File_Filter *filter)
+struct Simple_File_Watcher simple_file_watcher_init(Path root_dir, Fn_File_Filter *filter, void* user_data)
 {
   struct Simple_File_Watcher watcher = {
     .filter = filter,
+    .user_data = user_data,
   };
 
 #ifdef __linux__
@@ -88,7 +89,7 @@ static usize _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_W
         break;
       }
       case DT_REG:
-        if(watcher->filter(entry->d_name))
+        if(watcher->filter(entry->d_name, watcher->user_data))
         {
           const Path path = path_join(dir, path_from_cstr(entry->d_name)); // modify path to point to the current file
           // printf("regular file: %s\n", path.cstr);
@@ -319,4 +320,10 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 
 #undef DBG_EVENTS
 #endif // __linux__
+
+bool watch_c_files(const char* filepath, void* user_data)
+{
+  (void)user_data;
+  return path_is_c_file(filepath);
+}
 

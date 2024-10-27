@@ -1,10 +1,11 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
-typedef bool Fn_File_Filter(const char* filepath);
+typedef bool Fn_File_Filter(const char* filepath, void* user);
 
 struct Simple_File_Watcher
 {
   Fn_File_Filter *filter; // Determines for a given filename, whether a file is relevant
+  void* user_data; // userdata for the filter
 
 #ifdef __linux__
   // Use two inotify instances: one for directories, one for the relevant files
@@ -22,7 +23,8 @@ struct Simple_File_Watcher
 #endif
 };
 
-struct Simple_File_Watcher simple_file_watcher_init(Path root_dir, Fn_File_Filter *filter);
+struct Simple_File_Watcher simple_file_watcher_init(Path root_dir, Fn_File_Filter *filter, void* user_data);
 void simple_file_watcher_deinit(struct Simple_File_Watcher* watcher);
 bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher);
 
+bool watch_c_files(const char* filepath, void* user_data);

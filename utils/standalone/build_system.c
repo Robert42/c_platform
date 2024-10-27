@@ -64,7 +64,7 @@ int main(int argc, const char** argv)
 
   const Path unit_test_bin_file = path_join(build_path, path_from_cstr("unit_test.exe"));
 
-  struct Simple_File_Watcher watcher = simple_file_watcher_init(build_path, path_is_c_file);
+  struct Simple_File_Watcher watcher = simple_file_watcher_init(build_path, watch_c_files, NULL);
   do
   {
 #if CLEAR
