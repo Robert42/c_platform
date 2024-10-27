@@ -12,6 +12,12 @@
 #define CLEAR 1
 #define PRINT_PATHS_AND_EXIT 0
 
+struct Watch_Files
+{
+  const char** suffix;
+  usize suffix_count;
+};
+
 struct Unit_Test
 {
   const char* src;
@@ -19,6 +25,9 @@ struct Unit_Test
 
 struct Build_System_Data
 {
+  struct Watch_Files watch_files[1];
+  usize watch_files_count;
+
   struct Unit_Test unit_test[1024];
   usize unit_test_count;
 };
@@ -45,6 +54,7 @@ static struct Config cfg_default()
 
 static struct Config build_system_cfg_load(int argc, const char** argv);
 static struct Build_System_Data build_system_ini_load(Path ini_file);
+static bool watch_files_filter(const char* filepath, const struct Build_System_Data* data);
 
 static void run_unit_test(struct Config cfg, Path bin_path, Path c_path);
 
@@ -64,7 +74,7 @@ int main(int argc, const char** argv)
 
   const Path unit_test_bin_file = path_join(build_path, path_from_cstr("unit_test.exe"));
 
-  struct Simple_File_Watcher watcher = simple_file_watcher_init(build_path, watch_c_files, NULL);
+  struct Simple_File_Watcher watcher = simple_file_watcher_init(build_path, (Fn_File_Filter*)&watch_files_filter, &data);
   do
   {
 #if CLEAR
@@ -102,6 +112,11 @@ static struct Ini_Format build_system_format(struct Build_System_Data* data)
 {
   struct Ini_Format ini_format = {};
 
+  {
+    INI_FORMAT_SECTION_BEGIN(struct Watch_Files, watch_files, data->watch_files, ARRAY_LEN(data->watch_files), &data->watch_files_count);
+    INI_FORMAT_FIELD(suffix);
+    INI_FORMAT_SECTION_END();
+  }
   {
     INI_FORMAT_SECTION_BEGIN(struct Unit_Test, unit_test, data->unit_test, ARRAY_LEN(data->unit_test), &data->unit_test_count);
     INI_FORMAT_FIELD(src);
@@ -145,7 +160,22 @@ static struct Build_System_Data build_system_ini_load(Path ini_file)
     STACK = _prev;
   }
 
+  if(data.watch_files_count == 0)
+  {
+    static const char* watch_files_default[] = {
+      ".c",
+      ".h",
+    };
+    data.watch_files[0].suffix = watch_files_default;
+    data.watch_files[0].suffix_count = ARRAY_LEN(watch_files_default);
+  }
+
   return data;
+}
+
+static bool watch_files_filter(const char* filepath, const struct Build_System_Data* data)
+{
+  return path_has_suffix_one_of(filepath, data->watch_files->suffix, data->watch_files->suffix_count);
 }
 
 static void run_unit_test(struct Config cfg, Path bin_path, Path c_path)
