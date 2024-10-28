@@ -15,7 +15,7 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
 
   while(**code != 0)
   {
-    if(**code == '-')
+    if(**code == ':')
       dict.content.mapping_dict.len++;
     *code += 1;
   }

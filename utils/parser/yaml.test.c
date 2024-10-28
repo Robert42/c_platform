@@ -22,9 +22,9 @@ void yaml_test()
   // simple scalars
   {
     const char* full = 
-      "- name: John Doe\n"
-      "- hero: true\n"
-      "- age: 42\n"
+      "name: John Doe\n"
+      "hero: true\n"
+      "age: 42\n"
     ;
     const char* xs = full;
     struct Yaml_Node root = yaml_parse_doc_with_rest(&STACK, &xs);
