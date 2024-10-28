@@ -2,9 +2,22 @@
 
 #include "yaml.h"
 
+#define TEST_YAML_LEX(CODE, REST, TOK) \
+  { \
+    const char* code = (CODE REST); \
+    assert_yaml_tok_eq(yaml_lex(&code), TOK); \
+    assert_cstr_eq(code, REST); \
+  }
+
 void yaml_test()
 {
   const Mem_Region _prev = STACK;
+
+  // ==== YAML lexer ====
+  TEST_YAML_LEX(":", "-", YAML_COLON);
+  TEST_YAML_LEX("-", "-", YAML_TOK_CONTENT);
+  TEST_YAML_LEX("---", " ", YAML_TOK_DOC_BEGIN);
+  TEST_YAML_LEX("...", " ", YAML_TOK_DOC_END);
 
   // ==== YAML dictionaties ====
 
@@ -38,3 +51,6 @@ void yaml_test()
 
   STACK = _prev;
 }
+
+#undef TEST_YAML_LEX
+
