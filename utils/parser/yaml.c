@@ -42,8 +42,12 @@ enum Yaml_Token yaml_lex(const char** code)
   switch((*code)[0])
   {
   case ':':
-    *code += 1;
-    return YAML_COLON;
+    if(char_is_ws((*code)[1]))
+    {
+      *code += 1;
+      return YAML_COLON;
+    }
+    break;
   case '-':
     switch((*code)[1])
     {

@@ -14,8 +14,11 @@ void yaml_test()
   const Mem_Region _prev = STACK;
 
   // ==== YAML lexer ====
-  TEST_YAML_LEX(":", "-", YAML_COLON);
+  TEST_YAML_LEX(":", "-", YAML_TOK_CONTENT);
   TEST_YAML_LEX("-", "-", YAML_TOK_CONTENT);
+
+  TEST_YAML_LEX(":", " ", YAML_COLON);
+  TEST_YAML_LEX(":", "\n", YAML_COLON);
   TEST_YAML_LEX("---", " ", YAML_TOK_DOC_BEGIN);
   TEST_YAML_LEX("...", " ", YAML_TOK_DOC_END);
 
