@@ -79,9 +79,9 @@ void path_test()
   // ==== path_has_suffix_one_of ====
   const char* archive_formats[] = {".xz", ".tar", ".zip"};
   
-  assert_bool_eq(path_has_suffix_one_of("img.jpg", &archive_formats, ARRAY_LEN(archive_formats)), false);
-  assert_bool_eq(path_has_suffix_one_of("img.xz", &archive_formats, ARRAY_LEN(archive_formats)), true);
-  assert_bool_eq(path_has_suffix_one_of("img.tar", &archive_formats, ARRAY_LEN(archive_formats)), true);
-  assert_bool_eq(path_has_suffix_one_of("img.zip", &archive_formats, ARRAY_LEN(archive_formats)), true);
-  assert_bool_eq(path_has_suffix_one_of("img.tar.gz", &archive_formats, ARRAY_LEN(archive_formats)), false);
+  assert_bool_eq(path_has_suffix_one_of("img.jpg", &archive_formats[0], ARRAY_LEN(archive_formats)), false);
+  assert_bool_eq(path_has_suffix_one_of("img.xz", &archive_formats[0], ARRAY_LEN(archive_formats)), true);
+  assert_bool_eq(path_has_suffix_one_of("img.tar", &archive_formats[0], ARRAY_LEN(archive_formats)), true);
+  assert_bool_eq(path_has_suffix_one_of("img.zip", &archive_formats[0], ARRAY_LEN(archive_formats)), true);
+  assert_bool_eq(path_has_suffix_one_of("img.tar.gz", &archive_formats[0], ARRAY_LEN(archive_formats)), false);
 }
