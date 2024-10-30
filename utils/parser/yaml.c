@@ -98,9 +98,13 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
 
   while(**code != 0)
   {
-    if(**code == ':')
+    enum Yaml_Token tok = yaml_lex(code);
+    switch(tok)
+    {
+    case YAML_COLON:
       dict.content.mapping_dict.len++;
-    *code += 1;
+      break;
+    }
   }
   
   return dict;
