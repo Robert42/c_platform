@@ -32,7 +32,7 @@ void yaml_test()
 
     assert_ptr_eq(xs, full);
     assert(root.kind == YAML_DICT);
-    assert(root.content.mapping_dict.len == 0);
+    assert_usize_eq(root.content.mapping_dict.len, 0);
   }
 
   // simple scalars
@@ -47,7 +47,7 @@ void yaml_test()
 
     assert_ptr_eq(xs, full+strlen(full));
     assert(root.kind == YAML_DICT);
-    assert(root.content.mapping_dict.len == 3);
+    assert_usize_eq(root.content.mapping_dict.len, 3);
   }
 
   // ==== YAML documents ====
@@ -67,19 +67,19 @@ void yaml_test()
 
     assert_ptr_eq(xs, full+3);
     assert(root.kind == YAML_DICT);
-    assert(root.content.mapping_dict.len == 0);
+    assert_usize_eq(root.content.mapping_dict.len, 0);
     
     root = yaml_parse_doc_with_rest(&STACK, &xs);
 
     assert_ptr_eq(xs, full+strlen(full)-1);
     assert(root.kind == YAML_DICT);
-    assert(root.content.mapping_dict.len == 3);
+    assert_usize_eq(root.content.mapping_dict.len, 3);
     
     root = yaml_parse_doc_with_rest(&STACK, &xs);
 
     assert_ptr_eq(xs, full+strlen(full));
     assert(root.kind == YAML_DICT);
-    assert(root.content.mapping_dict.len == 0);
+    assert_usize_eq(root.content.mapping_dict.len, 0);
   }
 
   STACK = _prev;
