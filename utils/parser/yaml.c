@@ -104,6 +104,8 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
     case YAML_COLON:
       dict.content.mapping_dict.len++;
       break;
+    case YAML_TOK_DOC_END:
+      return dict;
     }
   }
   

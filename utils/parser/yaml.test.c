@@ -52,6 +52,36 @@ void yaml_test()
 
   // ==== YAML documents ====
 
+  // first is empty empty
+  {
+    const char* full = 
+      "...\n"
+      "---\n"
+      "name: John Doe\n"
+      "hero: true\n"
+      "age: 42\n"
+      "...\n"
+    ;
+    const char* xs = full;
+    struct Yaml_Node root = yaml_parse_doc_with_rest(&STACK, &xs);
+
+    assert_ptr_eq(xs, full+3);
+    assert(root.kind == YAML_DICT);
+    assert(root.content.mapping_dict.len == 0);
+    
+    root = yaml_parse_doc_with_rest(&STACK, &xs);
+
+    assert_ptr_eq(xs, full+strlen(full)-1);
+    assert(root.kind == YAML_DICT);
+    assert(root.content.mapping_dict.len == 3);
+    
+    root = yaml_parse_doc_with_rest(&STACK, &xs);
+
+    assert_ptr_eq(xs, full+strlen(full));
+    assert(root.kind == YAML_DICT);
+    assert(root.content.mapping_dict.len == 0);
+  }
+
   STACK = _prev;
 }
 
