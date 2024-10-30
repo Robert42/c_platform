@@ -41,6 +41,8 @@ enum Yaml_Token yaml_lex(const char** code)
 {
   switch((*code)[0])
   {
+  case 0:
+    return YAML_TOK_DOC_END;
   case ':':
     if(char_is_ws((*code)[1]))
     {
@@ -96,10 +98,13 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
     .kind = YAML_DICT,
   };
 
-  while(**code != 0)
+  enum Yaml_Token peek = yaml_lex(code);
+
+  while(peek != YAML_TOK_DOC_END)
   {
-    enum Yaml_Token tok = yaml_lex(code);
-    switch(tok)
+    enum Yaml_Token next = peek;
+    peek = yaml_lex(code);
+    switch(next)
     {
     case YAML_COLON:
       dict.content.mapping_dict.len++;
