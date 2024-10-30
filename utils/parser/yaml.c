@@ -13,6 +13,7 @@ enum Yaml_Token
   YAML_TOK_DOC_END, // `...`
   
   YAML_TOK_CONTENT,
+  YAML_TOK_WHITESPACE,
 
   YAML_COLON = ':',
 };
@@ -24,6 +25,7 @@ static const char* yaml_tok_fmt(enum Yaml_Token tok)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_DOC_BEGIN)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_DOC_END)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_CONTENT)
+  X_CASE_RETURN_AS_CSTR(YAML_TOK_WHITESPACE)
   X_CASE_RETURN_AS_CSTR(YAML_COLON)
   }
   UNREACHABLE();
@@ -43,6 +45,10 @@ enum Yaml_Token yaml_lex(const char** code)
   {
   case 0:
     return YAML_TOK_DOC_END;
+  case ' ':
+  case '\n':
+    *code = cstr_trim_left(*code);
+    return YAML_TOK_WHITESPACE;
   case ':':
     if(char_is_ws((*code)[1]))
     {
@@ -99,6 +105,10 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
   };
 
   enum Yaml_Token peek = yaml_lex(code);
+  while(peek == YAML_TOK_WHITESPACE)
+    peek = yaml_lex(code);
+  if(peek == YAML_TOK_DOC_BEGIN)
+    peek = YAML_TOK_WHITESPACE;
 
   while(peek != YAML_TOK_DOC_END)
   {
@@ -110,6 +120,7 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
       dict.content.mapping_dict.len++;
       break;
     case YAML_TOK_DOC_END:
+    case YAML_TOK_DOC_BEGIN:
       return dict;
     }
   }

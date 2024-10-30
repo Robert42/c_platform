@@ -52,7 +52,7 @@ void yaml_test()
 
   // ==== YAML documents ====
 
-  // first is empty empty
+  // first doc is empty
   {
     const char* full = 
       "...\n"
@@ -78,6 +78,33 @@ void yaml_test()
     root = yaml_parse_doc_with_rest(&STACK, &xs);
 
     assert_ptr_eq(xs, full+strlen(full));
+    assert(root.kind == YAML_DICT);
+    assert_usize_eq(root.content.mapping_dict.len, 0);
+  }
+  
+  // Use `---` as separator
+  {
+    const char* full = 
+      "---\n"
+      "name: John Doe\n"
+      "---\n"
+      "hero: true\n"
+      "age: 42\n"
+    ;
+
+    const char* xs = full;
+    struct Yaml_Node root = yaml_parse_doc_with_rest(&STACK, &xs);
+
+    assert(root.kind == YAML_DICT);
+    assert_usize_eq(root.content.mapping_dict.len, 1);
+    
+    root = yaml_parse_doc_with_rest(&STACK, &xs);
+
+    assert(root.kind == YAML_DICT);
+    assert_usize_eq(root.content.mapping_dict.len, 2);
+    
+    root = yaml_parse_doc_with_rest(&STACK, &xs);
+
     assert(root.kind == YAML_DICT);
     assert_usize_eq(root.content.mapping_dict.len, 0);
   }
