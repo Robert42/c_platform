@@ -9,11 +9,12 @@ struct Yaml_Parse_Context
 
 enum Yaml_Token
 {
+  YAML_TOK_DOC_END = 0, // `...`
   YAML_TOK_DOC_BEGIN, // `---`
-  YAML_TOK_DOC_END, // `...`
   
-  YAML_TOK_CONTENT,
-  YAML_TOK_WHITESPACE,
+  YAML_TOK_CONTENT = 'x',
+  YAML_TOK_SPACE = ' ',
+  YAML_TOK_LINEBREAK = '\n',
 
   YAML_COLON = ':',
 };
@@ -25,7 +26,8 @@ static const char* yaml_tok_fmt(enum Yaml_Token tok)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_DOC_BEGIN)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_DOC_END)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_CONTENT)
-  X_CASE_RETURN_AS_CSTR(YAML_TOK_WHITESPACE)
+  X_CASE_RETURN_AS_CSTR(YAML_TOK_SPACE)
+  X_CASE_RETURN_AS_CSTR(YAML_TOK_LINEBREAK)
   X_CASE_RETURN_AS_CSTR(YAML_COLON)
   }
   UNREACHABLE();
@@ -46,9 +48,12 @@ enum Yaml_Token yaml_lex(const char** code)
   case 0:
     return YAML_TOK_DOC_END;
   case ' ':
+    while(**code == ' ')
+      *code += 1;
+    return YAML_TOK_SPACE;
   case '\n':
-    *code = cstr_trim_left(*code);
-    return YAML_TOK_WHITESPACE;
+    *code += 1;
+    return YAML_TOK_LINEBREAK;
   case ':':
     if(char_is_ws((*code)[1]))
     {
@@ -98,6 +103,28 @@ enum Yaml_Token yaml_lex(const char** code)
   return YAML_TOK_CONTENT;
 }
 
+static bool _yaml_is_inline_space(enum Yaml_Token tok)
+{
+  switch(tok)
+  {
+  case YAML_TOK_SPACE:
+    return true;
+  default:
+    return false;
+  }
+}
+
+static bool _yaml_is_space(enum Yaml_Token tok)
+{
+  switch(tok)
+  {
+  case YAML_TOK_LINEBREAK:
+    return true;
+  default:
+    return _yaml_is_inline_space(tok);
+  }
+}
+
 static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, const char** code)
 {
   struct Yaml_Node dict = {
@@ -105,10 +132,10 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
   };
 
   enum Yaml_Token peek = yaml_lex(code);
-  while(peek == YAML_TOK_WHITESPACE)
+  while(_yaml_is_space(peek))
     peek = yaml_lex(code);
   if(peek == YAML_TOK_DOC_BEGIN)
-    peek = YAML_TOK_WHITESPACE;
+    peek = YAML_TOK_SPACE;
 
   while(peek != YAML_TOK_DOC_END)
   {
