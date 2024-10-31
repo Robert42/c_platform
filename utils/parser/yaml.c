@@ -197,10 +197,6 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Tokenizer* tokenizer)
     .kind = YAML_DICT,
   };
 
-  _yaml_tokenize_skip_whitespace(tokenizer);
-  if(tokenizer->peek.id == YAML_TOK_DOC_BEGIN)
-    tokenizer->peek.id = YAML_TOK_SPACE;
-
   while(true)
   {
     switch(tokenizer->peek.id)
@@ -227,6 +223,10 @@ struct Yaml_Node yaml_parse_doc_with_rest(Mem_Region* region, const char** code)
   ctx.region = region;
 
   struct Yaml_Tokenizer tokenizer = _yaml_tokenize_start(&ctx, *code);
+
+  _yaml_tokenize_skip_whitespace(&tokenizer);
+  if(tokenizer.peek.id == YAML_TOK_DOC_BEGIN)
+    tokenizer.peek.id = YAML_TOK_SPACE;
 
   struct Yaml_Node node = _yaml_parse_dict_block(&tokenizer);
 
