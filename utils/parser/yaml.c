@@ -158,23 +158,52 @@ static bool _yaml_is_space(enum Yaml_Token_ID tok)
   }
 }
 
-static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, const char** code)
+struct Yaml_Tokenizer
+{
+  Mem_Region* region;
+  const char* code;
+  struct Yaml_Token next, peek;
+};
+
+static struct Yaml_Tokenizer _yaml_tokenize_start(struct Yaml_Parse_Context* ctx, const char* code)
+{
+  Mem_Region* const region = ctx->region;
+  struct Yaml_Tokenizer tokenizer = {
+    .region = region,
+    .code = code,
+  };
+
+  tokenizer.peek = yaml_lex(tokenizer.region, &tokenizer.code);
+
+  return tokenizer;
+}
+
+static struct Yaml_Token _yaml_tokenize_next(struct Yaml_Tokenizer* tokenizer)
+{
+  struct Yaml_Token next = tokenizer->peek;
+  tokenizer->peek = yaml_lex(tokenizer->region, &tokenizer->code);
+  return next;
+}
+
+static struct Yaml_Node _yaml_tokenize_skip_whitespace(struct Yaml_Tokenizer* tokenizer)
+{
+  while(_yaml_is_space(tokenizer->peek.id))
+    _yaml_tokenize_next(tokenizer);
+}
+
+static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Tokenizer* tokenizer)
 {
   struct Yaml_Node dict = {
     .kind = YAML_DICT,
   };
-  Mem_Region* const region = ctx->region;
 
-  struct Yaml_Token peek = yaml_lex(region, code);
-  while(_yaml_is_space(peek.id))
-    peek = yaml_lex(region, code);
-  if(peek.id == YAML_TOK_DOC_BEGIN)
-    peek = TOK(YAML_TOK_SPACE);
+  _yaml_tokenize_skip_whitespace(tokenizer);
+  if(tokenizer->peek.id == YAML_TOK_DOC_BEGIN)
+    tokenizer->peek.id = YAML_TOK_SPACE;
 
-  while(peek.id != YAML_TOK_DOC_END)
+  while(tokenizer->peek.id != YAML_TOK_DOC_END)
   {
-    struct Yaml_Token next = peek;
-    peek = yaml_lex(region, code);
+    struct Yaml_Token next = _yaml_tokenize_next(tokenizer);
     switch(next.id)
     {
     case YAML_COLON:
@@ -193,7 +222,14 @@ struct Yaml_Node yaml_parse_doc_with_rest(Mem_Region* region, const char** code)
 {
   struct Yaml_Parse_Context ctx;
   ctx.region = region;
-  return _yaml_parse_dict_block(&ctx, code);
+
+  struct Yaml_Tokenizer tokenizer = _yaml_tokenize_start(&ctx, *code);
+
+  struct Yaml_Node node = _yaml_parse_dict_block(&tokenizer);
+
+  *code = tokenizer.code;
+
+  return node;
 }
 
 struct Yaml_Node yaml_parse_doc(Mem_Region* region, const char* code)
