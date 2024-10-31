@@ -7,7 +7,7 @@ struct Yaml_Parse_Context
   Mem_Region* region;
 };
 
-enum Yaml_Token
+enum Yaml_Token_ID
 {
   YAML_TOK_DOC_END = 0, // `...`
   YAML_TOK_DOC_BEGIN, // `---`
@@ -19,7 +19,7 @@ enum Yaml_Token
   YAML_COLON = ':',
 };
 
-static const char* yaml_tok_fmt(enum Yaml_Token tok)
+static const char* yaml_tok_id_fmt(enum Yaml_Token_ID tok)
 {
   switch(tok)
   {
@@ -32,16 +32,16 @@ static const char* yaml_tok_fmt(enum Yaml_Token tok)
   }
   UNREACHABLE();
 }
-void __assert_yaml_tok_eq__(enum Yaml_Token x, enum Yaml_Token y, const char* condition, const char* file, int line)
+void __assert_yaml_tok_id_eq__(enum Yaml_Token_ID x, enum Yaml_Token_ID y, const char* condition, const char* file, int line)
 {
   if(LIKELY(x == y))
     return;
   else
-  __bin_assert_failed__(condition, yaml_tok_fmt(x), yaml_tok_fmt(y), file, line);
+  __bin_assert_failed__(condition, yaml_tok_id_fmt(x), yaml_tok_id_fmt(y), file, line);
 }
-#define assert_yaml_tok_eq(x, y) __assert_yaml_tok_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
+#define assert_yaml_tok_id_eq(x, y) __assert_yaml_tok_id_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
 
-enum Yaml_Token yaml_lex(const char** code)
+enum Yaml_Token_ID yaml_lex(const char** code)
 {
   switch((*code)[0])
   {
@@ -103,7 +103,7 @@ enum Yaml_Token yaml_lex(const char** code)
   return YAML_TOK_CONTENT;
 }
 
-static bool _yaml_is_inline_space(enum Yaml_Token tok)
+static bool _yaml_is_inline_space(enum Yaml_Token_ID tok)
 {
   switch(tok)
   {
@@ -114,7 +114,7 @@ static bool _yaml_is_inline_space(enum Yaml_Token tok)
   }
 }
 
-static bool _yaml_is_space(enum Yaml_Token tok)
+static bool _yaml_is_space(enum Yaml_Token_ID tok)
 {
   switch(tok)
   {
@@ -131,7 +131,7 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
     .kind = YAML_DICT,
   };
 
-  enum Yaml_Token peek = yaml_lex(code);
+  enum Yaml_Token_ID peek = yaml_lex(code);
   while(_yaml_is_space(peek))
     peek = yaml_lex(code);
   if(peek == YAML_TOK_DOC_BEGIN)
@@ -139,7 +139,7 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
 
   while(peek != YAML_TOK_DOC_END)
   {
-    enum Yaml_Token next = peek;
+    enum Yaml_Token_ID next = peek;
     peek = yaml_lex(code);
     switch(next)
     {
