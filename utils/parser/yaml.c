@@ -201,17 +201,20 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Tokenizer* tokenizer)
   if(tokenizer->peek.id == YAML_TOK_DOC_BEGIN)
     tokenizer->peek.id = YAML_TOK_SPACE;
 
-  while(tokenizer->peek.id != YAML_TOK_DOC_END)
+  while(true)
   {
-    struct Yaml_Token next = _yaml_tokenize_next(tokenizer);
-    switch(next.id)
+    switch(tokenizer->peek.id)
     {
     case YAML_COLON:
+      _yaml_tokenize_next(tokenizer);
       dict.content.mapping_dict.len++;
-      break;
+      continue;
     case YAML_TOK_DOC_END:
     case YAML_TOK_DOC_BEGIN:
       return dict;
+    default:
+      _yaml_tokenize_next(tokenizer);
+      continue;
     }
   }
   
