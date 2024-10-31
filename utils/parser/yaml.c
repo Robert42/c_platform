@@ -19,6 +19,11 @@ enum Yaml_Token_ID
   YAML_COLON = ':',
 };
 
+struct Yaml_Token
+{
+  enum Yaml_Token_ID id;
+};
+
 static const char* yaml_tok_id_fmt(enum Yaml_Token_ID tok)
 {
   switch(tok)
@@ -41,24 +46,27 @@ void __assert_yaml_tok_id_eq__(enum Yaml_Token_ID x, enum Yaml_Token_ID y, const
 }
 #define assert_yaml_tok_id_eq(x, y) __assert_yaml_tok_id_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
 
-enum Yaml_Token_ID yaml_lex(const char** code)
+#define TOK(X) ((struct Yaml_Token){.id = (X)})
+
+struct Yaml_Token yaml_lex(const char** code)
 {
   switch((*code)[0])
   {
   case 0:
-    return YAML_TOK_DOC_END;
+    return TOK(YAML_TOK_DOC_END);
   case ' ':
     while(**code == ' ')
       *code += 1;
-    return YAML_TOK_SPACE;
+
+    return TOK(YAML_TOK_SPACE);
   case '\n':
     *code += 1;
-    return YAML_TOK_LINEBREAK;
+    return TOK(YAML_TOK_LINEBREAK);
   case ':':
     if(char_is_ws((*code)[1]))
     {
       *code += 1;
-      return YAML_COLON;
+      return TOK(YAML_COLON);
     }
     break;
   case '-':
@@ -69,7 +77,7 @@ enum Yaml_Token_ID yaml_lex(const char** code)
       {
       case '-':
         *code += 3;
-        return YAML_TOK_DOC_BEGIN;
+        return TOK(YAML_TOK_DOC_BEGIN);
       default:
         break;
       }
@@ -86,7 +94,7 @@ enum Yaml_Token_ID yaml_lex(const char** code)
       {
       case '.':
         *code += 3;
-        return YAML_TOK_DOC_END;
+        return TOK(YAML_TOK_DOC_END);
       default:
         break;
       }
@@ -100,7 +108,7 @@ enum Yaml_Token_ID yaml_lex(const char** code)
   }
 
   *code += 1;
-  return YAML_TOK_CONTENT;
+  return TOK(YAML_TOK_CONTENT);
 }
 
 static bool _yaml_is_inline_space(enum Yaml_Token_ID tok)
@@ -131,17 +139,17 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
     .kind = YAML_DICT,
   };
 
-  enum Yaml_Token_ID peek = yaml_lex(code);
-  while(_yaml_is_space(peek))
+  struct Yaml_Token peek = yaml_lex(code);
+  while(_yaml_is_space(peek.id))
     peek = yaml_lex(code);
-  if(peek == YAML_TOK_DOC_BEGIN)
-    peek = YAML_TOK_SPACE;
+  if(peek.id == YAML_TOK_DOC_BEGIN)
+    peek = TOK(YAML_TOK_SPACE);
 
-  while(peek != YAML_TOK_DOC_END)
+  while(peek.id != YAML_TOK_DOC_END)
   {
-    enum Yaml_Token_ID next = peek;
+    struct Yaml_Token next = peek;
     peek = yaml_lex(code);
-    switch(next)
+    switch(next.id)
     {
     case YAML_COLON:
       dict.content.mapping_dict.len++;
@@ -167,3 +175,4 @@ struct Yaml_Node yaml_parse_doc(Mem_Region* region, const char* code)
   return yaml_parse_doc_with_rest(region, &code);
 }
 
+#undef TOK
