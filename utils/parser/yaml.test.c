@@ -24,6 +24,10 @@ void yaml_test()
 
   TEST_YAML_LEX("\"\"", " ", YAML_TOK_LIT_STR);
 
+  TEST_YAML_LEX("_3D-stuff", " ", YAML_TOK_IDENT);
+  TEST_YAML_LEX("hello-world", " ", YAML_TOK_IDENT);
+  TEST_YAML_LEX("HELLO_WORLD", " ", YAML_TOK_IDENT);
+
   // ==== YAML dictionaties ====
 
   // empty

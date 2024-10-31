@@ -13,6 +13,7 @@ enum Yaml_Token_ID
   YAML_TOK_DOC_BEGIN, // `---`
   
   YAML_TOK_CONTENT = 'x',
+  YAML_TOK_IDENT = 'i',
   YAML_TOK_SPACE = ' ',
   YAML_TOK_LINEBREAK = '\n',
 
@@ -33,6 +34,7 @@ static const char* yaml_tok_id_fmt(enum Yaml_Token_ID tok)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_DOC_BEGIN)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_DOC_END)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_CONTENT)
+  X_CASE_RETURN_AS_CSTR(YAML_TOK_IDENT)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_SPACE)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_LINEBREAK)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_LIT_STR)
@@ -110,6 +112,22 @@ struct Yaml_Token yaml_lex(struct Mem_Region* region, const char** code)
       break;
     }
     break;
+  case '_':
+  case 'a' ... 'z':
+  case 'A' ... 'Z':
+    while(**code)
+      switch(**code)
+      {
+      case '-':
+      case '_':
+      case '0' ... '9':
+      case 'a' ... 'z':
+      case 'A' ... 'Z':
+        *code += 1;
+        continue;
+      default:
+        return TOK(YAML_TOK_IDENT);
+      }
   default:
     break;
   }
