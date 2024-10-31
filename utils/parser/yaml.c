@@ -16,6 +16,8 @@ enum Yaml_Token_ID
   YAML_TOK_SPACE = ' ',
   YAML_TOK_LINEBREAK = '\n',
 
+  YAML_TOK_LIT_STR = '"',
+
   YAML_COLON = ':',
 };
 
@@ -33,6 +35,7 @@ static const char* yaml_tok_id_fmt(enum Yaml_Token_ID tok)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_CONTENT)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_SPACE)
   X_CASE_RETURN_AS_CSTR(YAML_TOK_LINEBREAK)
+  X_CASE_RETURN_AS_CSTR(YAML_TOK_LIT_STR)
   X_CASE_RETURN_AS_CSTR(YAML_COLON)
   }
   UNREACHABLE();
@@ -48,7 +51,7 @@ void __assert_yaml_tok_id_eq__(enum Yaml_Token_ID x, enum Yaml_Token_ID y, const
 
 #define TOK(X) ((struct Yaml_Token){.id = (X)})
 
-struct Yaml_Token yaml_lex(const char** code)
+struct Yaml_Token yaml_lex(struct Mem_Region* region, const char** code)
 {
   switch((*code)[0])
   {
@@ -68,6 +71,10 @@ struct Yaml_Token yaml_lex(const char** code)
       *code += 1;
       return TOK(YAML_COLON);
     }
+    break;
+  case '"':
+    c_tok_parse_str_lit(region, code);
+    return TOK(YAML_TOK_LIT_STR);
     break;
   case '-':
     switch((*code)[1])
@@ -138,17 +145,18 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Parse_Context* ctx, c
   struct Yaml_Node dict = {
     .kind = YAML_DICT,
   };
+  Mem_Region* const region = ctx->region;
 
-  struct Yaml_Token peek = yaml_lex(code);
+  struct Yaml_Token peek = yaml_lex(region, code);
   while(_yaml_is_space(peek.id))
-    peek = yaml_lex(code);
+    peek = yaml_lex(region, code);
   if(peek.id == YAML_TOK_DOC_BEGIN)
     peek = TOK(YAML_TOK_SPACE);
 
   while(peek.id != YAML_TOK_DOC_END)
   {
     struct Yaml_Token next = peek;
-    peek = yaml_lex(code);
+    peek = yaml_lex(region, code);
     switch(next.id)
     {
     case YAML_COLON:

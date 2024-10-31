@@ -5,7 +5,7 @@
 #define TEST_YAML_LEX(CODE, REST, TOK) \
   { \
     const char* code = (CODE REST); \
-    assert_yaml_tok_id_eq(yaml_lex(&code).id, TOK); \
+    assert_yaml_tok_id_eq(yaml_lex(&STACK, &code).id, TOK); \
     assert_cstr_eq(code, REST); \
   }
 
@@ -21,6 +21,8 @@ void yaml_test()
   TEST_YAML_LEX(":", "\n", YAML_COLON);
   TEST_YAML_LEX("---", " ", YAML_TOK_DOC_BEGIN);
   TEST_YAML_LEX("...", " ", YAML_TOK_DOC_END);
+
+  TEST_YAML_LEX("\"\"", " ", YAML_TOK_LIT_STR);
 
   // ==== YAML dictionaties ====
 
