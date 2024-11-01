@@ -62,6 +62,9 @@ void yaml_test()
         .content.scalar_int = 137,
       },
       {
+        .kind = YAML_LIST,
+      },
+      {
         .kind = YAML_BOOL,
         .content.scalar_bool = false,
       },
@@ -74,7 +77,7 @@ void yaml_test()
       },
     };
 
-    assert_cstr_eq(yaml_node_fmt(&STACK, x), "[42, true, 137, false]");
+    assert_cstr_eq(yaml_node_fmt(&STACK, x), "[42, true, 137, [], false]");
   }
 
   // ==== YAML dictionaties ====
