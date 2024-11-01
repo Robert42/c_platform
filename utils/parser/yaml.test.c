@@ -203,4 +203,5 @@ void yaml_test()
 }
 
 #undef TEST_YAML_LEX
+#undef TEST_YAML_LEX_STR
 
