@@ -80,9 +80,10 @@ struct Yaml_Token yaml_lex(Mem_Region* region, const char** code)
     }
     break;
   case '"':
-    c_tok_parse_str_lit(region, code);
-    return TOK(YAML_TOK_LIT_STR);
-    break;
+  {
+    const char* xs = c_tok_parse_str_lit(region, code);
+    return TOK(YAML_TOK_LIT_STR, .content_str=str_from_cstr(xs));
+  }
   case '-':
     switch((*code)[1])
     {

@@ -31,7 +31,8 @@ void yaml_test()
   TEST_YAML_LEX("---", " ", YAML_TOK_DOC_BEGIN);
   TEST_YAML_LEX("...", " ", YAML_TOK_DOC_END);
 
-  TEST_YAML_LEX("\"\"", " ", YAML_TOK_LIT_STR);
+  TEST_YAML_LEX_STR("\"\"", " ", YAML_TOK_LIT_STR, "");
+  TEST_YAML_LEX_STR("\"x\\ny\\\\z\"", " ", YAML_TOK_LIT_STR, "x\ny\\z");
 
   TEST_YAML_LEX_STR("_3D-stuff", " ", YAML_TOK_IDENT, "_3D-stuff");
   TEST_YAML_LEX_STR("hello-world", " ", YAML_TOK_IDENT, "hello-world");

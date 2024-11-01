@@ -14,6 +14,11 @@ str str_from_cstr_len(const char* s, usize len)
   return (str){s, s+len};
 }
 
+str str_from_cstr(const char* s)
+{
+  return str_from_cstr_len(s, strlen(s));
+}
+
 int str_cmp(str x, str y)
 {
   const usize x_len = str_len(x);

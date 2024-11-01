@@ -33,6 +33,8 @@ usize str_len(str s);
 str str_from_cstr_len(const char* s, usize len);
 #define STR_LIT(XS) str_from_cstr_len(XS, ARRAY_LEN(XS)-1)
 
+str str_from_cstr(const char* s);
+
 /*@
   requires str_valid(x) && str_valid(y);
   assigns \nothing;
