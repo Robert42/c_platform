@@ -135,6 +135,7 @@ struct Yaml_Token yaml_lex(Mem_Region* region, const char** code)
   *code += 1;
   return TOK(YAML_TOK_CONTENT);
 }
+#undef TOK
 
 static bool _yaml_is_inline_space(enum Yaml_Token_ID tok)
 {
@@ -240,4 +241,3 @@ struct Yaml_Node yaml_parse_doc(Mem_Region* region, const char* code)
   return yaml_parse_doc_with_rest(region, &code);
 }
 
-#undef TOK
