@@ -47,6 +47,14 @@ void yaml_test()
 
     assert_cstr_eq(yaml_node_fmt(&STACK, xs), "\"newline=`\\n` backslash=`\\\\`\"");
   }
+  {
+    struct Yaml_Node xs = {
+      .kind = YAML_INT,
+      .content.scalar_int = 42,
+    };
+
+    assert_cstr_eq(yaml_node_fmt(&STACK, xs), "42");
+  }
 
   // ==== YAML dictionaties ====
 

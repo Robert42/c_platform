@@ -71,7 +71,7 @@ static const char* _yaml_flow_fmt(Fmt* f, struct Yaml_Node node)
     TODO();
     break;
   case YAML_INT:
-    TODO();
+    fmt_write(f, "%" PRI_yaml_int, node.content.scalar_int);
     break;
   case YAML_STR:
     c_tok_fmt_str_lit(f, node.content.scalar_str);

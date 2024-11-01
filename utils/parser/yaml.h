@@ -44,6 +44,7 @@ struct Yaml_Node
     struct Yaml_List seq_list;
 
     bool scalar_bool;
+#define PRI_yaml_int PRId64
     s64 scalar_int;
     str scalar_str;
   } content;
