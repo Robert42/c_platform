@@ -75,7 +75,7 @@ static const char* _yaml_flow_fmt(Fmt* f, struct Yaml_Node node)
     fmt_write(f, "]");
     break;
   case YAML_BOOL:
-    TODO();
+    fmt_write(f, "%s", node.content.scalar_bool ? "true" : "false");
     break;
   case YAML_INT:
     fmt_write(f, "%" PRI_yaml_int, node.content.scalar_int);

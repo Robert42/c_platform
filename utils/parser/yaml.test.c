@@ -54,8 +54,16 @@ void yaml_test()
         .content.scalar_int = 42,
       },
       {
+        .kind = YAML_BOOL,
+        .content.scalar_bool = true,
+      },
+      {
         .kind = YAML_INT,
         .content.scalar_int = 137,
+      },
+      {
+        .kind = YAML_BOOL,
+        .content.scalar_bool = false,
       },
     };
     struct Yaml_Node x = {
@@ -66,7 +74,7 @@ void yaml_test()
       },
     };
 
-    assert_cstr_eq(yaml_node_fmt(&STACK, x), "[42, 137]");
+    assert_cstr_eq(yaml_node_fmt(&STACK, x), "[42, true, 137, false]");
   }
 
   // ==== YAML dictionaties ====
