@@ -22,7 +22,7 @@ void print_cstr_diff(const char* x, const char* y)
 
 void print_str_diff(str x, str y)
 {
-  (void)x;
-  (void)y;
-  TODO();
+  const Mem_Region _prev = STACK;
+  print_cstr_diff(str_fmt_to_region(&STACK, x), str_fmt_to_region(&STACK, y));
+  STACK = _prev;
 }
