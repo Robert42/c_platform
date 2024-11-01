@@ -214,7 +214,7 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Tokenizer* tokenizer)
     }
   }
   
-  return dict;
+  UNREACHABLE();
 }
 
 struct Yaml_Node yaml_parse_doc_with_rest(Mem_Region* region, const char** code)
