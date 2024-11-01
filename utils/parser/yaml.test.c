@@ -9,6 +9,14 @@
     assert_yaml_tok_id_eq(tok.id, TOK); \
     assert_cstr_eq(code, REST); \
   }
+#define TEST_YAML_LEX_STR(CODE, REST, TOK, CONTENT) \
+  { \
+    const char* code = (CODE REST); \
+    struct Yaml_Token tok = yaml_lex(&STACK, &code); \
+    assert_yaml_tok_id_eq(tok.id, TOK); \
+    assert_cstr_eq(code, REST); \
+    assert_str_eq(tok.content_str, STR_LIT(CONTENT)); \
+  }
 
 void yaml_test()
 {
@@ -25,9 +33,9 @@ void yaml_test()
 
   TEST_YAML_LEX("\"\"", " ", YAML_TOK_LIT_STR);
 
-  TEST_YAML_LEX("_3D-stuff", " ", YAML_TOK_IDENT);
-  TEST_YAML_LEX("hello-world", " ", YAML_TOK_IDENT);
-  TEST_YAML_LEX("HELLO_WORLD", " ", YAML_TOK_IDENT);
+  TEST_YAML_LEX_STR("_3D-stuff", " ", YAML_TOK_IDENT, "_3D-stuff");
+  TEST_YAML_LEX_STR("hello-world", " ", YAML_TOK_IDENT, "hello-world");
+  TEST_YAML_LEX_STR("HELLO_WORLD", " ", YAML_TOK_IDENT, "HELLO_WORLD");
 
   // ==== YAML dictionaties ====
 

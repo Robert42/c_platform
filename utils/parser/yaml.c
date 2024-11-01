@@ -25,6 +25,10 @@ enum Yaml_Token_ID
 struct Yaml_Token
 {
   enum Yaml_Token_ID id;
+  union
+  {
+    str content_str;
+  };
 };
 
 static const char* yaml_tok_id_fmt(enum Yaml_Token_ID tok)
@@ -51,10 +55,11 @@ void __assert_yaml_tok_id_eq__(enum Yaml_Token_ID x, enum Yaml_Token_ID y, const
 }
 #define assert_yaml_tok_id_eq(x, y) __assert_yaml_tok_id_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
 
-#define TOK(X) ((struct Yaml_Token){.id = (X)})
+#define TOK(X, ...) ((struct Yaml_Token){.id = (X), __VA_ARGS__})
 
 struct Yaml_Token yaml_lex(Mem_Region* region, const char** code)
 {
+  const char* begin = *code;
   switch((*code)[0])
   {
   case 0:
@@ -126,7 +131,10 @@ struct Yaml_Token yaml_lex(Mem_Region* region, const char** code)
         *code += 1;
         continue;
       default:
-        return TOK(YAML_TOK_IDENT);
+      {
+        const str span = {begin, *code};
+        return TOK(YAML_TOK_IDENT, .content_str=span);
+      }
       }
   default:
     break;
