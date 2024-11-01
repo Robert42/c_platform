@@ -79,6 +79,38 @@ void yaml_test()
 
     assert_cstr_eq(yaml_node_fmt(&STACK, x), "[42, true, 137, [], false]");
   }
+  {
+    struct Yaml_Node keys[] = {
+      {
+        .kind = YAML_STR,
+        .content.scalar_str = STR_LIT("name"),
+      },
+      {
+        .kind = YAML_STR,
+        .content.scalar_str = STR_LIT("age"),
+      },
+    };
+    struct Yaml_Node values[] = {
+      {
+        .kind = YAML_STR,
+        .content.scalar_str = STR_LIT("John Doe"),
+      },
+      {
+        .kind = YAML_INT,
+        .content.scalar_int = 42,
+      },
+    };
+    struct Yaml_Node x = {
+      .kind = YAML_DICT,
+      .content.mapping_dict = {
+        .keys = keys,
+        .values = values,
+        .len = ARRAY_LEN(keys),
+      },
+    };
+
+    assert_cstr_eq(yaml_node_fmt(&STACK, x), "{\"name\": \"John Doe\", \"age\": 42}");
+  }
 
   // ==== YAML dictionaties ====
 

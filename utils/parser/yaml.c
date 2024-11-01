@@ -62,7 +62,16 @@ static const char* _yaml_flow_fmt(Fmt* f, struct Yaml_Node node)
   switch(node.kind)
   {
   case YAML_DICT:
-    TODO();
+    fmt_write(f, "{");
+    for(usize i=0; i<node.content.mapping_dict.len; ++i)
+    {
+      if(i != 0)
+        fmt_write(f, ", ");
+      _yaml_flow_fmt(f, node.content.mapping_dict.keys[i]);
+      fmt_write(f, ": ");
+      _yaml_flow_fmt(f, node.content.mapping_dict.values[i]);
+    }
+    fmt_write(f, "}");
     break;
   case YAML_LIST:
     fmt_write(f, "[");
