@@ -17,6 +17,13 @@
     assert_cstr_eq(code, REST); \
     assert_str_eq(tok.content_str, STR_LIT(CONTENT)); \
   }
+#define TEST_YAML_PARSE_FMT(CODE, REST, KIND, FMT) \
+  { \
+    const char* code = (CODE REST); \
+    struct Yaml_Node node = yaml_parse_doc_with_rest(&STACK, &code); \
+    assert_usize_eq(node.kind, KIND); \
+    assert_cstr_eq(yaml_node_fmt(&STACK, node), FMT); \
+  }
 
 void yaml_test()
 {
@@ -112,6 +119,10 @@ void yaml_test()
     assert_cstr_eq(yaml_node_fmt(&STACK, x), "{\"name\": \"John Doe\", \"age\": 42}");
   }
 
+  // ==== YAML scalars ====
+
+  TEST_YAML_PARSE_FMT("42", "  ", YAML_INT, "42");
+
   // ==== YAML dictionaties ====
 
   // empty
@@ -204,4 +215,5 @@ void yaml_test()
 
 #undef TEST_YAML_LEX
 #undef TEST_YAML_LEX_STR
+#undef TEST_YAML_PARSE_FMT
 

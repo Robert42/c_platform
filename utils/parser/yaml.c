@@ -18,6 +18,7 @@ enum Yaml_Token_ID
   YAML_TOK_LINEBREAK = '\n',
 
   YAML_TOK_LIT_STR = '"',
+  YAML_TOK_LIT_INT = '0',
 
   YAML_COLON = ':',
 };
@@ -28,6 +29,7 @@ struct Yaml_Token
   union
   {
     str content_str;
+    yaml_int content_int;
   };
 };
 
@@ -167,6 +169,24 @@ struct Yaml_Token yaml_lex(Mem_Region* region, const char** code)
       break;
     }
     break;
+  case '0' ... '9':
+  {
+    yaml_int x = 0;
+    while(**code)
+      switch(**code)
+      {
+      case '0' ... '9':
+        x *= 10;
+        x += **code - '0';
+        *code += 1;
+        continue;
+      default:
+      {
+        const str span = {begin, *code};
+        return TOK(YAML_TOK_LIT_INT, .content_int=x);
+      }
+      }
+  }
   case '_':
   case 'a' ... 'z':
   case 'A' ... 'Z':
@@ -250,6 +270,24 @@ void _yaml_tokenize_skip_whitespace(struct Yaml_Tokenizer* tokenizer)
     _yaml_tokenize_next(tokenizer);
 }
 
+static struct Yaml_Node _yaml_parse_flow(struct Yaml_Tokenizer* tokenizer)
+{
+  switch(tokenizer->peek.id)
+  {
+  case YAML_TOK_LIT_INT:
+  {
+    struct Yaml_Token tok = _yaml_tokenize_next(tokenizer);
+
+    return (struct Yaml_Node){
+      .kind = YAML_INT,
+      .content.scalar_int = tok.content_int,
+    };
+  }
+  default:
+    TODO();
+  }
+}
+
 static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Tokenizer* tokenizer)
 {
   struct Yaml_Node dict = {
@@ -267,6 +305,9 @@ static struct Yaml_Node _yaml_parse_dict_block(struct Yaml_Tokenizer* tokenizer)
     case YAML_TOK_DOC_END:
     case YAML_TOK_DOC_BEGIN:
       return dict;
+    case YAML_TOK_LIT_INT:
+      if(dict.content.mapping_dict.len == 0) // TODO: build a proper dict
+      return _yaml_parse_flow(tokenizer);
     default:
       _yaml_tokenize_next(tokenizer);
       continue;
