@@ -53,7 +53,7 @@ void __assert_yaml_tok_id_eq__(enum Yaml_Token_ID x, enum Yaml_Token_ID y, const
 
 #define TOK(X) ((struct Yaml_Token){.id = (X)})
 
-struct Yaml_Token yaml_lex(struct Mem_Region* region, const char** code)
+struct Yaml_Token yaml_lex(Mem_Region* region, const char** code)
 {
   switch((*code)[0])
   {
