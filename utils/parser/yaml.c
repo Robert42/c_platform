@@ -185,7 +185,7 @@ static struct Yaml_Token _yaml_tokenize_next(struct Yaml_Tokenizer* tokenizer)
   return next;
 }
 
-static struct Yaml_Node _yaml_tokenize_skip_whitespace(struct Yaml_Tokenizer* tokenizer)
+void _yaml_tokenize_skip_whitespace(struct Yaml_Tokenizer* tokenizer)
 {
   while(_yaml_is_space(tokenizer->peek.id))
     _yaml_tokenize_next(tokenizer);
