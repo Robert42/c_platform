@@ -4,7 +4,7 @@
 #include <signal.h>
 
 volatile bool exit_requested = false;
-static void _handle_sigint_for_graceful_exit(int sig){exit_requested=true;}
+static void _handle_sigint_for_graceful_exit(int sig){(void)sig; exit_requested=true;}
 void register_graceful_exit_via_sigint()
 {
   struct sigaction action = {
