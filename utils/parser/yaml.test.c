@@ -5,7 +5,8 @@
 #define TEST_YAML_LEX(CODE, REST, TOK) \
   { \
     const char* code = (CODE REST); \
-    assert_yaml_tok_id_eq(yaml_lex(&STACK, &code).id, TOK); \
+    struct Yaml_Token tok = yaml_lex(&STACK, &code); \
+    assert_yaml_tok_id_eq(tok.id, TOK); \
     assert_cstr_eq(code, REST); \
   }
 
