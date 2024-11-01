@@ -134,7 +134,7 @@ char* ini_fmt(Mem_Region* region, const struct Ini_Format* format)
           fmt_write(&f, "%zu", *(usize*)data);
           break;
         case INI_FIELD_TYPE_CSTR: // char*
-          c_tok_fmt_str_lit(&f, *(const char**)data);
+          c_tok_fmt_cstr_lit(&f, *(const char**)data);
           break;
         case INI_FIELD_TYPE_CSTR_ARRAY: // char**, usize
         {
@@ -151,7 +151,7 @@ char* ini_fmt(Mem_Region* region, const struct Ini_Format* format)
             {
               if(i!=0)
                 fmt_write(&f, " ");
-              c_tok_fmt_str_lit(&f, xs[i]);
+              c_tok_fmt_cstr_lit(&f, xs[i]);
             }
           break;
         }
