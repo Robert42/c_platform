@@ -55,6 +55,39 @@ void __assert_yaml_tok_id_eq__(enum Yaml_Token_ID x, enum Yaml_Token_ID y, const
 }
 #define assert_yaml_tok_id_eq(x, y) __assert_yaml_tok_id_eq__(x, y, #x " == " #y, __FILE__, __LINE__)
 
+// ==== yaml_node_fmt ====
+
+static const char* _yaml_flow_fmt(Fmt* f, struct Yaml_Node node)
+{
+  switch(node.kind)
+  {
+  case YAML_DICT:
+    TODO();
+    break;
+  case YAML_LIST:
+    TODO();
+    break;
+  case YAML_BOOL:
+    TODO();
+    break;
+  case YAML_INT:
+    TODO();
+    break;
+  case YAML_STR:
+    c_tok_fmt_str_lit(f, node.content.scalar_str);
+    break;
+  }
+}
+
+const char* yaml_node_fmt(Mem_Region* region, struct Yaml_Node node)
+{
+  Fmt f = fmt_new_from_region(region, 4096);
+  _yaml_flow_fmt(&f, node);
+  return f.begin;
+}
+
+// ==== yaml_lex ====
+
 #define TOK(X, ...) ((struct Yaml_Token){.id = (X), __VA_ARGS__})
 
 struct Yaml_Token yaml_lex(Mem_Region* region, const char** code)

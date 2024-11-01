@@ -38,6 +38,16 @@ void yaml_test()
   TEST_YAML_LEX_STR("hello-world", " ", YAML_TOK_IDENT, "hello-world");
   TEST_YAML_LEX_STR("HELLO_WORLD", " ", YAML_TOK_IDENT, "HELLO_WORLD");
 
+  // ==== YAML fmt ====
+  {
+    struct Yaml_Node xs = {
+      .kind = YAML_STR,
+      .content.scalar_str = STR_LIT("newline=`\n` backslash=`\\`"),
+    };
+
+    assert_cstr_eq(yaml_node_fmt(&STACK, xs), "\"newline=`\\n` backslash=`\\\\`\"");
+  }
+
   // ==== YAML dictionaties ====
 
   // empty
