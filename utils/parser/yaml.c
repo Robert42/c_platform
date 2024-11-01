@@ -65,7 +65,14 @@ static const char* _yaml_flow_fmt(Fmt* f, struct Yaml_Node node)
     TODO();
     break;
   case YAML_LIST:
-    TODO();
+    fmt_write(f, "[");
+    for(usize i=0; i<node.content.seq_list.len; ++i)
+    {
+      if(i != 0)
+        fmt_write(f, ", ");
+      _yaml_flow_fmt(f, node.content.seq_list.xs[i]);
+    }
+    fmt_write(f, "]");
     break;
   case YAML_BOOL:
     TODO();

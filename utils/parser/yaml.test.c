@@ -48,12 +48,25 @@ void yaml_test()
     assert_cstr_eq(yaml_node_fmt(&STACK, xs), "\"newline=`\\n` backslash=`\\\\`\"");
   }
   {
-    struct Yaml_Node xs = {
-      .kind = YAML_INT,
-      .content.scalar_int = 42,
+    struct Yaml_Node xs[] = {
+      {
+        .kind = YAML_INT,
+        .content.scalar_int = 42,
+      },
+      {
+        .kind = YAML_INT,
+        .content.scalar_int = 137,
+      },
+    };
+    struct Yaml_Node x = {
+      .kind = YAML_LIST,
+      .content.seq_list = {
+        .xs = xs,
+        .len = ARRAY_LEN(xs),
+      },
     };
 
-    assert_cstr_eq(yaml_node_fmt(&STACK, xs), "42");
+    assert_cstr_eq(yaml_node_fmt(&STACK, x), "[42, 137]");
   }
 
   // ==== YAML dictionaties ====
