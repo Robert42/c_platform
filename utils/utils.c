@@ -2,4 +2,5 @@
 
 #include "parser/c_tok.c"
 #include "parser/ini.c"
+#include "parser/yaml.c"
 

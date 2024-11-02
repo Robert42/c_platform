@@ -20,7 +20,7 @@ inline static char* test_c_tok_parse_str_lit(const char* code, const char* expec
 static const char* c_tok_fmt_list_str_test(const char* content)
 {
   Fmt f = fmt_new_from_region(&SCRATCH, 1024);
-  c_tok_fmt_str_lit(&f, content);
+  c_tok_fmt_cstr_lit(&f, content);
   return f.begin;
 }
 
@@ -38,4 +38,13 @@ void c_tok_test()
   assert_cstr_eq(c_tok_fmt_list_str_test("xyz \n  "), "\"xyz \\n  \"");
   assert_cstr_eq(c_tok_fmt_list_str_test("\""), "\"\\\"\"");
   assert_cstr_eq(c_tok_fmt_list_str_test("\\"), "\"\\\\\"");
+
+  {
+    Fmt f = fmt_new_from_region(&SCRATCH, 16);
+
+    str xs = str_from_cstr("xyz");
+    xs.end--;
+    c_tok_fmt_str_lit(&f, xs);
+    assert_cstr_eq(f.begin, "\"xy\"");
+  }
 }

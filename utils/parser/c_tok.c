@@ -1,5 +1,7 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 
+#include "c_tok.h"
+
 char* c_tok_parse_str_lit(Mem_Region* region, const char** code)
 {
   debug_assert_ptr_ne(code, NULL);
@@ -48,12 +50,17 @@ char* c_tok_parse_str_lit(Mem_Region* region, const char** code)
   }
 }
 
-void c_tok_fmt_str_lit(Fmt* f, const char* content)
+void c_tok_fmt_cstr_lit(Fmt* f, const char* content)
+{
+  c_tok_fmt_str_lit(f, str_from_cstr(content));
+}
+
+void c_tok_fmt_str_lit(Fmt* f, str content)
 {
   fmt_write(f, "\"");
-  while(*content != 0)
+  while(content.begin < content.end)
   {
-    const char x = *(content++);
+    const char x = *(content.begin++);
     switch(x)
     {
     case 0: UNREACHABLE();
