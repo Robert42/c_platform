@@ -5,7 +5,7 @@
 #include "../script/simple_file_watcher.c" // depends on setintcddo.c, x_macros.h
 
 // ```
-// gcc -O2 utils/standalone/build_system.c -o utils/standalone/__build__
+// gcc -O2 utils/standalone/build_system.c -o utils/standalone/bs
 // ```
 
 #define PRINT_ITER_STATS 1

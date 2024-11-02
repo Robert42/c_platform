@@ -4,7 +4,7 @@ a.out
 /verify
 /tdd
 /unit_test
-/utils/standalone/__build__
+/utils/standalone/bs
 /utils/standalone/time
 
 # ==== C ====
