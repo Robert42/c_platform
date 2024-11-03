@@ -102,4 +102,15 @@ void str_test()
     assert_bool_eq(str_ends_with(STR_LIT("yx"), STR_LIT("x")), true);
     assert_bool_eq(str_ends_with(STR_LIT("x"), STR_LIT("xx")), false);
   }
+
+  // str_starts_with
+  {
+    assert_bool_eq(str_starts_with(STR_LIT(""), STR_LIT("")), true);
+    assert_bool_eq(str_starts_with(STR_LIT("x"), STR_LIT("")), true);
+    assert_bool_eq(str_starts_with(STR_LIT("x"), STR_LIT("x")), true);
+    assert_bool_eq(str_starts_with(STR_LIT("x"), STR_LIT("y")), false);
+    assert_bool_eq(str_starts_with(STR_LIT("xy"), STR_LIT("x")), true);
+    assert_bool_eq(str_starts_with(STR_LIT("yx"), STR_LIT("x")), false);
+    assert_bool_eq(str_starts_with(STR_LIT("x"), STR_LIT("xx")), false);
+  }
 }

@@ -54,6 +54,15 @@ int str_cstr_cmp(str x, const char* y)
   return str_cmp(x, (str){y, y+strlen(y)});
 }
 
+bool str_starts_with(str haystack, str needle)
+{
+  const usize needle_len = str_len(needle);
+  if(str_len(haystack) < needle_len)
+    return false;
+
+  return str_cmp((str){haystack.begin, haystack.begin+needle_len}, needle) == 0;
+}
+
 bool str_ends_with(str haystack, str needle)
 {
   const usize needle_len = str_len(needle);

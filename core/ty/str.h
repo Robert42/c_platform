@@ -49,6 +49,7 @@ str str_from_cstr(const char* s);
 int str_cmp(str x, str y);
 int str_cstr_cmp(str x, const char* y);
 
+bool str_starts_with(str haystack, str needle);
 bool str_ends_with(str haystack, str needle);
 
 str str_trim_right(str xs);
