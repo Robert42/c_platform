@@ -78,6 +78,9 @@ const char* const _C_GCC_SANITIZER[] = {
 const char* const _C_TCC_WARNING_OPTIONS[] = {
   "-Wall",
   "-Wunsupported",
+  /*TODO: decide
+  "-Wwrite-strings",
+  */
   "-Werror",
 };
 
