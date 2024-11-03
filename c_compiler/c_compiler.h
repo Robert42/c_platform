@@ -14,6 +14,9 @@ enum C_Version
   C_VERSION_1989,
   C_VERSION_1999,
   C_VERSION_2011,
+  C_VERSION_GNU_1989,
+  C_VERSION_GNU_1999,
+  C_VERSION_GNU_2011,
 };
 
 struct C_Compiler_Config

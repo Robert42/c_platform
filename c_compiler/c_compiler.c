@@ -31,9 +31,21 @@ static void _ccc_count_incr_end_cmd(void* user_data) {*(usize*)user_data += 1;}
 static void _ccc_fmt_push_arg(const str arg, void* user_data) {fmt_write((Fmt*)user_data, "`%s` ", str_fmt(arg));}
 static void _ccc_fmt_end_cmd(void* user_data) {Fmt* f = (Fmt*)user_data; if(f->begin < f->end && f->end[-1]==' ')f->end--; fmt_write(f, "\n");}
 
+const char* const _C_VERSION_NAME_GCC[] = {
+  [C_VERSION_1989] = "c89",
+  [C_VERSION_1999] = "c99",
+  [C_VERSION_2011] = "c11",
+  [C_VERSION_GNU_1989] = "gnu89",
+  [C_VERSION_GNU_1999] = "gnu99",
+  [C_VERSION_GNU_2011] = "gnu11",
+};
+
 static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const str arg, void* user_data), void (*end_cmd)(void* user_data))
 {
   debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
+  
+  char _buf_std[16];
+  str std;
 
   switch(cfg.cc)
   {
@@ -46,18 +58,13 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     TODO();
   }
 
-  switch(cfg.c_version)
   {
-  case C_VERSION_1989:
-    push_arg(str_from_cstr("-std=c89"), user_data);
-    break;
-  case C_VERSION_1999:
-    push_arg(str_from_cstr("-std=c99"), user_data);
-    break;
-  case C_VERSION_2011:
-    push_arg(str_from_cstr("-std=c11"), user_data);
-    break;
+    Fmt f = fmt_new(_buf_std, sizeof(_buf_std));
+    fmt_write(&f, "-std=%s", _C_VERSION_NAME_GCC[cfg.c_version]);
+    std = (str){f.begin, f.end};
   }
+
+  push_arg(std, user_data);
 
   push_arg(path_as_str(&cfg.c_file), user_data);
 
