@@ -24,7 +24,7 @@ void c_compiler_test()
       .c_file = path_from_cstr("x/y/z.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
-    "`gcc` `-std=c89` `-pedantic` `x/y/z.c` `-o` `hello_world`\n"
+    "`gcc` `-std=c89` `-pedantic` `-o` `hello_world` `x/y/z.c`\n"
   );
   ASSERT_CC_CMF_EQ(
     ((struct C_Compiler_Config){
@@ -34,7 +34,7 @@ void c_compiler_test()
       .c_file = path_from_cstr("main.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
-    "`tcc` `main.c` `-o` `hello_world`\n"
+    "`tcc` `-o` `hello_world` `main.c`\n"
   );
   ASSERT_CC_CMF_EQ(
     ((struct C_Compiler_Config){
@@ -44,7 +44,7 @@ void c_compiler_test()
       .c_file = path_from_cstr("main.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
-    "`clang` `-std=gnu99` `main.c` `-o` `hello_world`\n"
+    "`clang` `-std=gnu99` `-o` `hello_world` `main.c`\n"
   );
 
   // ==== warnings & errors ====
