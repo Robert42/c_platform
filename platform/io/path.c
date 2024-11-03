@@ -118,6 +118,11 @@ Path path_realpath(Path p)
 }
 #endif
 
+str path_as_str(const Path* p)
+{
+  return (str){p->cstr, p->cstr + p->len};
+}
+
 bool path_is_c_file(const char* path)
 {
   const usize len = strlen(path);

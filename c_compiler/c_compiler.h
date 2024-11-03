@@ -9,6 +9,28 @@ enum C_Compiler
 };
 #define CC_COUNT 3
 
+enum C_Version
+{
+  C_VERSION_1989,
+  C_VERSION_1999,
+  C_VERSION_2011,
+};
+
+struct C_Compiler_Config
+{
+  enum C_Compiler cc : 8; // `gcc`, `clang`, `tcc`, ...
+  enum C_Version c_version : 4; // `-std=c89`, `-std=c99`, `-std=c11`
+
+  Path c_file; // `cc c_file`
+  Path output_file; // `-o file_out`
+
+  // - If null: `-o file_out`
+  // - If not null: List of NULL terminated arguments. `-o file_out && file_out run_args[arg0] run_args[arg1] run_args[arg2]`
+  const char** run_args;
+};
+
+void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg);
+
 bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file);
 enum C_Compiler cc_compiler_for_name(const char* name); // will call errx, if the name is an unknown compiler
 const char* cc_compiler_name(enum C_Compiler cc);

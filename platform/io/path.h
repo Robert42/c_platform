@@ -21,6 +21,8 @@ Path path_join(Path a, Path b);
 Path path_join_cstr_append_cstr(Path dir, const char* name_1, const char* name_2);
 Path path_realpath(Path p);
 
+str path_as_str(const Path* p);
+
 bool path_is_c_file(const char* path);
 bool path_has_suffix_one_of(const char* path, const char** suffix, usize suffix_count);
 
