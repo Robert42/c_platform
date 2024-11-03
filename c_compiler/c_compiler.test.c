@@ -36,11 +36,11 @@ void c_compiler_test()
   ASSERT_CC_CMF_EQ(
     ((struct C_Compiler_Config){
       .cc = CC_CLANG,
-      .c_version = C_VERSION_1999,
+      .c_version = C_VERSION_GNU_1999,
       .c_file = path_from_cstr("main.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
-    "`clang` `-std=c99` `main.c` `-o` `hello_world`\n"
+    "`clang` `-std=gnu99` `main.c` `-o` `hello_world`\n"
   );
 }
 
