@@ -39,6 +39,11 @@ const char* const _C_VERSION_NAME_GCC[] = {
   [C_VERSION_GNU_1999] = "gnu99",
   [C_VERSION_GNU_2011] = "gnu11",
 };
+const u32 _C_VERSION_WITH_EXTENSIONS = 0
+  | (1 << C_VERSION_GNU_1989)
+  | (1 << C_VERSION_GNU_1999)
+  | (1 << C_VERSION_GNU_2011)
+;
 
 const char* const _C_COMPILER_CMD[] = {
   [CC_TCC] = "tcc",
@@ -49,7 +54,8 @@ const char* const _C_COMPILER_CMD[] = {
 static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const str arg, void* user_data), void (*end_cmd)(void* user_data))
 {
   debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
-  
+
+  const bool has_extensions = (1 << cfg.c_version) & _C_VERSION_WITH_EXTENSIONS;
 
   push_arg(str_from_cstr(_C_COMPILER_CMD[cfg.cc]), user_data);
 
@@ -64,6 +70,9 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
       Fmt f = fmt_new(_buf_std, sizeof(_buf_std));
       fmt_write(&f, "-std=%s", _C_VERSION_NAME_GCC[cfg.c_version]);
       push_arg((str){f.begin, f.end}, user_data);
+
+      if(!has_extensions)
+        push_arg(str_from_cstr("-pedantic"), user_data);
     }
     break;
   }

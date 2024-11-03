@@ -15,6 +15,7 @@ void c_compiler_test()
 {
   cc_init();
 
+  // ==== different compilers & standards ====
   ASSERT_CC_CMF_EQ(
     ((struct C_Compiler_Config){
       .cc = CC_GCC,
@@ -22,7 +23,7 @@ void c_compiler_test()
       .c_file = path_from_cstr("x/y/z.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
-    "`gcc` `-std=c89` `x/y/z.c` `-o` `hello_world`\n"
+    "`gcc` `-std=c89` `-pedantic` `x/y/z.c` `-o` `hello_world`\n"
   );
   ASSERT_CC_CMF_EQ(
     ((struct C_Compiler_Config){
