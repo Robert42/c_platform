@@ -48,38 +48,5 @@ enum C_Compiler cc_fastest_available();
 enum C_Compiler cc_best_optimizer_available();
 bool cc_compiler_is_available(enum C_Compiler cc);
 
-// TODO: remove
-#define GCC_WARNING_OPTIONS \
-  "-Wall", \
-  "-Wextra", \
-  "-Werror", \
-  "-Wno-error=unused-parameter", \
-  "-Wno-error=unused-variable", \
-  "-Wno-error=unused-function", \
-  "-Wno-error=unused-but-set-variable", \
-  "-Wno-error=sign-compare", \
-  "-Wno-error=uninitialized", \
-  "-Wno-error=pedantic", \
-  "-Werror=vla", \
-
-// TODO: remove
-#define GCC_SANITIZER_OPTIONS \
-  "-fsanitize=address", \
-  "-fsanitize=pointer-compare", \
-  "-fsanitize=pointer-subtract", \
-  "-fsanitize=undefined", \
-  "-fsanitize-address-use-after-scope", \
-  "-fstack-protector-all", \
-
-#if 1
-// gcc extensions I like
-// - case ranges (`case 'a' ... 'z':`)
-// - binary integer literals (`0b000:`)
-// - binary integer literal separators (`0b1000'0000:`)
-#define C_STANDARD "-std=gnu99"
-#else
-#define C_STANDARD "-std=c99", "-pedantic"
-#endif
-
 void cc_init();
 
