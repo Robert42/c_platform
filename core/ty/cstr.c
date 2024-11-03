@@ -28,7 +28,7 @@ void cstr_trim_right(char* xs)
 
 char* cstr_to_lower(Mem_Region* region, const char* s)
 {
-  char* xs = (char*)mem_region_alloc_bytes_unaligned(region, strlen(s)+1);
+  char* xs = cstr_copy(region, s);
   for(char* x=xs; ; ++s, ++x)
   {
     *x = ascii_to_lower(*s);
@@ -36,6 +36,11 @@ char* cstr_to_lower(Mem_Region* region, const char* s)
       break;
   }
   return xs;
+}
+
+char* cstr_copy(Mem_Region* region, const char* s)
+{
+  return (char*)mem_region_alloc_bytes_unaligned(region, strlen(s)+1);
 }
 
 void convert_cstr_to_lower(char* s)
