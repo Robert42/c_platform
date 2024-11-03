@@ -140,7 +140,7 @@ void c_compiler_test()
       .c_file = path_from_cstr("main.c"),
       .run_args = args,
       .run_args_count = 0,
-      .output_file = path_from_cstr("bin/exe"),
+      .output_file = path_from_cstr("bin/exe"), // no outut file when running with tcc
     }),
     "`tcc` `-g` `-run` `main.c`\n"
   );
