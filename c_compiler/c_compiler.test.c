@@ -24,6 +24,24 @@ void c_compiler_test()
     }),
     "`gcc` `-std=c89` `x/y/z.c` `-o` `hello_world`\n"
   );
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_TCC,
+      .c_version = C_VERSION_1989,
+      .c_file = path_from_cstr("main.c"),
+      .output_file = path_from_cstr("hello_world"),
+    }),
+    "`tcc` `main.c` `-o` `hello_world`\n"
+  );
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_CLANG,
+      .c_version = C_VERSION_1999,
+      .c_file = path_from_cstr("main.c"),
+      .output_file = path_from_cstr("hello_world"),
+    }),
+    "`clang` `-std=c99` `main.c` `-o` `hello_world`\n"
+  );
 }
 
 #undef ASSERT_CC_CMF_EQ

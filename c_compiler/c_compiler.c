@@ -40,31 +40,33 @@ const char* const _C_VERSION_NAME_GCC[] = {
   [C_VERSION_GNU_2011] = "gnu11",
 };
 
+const char* const _C_COMPILER_CMD[] = {
+  [CC_TCC] = "tcc",
+  [CC_GCC] = "gcc",
+  [CC_CLANG] = "clang",
+};
+
 static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const str arg, void* user_data), void (*end_cmd)(void* user_data))
 {
   debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
   
-  char _buf_std[16];
-  str std;
+
+  push_arg(str_from_cstr(_C_COMPILER_CMD[cfg.cc]), user_data);
 
   switch(cfg.cc)
   {
   case CC_TCC:
-    TODO();
-  case CC_GCC:
-    push_arg(str_from_cstr("gcc"), user_data);
     break;
+  case CC_GCC:
   case CC_CLANG:
-    TODO();
+    {
+      char _buf_std[16];
+      Fmt f = fmt_new(_buf_std, sizeof(_buf_std));
+      fmt_write(&f, "-std=%s", _C_VERSION_NAME_GCC[cfg.c_version]);
+      push_arg((str){f.begin, f.end}, user_data);
+    }
+    break;
   }
-
-  {
-    Fmt f = fmt_new(_buf_std, sizeof(_buf_std));
-    fmt_write(&f, "-std=%s", _C_VERSION_NAME_GCC[cfg.c_version]);
-    std = (str){f.begin, f.end};
-  }
-
-  push_arg(std, user_data);
 
   push_arg(path_as_str(&cfg.c_file), user_data);
 
