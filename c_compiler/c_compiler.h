@@ -27,6 +27,7 @@ struct C_Compiler_Config
   bool disable_vla : 1; // `-Werror=vla`
   bool skip_warning_flags : 1; // used by tests to reduce duplicate testcases
   bool sanitize_memory : 1;
+  bool gen_parent_dir : 1;
 
   Path c_file; // `cc c_file`
   Path output_file; // `-o file_out`

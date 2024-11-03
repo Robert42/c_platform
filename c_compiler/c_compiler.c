@@ -211,6 +211,9 @@ bool cc_run(struct C_Compiler_Config cfg)
     .region_prev = STACK,
   };
 
+  if(cfg.gen_parent_dir && cfg.output_file.len > 0)
+    mkpath(path_parent(cfg.output_file));
+
   return _ccc(cfg, &runner, _ccc_run_push_arg, _ccc_run_end_cmd);
 }
 
