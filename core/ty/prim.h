@@ -42,3 +42,5 @@ typedef  int64_t s64;
 typedef size_t usize;
 typedef ssize_t ssize;
 
+#define USIZE_MAX SIZE_MAX
+
