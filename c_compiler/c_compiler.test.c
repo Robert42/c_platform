@@ -20,7 +20,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_GCC,
       .c_version = C_VERSION_1989,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_file = path_from_cstr("x/y/z.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
@@ -30,7 +30,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_TCC,
       .c_version = C_VERSION_1989,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_file = path_from_cstr("main.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
@@ -40,7 +40,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_CLANG,
       .c_version = C_VERSION_GNU_1999,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_file = path_from_cstr("main.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
@@ -52,7 +52,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_GCC,
       .disable_vla = true,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
     }),
@@ -98,7 +98,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_TCC,
       .debug = true,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
     }),
@@ -111,7 +111,7 @@ void c_compiler_test()
       .cc = CC_GCC,
       .debug = true,
       .sanitize_memory = true,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
     }),
@@ -122,7 +122,7 @@ void c_compiler_test()
       .cc = CC_TCC,
       .debug = true,
       .sanitize_memory = true,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
     }),
@@ -135,7 +135,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_TCC,
       .debug = true,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
       .run_args = args,
@@ -148,7 +148,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_GCC,
       .debug = true,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_version = C_VERSION_GNU_2011,
       .c_file = path_from_cstr("main.c"),
       .run_args = args,
@@ -162,7 +162,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_TCC,
       .debug = true,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
       .run_args = args,
@@ -175,7 +175,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_GCC,
       .debug = true,
-      .skip_waning_flags = true,
+      .skip_warning_flags = true,
       .c_version = C_VERSION_GNU_2011,
       .c_file = path_from_cstr("main.c"),
       .run_args = args,

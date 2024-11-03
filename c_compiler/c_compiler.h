@@ -25,7 +25,7 @@ struct C_Compiler_Config
   enum C_Version c_version : 4; // `-std=c89`, `-std=c99`, `-std=c11`
   bool debug : 1; // `-g`
   bool disable_vla : 1; // `-Werror=vla`
-  bool skip_waning_flags : 1; // used by tests to reduce duplicate testcases
+  bool skip_warning_flags : 1; // used by tests to reduce duplicate testcases
   bool sanitize_memory : 1;
 
   Path c_file; // `cc c_file`

@@ -118,7 +118,7 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
   switch(cfg.cc)
   {
   case CC_TCC:
-    if(!cfg.skip_waning_flags)
+    if(!cfg.skip_warning_flags)
       for(usize i=0; i<ARRAY_LEN(_C_TCC_WARNING_OPTIONS); ++i)
         push_arg(str_from_cstr(_C_TCC_WARNING_OPTIONS[i]), user_data);
     break;
@@ -133,7 +133,7 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
       if(!has_extensions)
         push_arg(str_from_cstr("-pedantic"), user_data);
 
-      if(!cfg.skip_waning_flags)
+      if(!cfg.skip_warning_flags)
         for(usize i=0; i<ARRAY_LEN(_C_GCC_WARNING_OPTIONS); ++i)
           push_arg(str_from_cstr(_C_GCC_WARNING_OPTIONS[i]), user_data);
 
@@ -227,7 +227,7 @@ bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
     .c_version = C_VERSION_GNU_1999,
     .debug = true,
     .disable_vla = true,
-    .skip_waning_flags = false,
+    .skip_warning_flags = false,
     .sanitize_memory = !DISABLE_SANITIZER,
     .c_file = c_file,
     .output_file = output_file,
