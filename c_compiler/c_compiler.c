@@ -157,7 +157,19 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
 
   push_arg(path_as_str(&cfg.c_file), user_data);
 
-  // TODO: cfg.run_args
+  if(cfg.run_args != NULL)
+  {
+    switch(cfg.cc)
+    {
+    case CC_TCC:
+      break;
+    case CC_GCC:
+    case CC_CLANG:
+      end_cmd(user_data);
+      push_arg(path_as_str(&cfg.output_file), user_data);
+      break;
+    }
+  }
 
   end_cmd(user_data);
 }

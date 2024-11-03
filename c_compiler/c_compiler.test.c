@@ -143,6 +143,20 @@ void c_compiler_test()
     }),
     "`tcc` `-g` `-run` `main.c`\n"
   );
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_GCC,
+      .debug = true,
+      .skip_waning_flags = true,
+      .c_version = C_VERSION_GNU_2011,
+      .c_file = path_from_cstr("main.c"),
+      .run_args = args,
+      .run_args_count = 0,
+      .output_file = path_from_cstr("bin/exe"),
+    }),
+    "`gcc` `-g` `-std=gnu11` `-o` `bin/exe` `main.c`\n"
+    "`bin/exe`\n"
+  );
 }
 
 #undef ASSERT_CC_CMF_EQ
