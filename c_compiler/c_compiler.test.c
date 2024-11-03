@@ -43,6 +43,17 @@ void c_compiler_test()
     }),
     "`clang` `-std=gnu99` `main.c` `-o` `hello_world`\n"
   );
+
+  // ==== warnings & errors ====
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_GCC,
+      .disable_vla = true,
+      .c_version = C_VERSION_1999,
+      .c_file = path_from_cstr("main.c"),
+    }),
+    "`gcc` `-std=c99` `-pedantic` `-Werror=vla` `main.c`\n"
+  );
 }
 
 #undef ASSERT_CC_CMF_EQ

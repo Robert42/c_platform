@@ -23,6 +23,7 @@ struct C_Compiler_Config
 {
   enum C_Compiler cc : 8; // `gcc`, `clang`, `tcc`, ...
   enum C_Version c_version : 4; // `-std=c89`, `-std=c99`, `-std=c11`
+  bool disable_vla : 1;
 
   Path c_file; // `cc c_file`
   Path output_file; // `-o file_out`
