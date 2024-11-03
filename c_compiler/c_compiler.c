@@ -51,6 +51,27 @@ const char* const _C_COMPILER_CMD[] = {
   [CC_CLANG] = "clang",
 };
 
+const char* const _C_GCC_WARNING_OPTIONS[] = {
+  "-Wall",
+  "-Wextra",
+  "-Werror",
+
+  // warnings, but not errors
+  "-Wno-error=unused-parameter",
+  "-Wno-error=unused-variable",
+  "-Wno-error=unused-function",
+  "-Wno-error=unused-but-set-variable",
+  "-Wno-error=sign-compare",
+  "-Wno-error=uninitialized",
+  "-Wno-error=pedantic",
+};
+
+const char* const _C_TCC_WARNING_OPTIONS[] = {
+  "-Wall",
+  "-Wunsupported",
+  "-Werror",
+};
+
 static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const str arg, void* user_data), void (*end_cmd)(void* user_data))
 {
   debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
@@ -62,6 +83,9 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
   switch(cfg.cc)
   {
   case CC_TCC:
+    if(!cfg.skip_waning_flags)
+      for(usize i=0; i<ARRAY_LEN(_C_TCC_WARNING_OPTIONS); ++i)
+        push_arg(str_from_cstr(_C_TCC_WARNING_OPTIONS[i]), user_data);
     break;
   case CC_GCC:
   case CC_CLANG:
@@ -73,12 +97,16 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
 
       if(!has_extensions)
         push_arg(str_from_cstr("-pedantic"), user_data);
+
+      if(!cfg.skip_waning_flags)
+        for(usize i=0; i<ARRAY_LEN(_C_GCC_WARNING_OPTIONS); ++i)
+          push_arg(str_from_cstr(_C_GCC_WARNING_OPTIONS[i]), user_data);
+
+      if(cfg.disable_vla)
+        push_arg(str_from_cstr("-Werror=vla"), user_data);
     }
     break;
   }
-
-  if(cfg.disable_vla)
-    push_arg(str_from_cstr("-Werror=vla"), user_data);
 
   push_arg(path_as_str(&cfg.c_file), user_data);
 

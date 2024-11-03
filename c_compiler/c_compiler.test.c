@@ -20,6 +20,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_GCC,
       .c_version = C_VERSION_1989,
+      .skip_waning_flags = true,
       .c_file = path_from_cstr("x/y/z.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
@@ -29,6 +30,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_TCC,
       .c_version = C_VERSION_1989,
+      .skip_waning_flags = true,
       .c_file = path_from_cstr("main.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
@@ -38,6 +40,7 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_CLANG,
       .c_version = C_VERSION_GNU_1999,
+      .skip_waning_flags = true,
       .c_file = path_from_cstr("main.c"),
       .output_file = path_from_cstr("hello_world"),
     }),
@@ -49,10 +52,45 @@ void c_compiler_test()
     ((struct C_Compiler_Config){
       .cc = CC_GCC,
       .disable_vla = true,
+      .skip_waning_flags = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
     }),
     "`gcc` `-std=c99` `-pedantic` `-Werror=vla` `main.c`\n"
+  );
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_GCC,
+      .disable_vla = true,
+      .c_version = C_VERSION_1999,
+      .c_file = path_from_cstr("main.c"),
+    }),
+    "`gcc` `-std=c99` `-pedantic` "
+    "`-Wall` "
+    "`-Wextra` "
+    "`-Werror` "
+    "`-Wno-error=unused-parameter` "
+    "`-Wno-error=unused-variable` "
+    "`-Wno-error=unused-function` "
+    "`-Wno-error=unused-but-set-variable` "
+    "`-Wno-error=sign-compare` "
+    "`-Wno-error=uninitialized` "
+    "`-Wno-error=pedantic` "
+    "`-Werror=vla` "
+    "`main.c`\n"
+  );
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_TCC,
+      .disable_vla = true,
+      .c_version = C_VERSION_1999,
+      .c_file = path_from_cstr("main.c"),
+    }),
+    "`tcc` "
+    "`-Wall` "
+    "`-Wunsupported` "
+    "`-Werror` "
+    "`main.c`\n"
   );
 }
 
