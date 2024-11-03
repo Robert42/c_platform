@@ -92,6 +92,18 @@ void c_compiler_test()
     "`-Werror` "
     "`main.c`\n"
   );
+
+  // ==== debug ====
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_TCC,
+      .debug = true,
+      .skip_waning_flags = true,
+      .c_version = C_VERSION_1999,
+      .c_file = path_from_cstr("main.c"),
+    }),
+    "`tcc` `-g` `main.c`\n"
+  );
 }
 
 #undef ASSERT_CC_CMF_EQ

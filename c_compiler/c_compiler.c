@@ -80,6 +80,18 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
 
   push_arg(str_from_cstr(_C_COMPILER_CMD[cfg.cc]), user_data);
 
+  if(cfg.debug)
+  {
+    switch(cfg.cc)
+    {
+    case CC_TCC:
+    case CC_GCC:
+    case CC_CLANG:
+      push_arg(str_from_cstr("-g"), user_data);
+      break;
+    }
+  }
+
   switch(cfg.cc)
   {
   case CC_TCC:
