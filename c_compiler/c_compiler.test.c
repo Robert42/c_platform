@@ -128,6 +128,21 @@ void c_compiler_test()
     }),
     "`tcc` `-g` `main.c`\n"
   );
+
+  // ==== run ====
+  const char* args[] = {"xyz", "uvw", "abc"};
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_TCC,
+      .debug = true,
+      .skip_waning_flags = true,
+      .c_version = C_VERSION_1999,
+      .c_file = path_from_cstr("main.c"),
+      .run_args = args,
+      .run_args_count = 0,
+    }),
+    "`tcc` `-g` `-run` `main.c`\n"
+  );
 }
 
 #undef ASSERT_CC_CMF_EQ

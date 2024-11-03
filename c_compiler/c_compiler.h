@@ -34,6 +34,7 @@ struct C_Compiler_Config
   // - If null: `-o file_out`
   // - If not null: List of NULL terminated arguments. `-o file_out && file_out run_args[arg0] run_args[arg1] run_args[arg2]`
   const char** run_args;
+  usize run_args_count;
 };
 
 void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg);
