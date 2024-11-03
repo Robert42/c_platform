@@ -88,7 +88,7 @@ void c_compiler_test()
     }),
     "`tcc` "
     "`-Wall` "
-    "`-Wunsupported` "
+    // "`-Wunsupported` "
     "`-Werror` "
     "`main.c`\n"
   );

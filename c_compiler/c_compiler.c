@@ -75,7 +75,7 @@ const char* const _C_GCC_SANITIZER[] = {
 
 const char* const _C_TCC_WARNING_OPTIONS[] = {
   "-Wall",
-  "-Wunsupported",
+  // "-Wunsupported",
   /*TODO: decide
   "-Wwrite-strings",
   */
@@ -84,8 +84,6 @@ const char* const _C_TCC_WARNING_OPTIONS[] = {
 
 static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const str arg, void* user_data), bool (*end_cmd)(void* user_data))
 {
-  debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
-
   const bool has_extensions = (1 << cfg.c_version) & _C_VERSION_WITH_EXTENSIONS;
   const bool run = cfg.run_args != NULL;
 
@@ -163,7 +161,8 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
       break;
     case CC_GCC:
     case CC_CLANG:
-      end_cmd(user_data);
+      if(!end_cmd(user_data))
+        return user_data;
       push_arg(path_as_str(&cfg.output_file), user_data);
       break;
     }
@@ -178,7 +177,7 @@ struct _Runner
 {
   Mem_Region* region;
   Mem_Region region_prev;
-  const char* args[128];
+  char* args[128];
   usize arg_count;
 };
 
@@ -192,21 +191,26 @@ static bool _ccc_runner_end_cmd(struct _Runner* runner)
   assert_usize_lt(runner->arg_count, sizeof(runner->args));
   runner->args[runner->arg_count] = NULL;
 
-  TODO();
+  const bool success = proc_exec_blocking(runner->args, (struct Proc_Exec_Blocking_Settings){0}).success;
 
   *runner->region = runner->region_prev;
   runner->arg_count = 0;
+
+  return success;
 }
 
 static void _ccc_run_push_arg(const str arg, void* user_data) {_ccc_runner_push_arg(arg, (struct _Runner*)user_data);}
-static bool _ccc_run_end_cmd(void* user_data) {return _ccc_run_end_cmd((struct _Runner*)user_data);}
+static bool _ccc_run_end_cmd(void* user_data) {return _ccc_runner_end_cmd((struct _Runner*)user_data);}
 
-bool cc(struct C_Compiler_Config cfg)
+bool cc_run(struct C_Compiler_Config cfg)
 {
+  debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
+
   struct _Runner runner = {
     .region = &STACK,
     .region_prev = STACK,
   };
+
   return _ccc(cfg, &runner, _ccc_run_push_arg, _ccc_run_end_cmd);
 }
 
@@ -217,53 +221,30 @@ void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg)
 
 bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
 {
-  debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
+  const char* no_args;
+  struct C_Compiler_Config cfg = {
+    .cc = cc,
+    .c_version = C_VERSION_GNU_1999,
+    .debug = true,
+    .disable_vla = true,
+    .skip_waning_flags = false,
+    .sanitize_memory = !DISABLE_SANITIZER,
+    .c_file = c_file,
+    .output_file = output_file,
+    .run_args = &no_args,
+    .run_args_count = 0,
+  };
 
-  switch(cc)
+#if 0
   {
-  // If choosing libtcc, then simply fork and compile via the libtcc.
-  case CC_TCC:
-  {
-    char* const args_compile[] = {"tcc", "-Wall", "-Werror", "-run", c_file.cstr, NULL};
-    return proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success;
+    char buf[4096] = {};
+    Fmt f = fmt_new(buf, sizeof(buf));
+    cc_command_fmt(&f, cfg);
+    printf("==== cc_compile_and_run ====\n%s\n====\n", f.begin);
   }
-  case CC_GCC:
-  {
-    char* const args_compile[] = {"gcc",
-      C_STANDARD,
-      GCC_WARNING_OPTIONS
-      "-g",
-#if !DISABLE_SANITIZER
-      GCC_SANITIZER_OPTIONS
 #endif
-      c_file.cstr,
-      "-o", output_file.cstr,
-      NULL};
-    char* const args_test[] = {output_file.cstr, NULL};
-    if(!proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success)
-      return false;
-    return proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0}).success;
-  }
-  case CC_CLANG:
-  {
-    char* const args_compile[] = {"clang",
-      C_STANDARD,
-      GCC_WARNING_OPTIONS
-      "-g",
-#if !DISABLE_SANITIZER
-      GCC_SANITIZER_OPTIONS
-#endif
-      c_file.cstr,
-      "-o", output_file.cstr,
-      NULL};
-    char* const args_test[] = {output_file.cstr, NULL};
-    if(!proc_exec_blocking(args_compile, (struct Proc_Exec_Blocking_Settings){0}).success)
-      return false;
-    return proc_exec_blocking(args_test, (struct Proc_Exec_Blocking_Settings){0}).success;
-  }
-  }
 
-  UNREACHABLE();
+  return cc_run(cfg);
 }
 
 static const char* _CC_NAMES[CC_COUNT] = {
