@@ -53,8 +53,8 @@ bool str_ends_with(str haystack, str needle);
 
 str str_trim_right(str xs);
 
-const char* str_fmt_to_region(Mem_Region* region, str x);
-const char* str_fmt(str x);
+char* str_fmt_to_region(Mem_Region* region, str x);
+char* str_fmt(str x);
 
 /*@
   assigns *region \from fmt;
