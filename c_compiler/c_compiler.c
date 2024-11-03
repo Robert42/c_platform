@@ -89,6 +89,7 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
   debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
 
   const bool has_extensions = (1 << cfg.c_version) & _C_VERSION_WITH_EXTENSIONS;
+  const bool run = cfg.run_args != NULL;
 
   push_arg(str_from_cstr(_C_COMPILER_CMD[cfg.cc]), user_data);
 
@@ -152,12 +153,12 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     push_arg(path_as_str(&cfg.output_file), user_data);
   }
 
-  if(cfg.cc==CC_TCC && cfg.run_args != NULL)
+  if(cfg.cc==CC_TCC && run)
     push_arg(STR_LIT("-run"), user_data);
 
   push_arg(path_as_str(&cfg.c_file), user_data);
 
-  if(cfg.run_args != NULL)
+  if(run)
   {
     switch(cfg.cc)
     {
