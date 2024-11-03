@@ -27,7 +27,7 @@ void cc_init()
 }
 
 static void _ccc_fmt_push_arg(const str arg, void* user_data) {fmt_write((Fmt*)user_data, "`%s` ", str_fmt(arg));}
-static void _ccc_fmt_end_cmd(void* user_data) {Fmt* f = (Fmt*)user_data; if(f->begin < f->end && f->end[-1]==' ')f->end--; fmt_write(f, "\n");}
+static bool _ccc_fmt_end_cmd(void* user_data) {Fmt* f = (Fmt*)user_data; if(f->begin < f->end && f->end[-1]==' ')f->end--; fmt_write(f, "\n"); return true;}
 
 const char* const _C_VERSION_NAME_GCC[] = {
   [C_VERSION_1989] = "c89",
@@ -82,7 +82,7 @@ const char* const _C_TCC_WARNING_OPTIONS[] = {
   "-Werror",
 };
 
-static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const str arg, void* user_data), void (*end_cmd)(void* user_data))
+static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const str arg, void* user_data), bool (*end_cmd)(void* user_data))
 {
   debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
 
@@ -171,7 +171,7 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
       push_arg(str_from_cstr(cfg.run_args[i]), user_data);
   }
 
-  end_cmd(user_data);
+  return end_cmd(user_data);
 }
 
 struct _Runner
@@ -187,7 +187,7 @@ static void _ccc_runner_push_arg(const str arg, struct _Runner* runner)
   assert_usize_lt(runner->arg_count, sizeof(runner->args));
   runner->args[runner->arg_count++] = str_fmt_to_region(runner->region, arg);
 }
-static void _ccc_runner_end_cmd(struct _Runner* runner)
+static bool _ccc_runner_end_cmd(struct _Runner* runner)
 {
   assert_usize_lt(runner->arg_count, sizeof(runner->args));
   runner->args[runner->arg_count] = NULL;
@@ -199,7 +199,7 @@ static void _ccc_runner_end_cmd(struct _Runner* runner)
 }
 
 static void _ccc_run_push_arg(const str arg, void* user_data) {_ccc_runner_push_arg(arg, (struct _Runner*)user_data);}
-static void _ccc_run_end_cmd(void* user_data) {_ccc_run_end_cmd((struct _Runner*)user_data);}
+static bool _ccc_run_end_cmd(void* user_data) {return _ccc_run_end_cmd((struct _Runner*)user_data);}
 
 bool cc(struct C_Compiler_Config cfg)
 {
@@ -207,7 +207,7 @@ bool cc(struct C_Compiler_Config cfg)
     .region = &STACK,
     .region_prev = STACK,
   };
-  _ccc(cfg, &runner, _ccc_run_push_arg, _ccc_run_end_cmd);
+  return _ccc(cfg, &runner, _ccc_run_push_arg, _ccc_run_end_cmd);
 }
 
 void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg)
