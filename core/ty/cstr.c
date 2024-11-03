@@ -81,3 +81,18 @@ usize cstr_to_usize(const char** s)
 #else
 #error unimplemented
 #endif
+
+bool cstr_eq(const char* x, const char* y)
+{
+  return strcmp(x, y) == 0;
+}
+
+bool cstr_starts_with(const char* haystack, const char* needle)
+{
+  return str_starts_with(str_from_cstr(haystack), str_from_cstr(needle));
+}
+
+bool cstr_ends_with(const char* haystack, const char* needle)
+{
+  return str_ends_with(str_from_cstr(haystack), str_from_cstr(needle));
+}

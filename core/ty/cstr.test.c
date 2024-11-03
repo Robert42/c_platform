@@ -72,5 +72,31 @@ void cstr_test()
   assert_cstr_eq(cstr_trim_left("  \t \n x"), "x");
   assert_cstr_eq(cstr_trim_left("  \t \n "), "");
 
+  assert_bool_eq(cstr_eq("", ""), true);
+  assert_bool_eq(cstr_eq("x", ""), false);
+  assert_bool_eq(cstr_eq("", "x"), false);
+
+  // str_ends_with
+  {
+    assert_bool_eq(cstr_ends_with("", ""), true);
+    assert_bool_eq(cstr_ends_with("x", ""), true);
+    assert_bool_eq(cstr_ends_with("x", "x"), true);
+    assert_bool_eq(cstr_ends_with("x", "y"), false);
+    assert_bool_eq(cstr_ends_with("xy", "x"), false);
+    assert_bool_eq(cstr_ends_with("yx", "x"), true);
+    assert_bool_eq(cstr_ends_with("x", "xx"), false);
+  }
+
+  // str_starts_with
+  {
+    assert_bool_eq(cstr_starts_with("", ""), true);
+    assert_bool_eq(cstr_starts_with("x", ""), true);
+    assert_bool_eq(cstr_starts_with("x", "x"), true);
+    assert_bool_eq(cstr_starts_with("x", "y"), false);
+    assert_bool_eq(cstr_starts_with("xy", "x"), true);
+    assert_bool_eq(cstr_starts_with("yx", "x"), false);
+    assert_bool_eq(cstr_starts_with("x", "xx"), false);
+  }
+
   STACK = _prev;
 }

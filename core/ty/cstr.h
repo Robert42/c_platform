@@ -31,3 +31,8 @@ char* cstr_copy(Mem_Region* region, const char* s);
 
 usize cstr_to_usize(const char** s);
 
+bool cstr_eq(const char* x, const char* y);
+
+bool cstr_starts_with(const char* haystack, const char* needle);
+bool cstr_ends_with(const char* haystack, const char* needle);
+
