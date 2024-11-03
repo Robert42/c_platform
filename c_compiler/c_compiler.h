@@ -32,7 +32,7 @@ struct C_Compiler_Config
   Path output_file; // `-o file_out`
 
   // - If null: `-o file_out`
-  // - If not null: List of NULL terminated arguments. `-o file_out && file_out run_args[arg0] run_args[arg1] run_args[arg2]`
+  // - If not null: List of run_args_count arguments. `-o file_out && file_out run_args[0] run_args[1] ... run_args[run_args_count-1]`
   const char** run_args;
   usize run_args_count;
 };
