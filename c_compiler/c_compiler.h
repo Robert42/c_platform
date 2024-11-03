@@ -26,6 +26,7 @@ struct C_Compiler_Config
   bool debug : 1; // `-g`
   bool disable_vla : 1; // `-Werror=vla`
   bool skip_waning_flags : 1; // used by tests to reduce duplicate testcases
+  bool sanitize_memory : 1;
 
   Path c_file; // `cc c_file`
   Path output_file; // `-o file_out`
@@ -59,6 +60,7 @@ bool cc_compiler_is_available(enum C_Compiler cc);
   "-Wno-error=pedantic", \
   "-Werror=vla", \
 
+// TODO: remove
 #define GCC_SANITIZER_OPTIONS \
   "-fsanitize=address", \
   "-fsanitize=pointer-compare", \

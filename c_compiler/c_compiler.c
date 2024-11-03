@@ -66,6 +66,15 @@ const char* const _C_GCC_WARNING_OPTIONS[] = {
   "-Wno-error=pedantic",
 };
 
+const char* const _C_GCC_SANITIZER[] = {
+  "-fsanitize=address",
+  "-fsanitize=pointer-compare",
+  "-fsanitize=pointer-subtract",
+  "-fsanitize=undefined",
+  "-fsanitize-address-use-after-scope",
+  "-fstack-protector-all",
+};
+
 const char* const _C_TCC_WARNING_OPTIONS[] = {
   "-Wall",
   "-Wunsupported",
@@ -88,6 +97,20 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     case CC_GCC:
     case CC_CLANG:
       push_arg(str_from_cstr("-g"), user_data);
+      break;
+    }
+  }
+
+  if(cfg.sanitize_memory)
+  {
+    switch(cfg.cc)
+    {
+    case CC_TCC:
+      break;
+    case CC_GCC:
+    case CC_CLANG:
+      for(usize i=0; i<ARRAY_LEN(_C_GCC_SANITIZER); ++i)
+        push_arg(str_from_cstr(_C_GCC_SANITIZER[i]), user_data);
       break;
     }
   }
