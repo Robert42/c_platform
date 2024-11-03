@@ -37,6 +37,7 @@ struct C_Compiler_Config
   usize run_args_count;
 };
 
+bool cc(struct C_Compiler_Config cfg);
 void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg);
 
 bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file);
