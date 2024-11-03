@@ -169,6 +169,8 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
       push_arg(path_as_str(&cfg.output_file), user_data);
       break;
     }
+    for(usize i=0; i<cfg.run_args_count; ++i)
+      push_arg(str_from_cstr(cfg.run_args[i]), user_data);
   }
 
   end_cmd(user_data);
