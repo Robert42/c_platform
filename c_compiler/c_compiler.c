@@ -147,14 +147,13 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     break;
   }
 
-  if(cfg.output_file.len > 0)
+  if(cfg.cc==CC_TCC && run)
+    push_arg(STR_LIT("-run"), user_data);
+  else if(cfg.output_file.len > 0)
   {
     push_arg(str_from_cstr("-o"), user_data);
     push_arg(path_as_str(&cfg.output_file), user_data);
   }
-
-  if(cfg.cc==CC_TCC && run)
-    push_arg(STR_LIT("-run"), user_data);
 
   push_arg(path_as_str(&cfg.c_file), user_data);
 
