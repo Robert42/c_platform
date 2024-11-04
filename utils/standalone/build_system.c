@@ -60,10 +60,25 @@ int main(int argc, const char** argv)
     .cfg = &cfg,
     .project = &project,
   };
-  // TODO: watch the paths (directories & files) in `trigger_fs_path` (instead of parent dir of the ini file)
-  struct Simple_File_Watcher watcher = simple_file_watcher_init(build_path, (Fn_File_Filter*)&watch_files_filter, &ctx);
+  struct Simple_File_Watcher watcher;
+  usize prev_action = USIZE_MAX;
   do
   {
+    // If another action was chosen, switch which files to watch
+    if(prev_action != cfg.action)
+    {
+      if(prev_action != USIZE_MAX)
+        simple_file_watcher_deinit(&watcher);
+
+      Path path_to_watch = build_path;
+      if(project.action[cfg.action].trigger_fs_path_count > 1)
+        TODO("TODO: watch multiple paths (directories & files) in `trigger_fs_path` (instead of parent dir of the ini file)");
+      else if(project.action[cfg.action].trigger_fs_path_count == 1)
+        path_to_watch = path_join(build_path, path_from_cstr(project.action[cfg.action].trigger_fs_path[0]));
+      printf("path_to_watch: %s\n", path_to_watch.cstr);
+      watcher = simple_file_watcher_init(path_to_watch, (Fn_File_Filter*)&watch_files_filter, &ctx);
+    }
+
 #if CLEAR
     printf("%s", TERM.clear);
     fflush(stdout);
