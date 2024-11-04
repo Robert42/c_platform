@@ -64,6 +64,11 @@ int main(int argc, const char** argv)
   usize prev_action = USIZE_MAX;
   do
   {
+    if(cfg.action == USIZE_MAX)
+    {
+      cfg.action = 0;
+    }
+
     // If another action was chosen, switch which files to watch
     if(prev_action != cfg.action)
     {
@@ -267,7 +272,7 @@ static struct Project project_load(struct Config* cfg)
     }
   }
 
-  if(cfg->action == USIZE_MAX && project.action_count>0)
+  if(cfg->action == USIZE_MAX && project.action_count==1)
     cfg->action = 0;
 
   return project;
