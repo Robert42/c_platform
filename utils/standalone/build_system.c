@@ -64,9 +64,56 @@ int main(int argc, const char** argv)
   usize prev_action = USIZE_MAX;
   do
   {
-    if(cfg.action == USIZE_MAX)
+    while(cfg.action == USIZE_MAX)
     {
-      cfg.action = 0;
+#if CLEAR
+      printf("%s", TERM.clear);
+      fflush(stdout);
+#endif
+
+      printf("Available actions:\n");
+      for(usize i=0; i<project.action_count; ++i)
+        printf("- %s\n", project.action[i].name);
+
+      char buf[4096];
+      char* choice = buf;
+      printf("Choose action: ");
+      fgets(choice, sizeof(buf), stdin);
+      if(feof(stdin))
+        return 0;
+
+      printf("Choice: %s\n", choice);
+
+      usize len = strlen(choice);
+      if(len > 0 && choice[len-1]=='\n')
+      {
+        choice[len-1] = 0;
+        len--;
+      }
+      
+      usize num_matches = 0;
+      usize match_so_far;
+      for(usize i=0; i<project.action_count; ++i)
+        if(cstr_starts_with(project.action[i].name, choice))
+        {
+          switch(num_matches)
+          {
+          case 0:
+            match_so_far = i;
+            break;
+          case 1:
+            printf("Multiple matching candidates:\n");
+            printf("- %s\n", project.action[match_so_far].name);
+            printf("- %s\n", project.action[i].name);
+            break;
+          default:
+            printf("- %s\n", project.action[i].name);
+            break;
+          }
+          num_matches++;
+        }
+      if(num_matches == 1)
+        cfg.action = match_so_far;
     }
 
     // If another action was chosen, switch which files to watch
