@@ -70,12 +70,18 @@ int main(int argc, const char** argv)
       if(prev_action != USIZE_MAX)
         simple_file_watcher_deinit(&watcher);
 
-      Path path_to_watch = build_path;
-      if(project.action[cfg.action].trigger_fs_path_count > 1)
-        TODO("TODO: watch multiple paths (directories & files) in `trigger_fs_path` (instead of parent dir of the ini file)");
-      else if(project.action[cfg.action].trigger_fs_path_count == 1)
+      Path path_to_watch;
+      switch(project.action[cfg.action].trigger_fs_path_count)
+      {
+      case 0:
+        path_to_watch = build_path;
+        break;
+      case 1:
         path_to_watch = path_join(build_path, path_from_cstr(project.action[cfg.action].trigger_fs_path[0]));
-      printf("path_to_watch: %s\n", path_to_watch.cstr);
+        break;
+      default:
+        TODO("TODO: watch multiple paths (directories & files) in `trigger_fs_path` (instead of parent dir of the ini file)");
+      }
       watcher = simple_file_watcher_init(path_to_watch, (Fn_File_Filter*)&watch_files_filter, &ctx);
     }
 
