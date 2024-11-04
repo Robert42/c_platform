@@ -263,6 +263,14 @@ enum C_Compiler cc_compiler_for_name(const char* name)
   errx(EXIT_FAILURE, "Unknown compiler `%s`\n", name);
 }
 
+enum C_Version cc_version_for_name(const char* name)
+{
+  for(int i=0; i<CC_COUNT; ++i)
+    if(cstr_eq(name, _C_VERSION_NAME_GCC[i]))
+      return (enum C_Version)i;
+  errx(EXIT_FAILURE, "Unknown version `%s`\n", name);
+}
+
 const char* cc_compiler_name(enum C_Compiler cc)
 {
   return _CC_NAMES[cc];

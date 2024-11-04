@@ -45,6 +45,8 @@ bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file);
 enum C_Compiler cc_compiler_for_name(const char* name); // will call errx, if the name is an unknown compiler
 const char* cc_compiler_name(enum C_Compiler cc);
 
+enum C_Version cc_version_for_name(const char* name); // will call errx, if the name is an unknown compiler
+
 enum C_Compiler cc_fastest_available();
 enum C_Compiler cc_best_optimizer_available();
 bool cc_compiler_is_available(enum C_Compiler cc);
