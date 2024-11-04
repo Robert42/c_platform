@@ -29,7 +29,10 @@ struct C_Compiler_Config
   bool sanitize_memory : 1;
   bool gen_parent_dir : 1;
 
-  Path c_file; // `cc c_file`
+  bool capture_run_output : 1; // ignored with `run_args` is NULL
+  Path capture_run_output_filepath; // `> output_filepath`
+
+  Path c_file; // ignored with `run_args` is NULL
   Path output_file; // `-o file_out`
 
   // - If null: `-o file_out`

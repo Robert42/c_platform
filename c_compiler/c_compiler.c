@@ -236,6 +236,7 @@ bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
     .output_file = output_file,
     .run_args = &no_args,
     .run_args_count = 0,
+    .capture_run_output = false,
   };
 
 #if 0

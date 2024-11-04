@@ -263,6 +263,7 @@ static struct Project project_load(struct Config* cfg)
         .c_file = false,
         .skip_warning_flags = false,
         .gen_parent_dir = true,
+        .capture_run_output = false,
       };
 
       for(usize i_cmd = 1; i_cmd<ini_action->cmd_count; ++i_cmd)
@@ -296,9 +297,20 @@ static struct Project project_load(struct Config* cfg)
           cc.run_args = &ini_action->cmd[i_cmd];
           for(; i_cmd<ini_action->cmd_count; ++i_cmd)
           {
-            cc.run_args_count++;
+            const char* cmd = ini_action->cmd[i_cmd];
             if(cstr_eq(cmd, ">"))
-              PANIC("Redirectoring the output vial `>` is unimplemented, yet");
+            {
+              i_cmd++;
+              if(i_cmd == ini_action->cmd_count)
+                PANIC("Missing filepath after `>`");
+              if(i_cmd+1 != ini_action->cmd_count)
+                PANIC("Expecting no more than one filepath after `>`");
+              const char* cmd = ini_action->cmd[i_cmd];
+              cc.capture_run_output = true;
+              cc.capture_run_output_filepath = path_from_cstr(cmd);
+            }
+            else
+              cc.run_args_count++;
           }
           break;
         }
