@@ -206,7 +206,16 @@ static bool _ccc_runner_end_cmd(struct _Runner* runner)
   *runner->region = runner->region_prev;
   runner->arg_count = 0;
 
-  // TODO save the outut to the files
+  if(runner->capture_run_stdout_filepath)
+  {
+    mkpath(path_parent(*runner->capture_run_stdout_filepath));
+    file_text_create_from_cstr_if_different(*runner->capture_run_stdout_filepath, result.captured_stdout);
+  }
+  if(runner->capture_run_stderr_filepath)
+  {
+    mkpath(path_parent(*runner->capture_run_stderr_filepath));
+    file_text_create_from_cstr_if_different(*runner->capture_run_stderr_filepath, result.captured_stderr);
+  }
 
   return result.success;
 }
