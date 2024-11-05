@@ -45,7 +45,7 @@ int main(int argc, const char** argv)
   c_script_init();
 
   struct Config cfg = build_system_cfg_load(argc, argv);
-  const Path build_path = path_parent(cfg.build_ini_path);
+  const Path build_path = path_parent(path_realpath(cfg.build_ini_path));
 
 #if PRINT_PATHS_AND_EXIT
   printf("cfg.build_ini_path: <%s>\n", cfg.build_ini_path.cstr);
