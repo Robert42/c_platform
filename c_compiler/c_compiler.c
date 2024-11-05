@@ -191,12 +191,13 @@ static bool _ccc_runner_end_cmd(struct _Runner* runner)
   assert_usize_lt(runner->arg_count, sizeof(runner->args));
   runner->args[runner->arg_count] = NULL;
 
-  const bool success = proc_exec_blocking(runner->args, (struct Proc_Exec_Blocking_Settings){0}).success;
+  const struct Proc_Exec_Blocking_Result result = proc_exec_blocking(runner->args, (struct Proc_Exec_Blocking_Settings){
+  });
 
   *runner->region = runner->region_prev;
   runner->arg_count = 0;
 
-  return success;
+  return result.success;
 }
 
 static void _ccc_run_push_arg(const str arg, void* user_data) {_ccc_runner_push_arg(arg, (struct _Runner*)user_data);}
