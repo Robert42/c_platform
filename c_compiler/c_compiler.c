@@ -179,6 +179,11 @@ struct _Runner
   Mem_Region region_prev;
   char* args[128];
   usize arg_count;
+
+  bool capture_run_stdout;
+  bool capture_run_stderr;
+  const Path* capture_run_stdout_filepath;
+  const Path* capture_run_stderr_filepath;
 };
 
 static void _ccc_runner_push_arg(const str arg, struct _Runner* runner)
@@ -192,10 +197,16 @@ static bool _ccc_runner_end_cmd(struct _Runner* runner)
   runner->args[runner->arg_count] = NULL;
 
   const struct Proc_Exec_Blocking_Result result = proc_exec_blocking(runner->args, (struct Proc_Exec_Blocking_Settings){
+    .capture_stdout = runner->capture_run_stdout,
+    .capture_stderr = runner->capture_run_stderr,
+    .region_stdout = runner->capture_run_stdout_filepath ? &STACK : NULL,
+    .region_stderr = runner->capture_run_stderr_filepath ? &STACK : NULL,
   });
 
   *runner->region = runner->region_prev;
   runner->arg_count = 0;
+
+  // TODO save the outut to the files
 
   return result.success;
 }
@@ -210,6 +221,10 @@ bool cc_run(struct C_Compiler_Config cfg)
   struct _Runner runner = {
     .region = &STACK,
     .region_prev = STACK,
+    .capture_run_stdout = cfg.capture_run_stdout,
+    .capture_run_stderr = cfg.capture_run_stderr,
+    .capture_run_stdout_filepath = cfg.capture_run_stdout && cfg.capture_run_stdout_filepath.len ? &cfg.capture_run_stdout_filepath : NULL,
+    .capture_run_stderr_filepath = cfg.capture_run_stderr && cfg.capture_run_stderr_filepath.len ? &cfg.capture_run_stderr_filepath : NULL,
   };
 
   if(cfg.gen_parent_dir && cfg.output_file.len > 0)
@@ -237,7 +252,8 @@ bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
     .output_file = output_file,
     .run_args = &no_args,
     .run_args_count = 0,
-    .capture_run_output = false,
+    .capture_run_stdout = false,
+    .capture_run_stderr = false,
   };
 
 #if 0
