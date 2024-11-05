@@ -85,6 +85,8 @@ void c_compiler_test()
       .disable_vla = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
+      .skip_warning_flags = false,
+      .debug = false,
     }),
     "`tcc` "
     "`-Wall` "
