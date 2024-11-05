@@ -203,9 +203,6 @@ static bool _ccc_runner_end_cmd(struct _Runner* runner)
     .region_stderr = runner->capture_run_stderr_filepath ? &STACK : NULL,
   });
 
-  *runner->region = runner->region_prev;
-  runner->arg_count = 0;
-
   if(runner->capture_run_stdout_filepath)
   {
     mkpath(path_parent(*runner->capture_run_stdout_filepath));
@@ -216,6 +213,9 @@ static bool _ccc_runner_end_cmd(struct _Runner* runner)
     mkpath(path_parent(*runner->capture_run_stderr_filepath));
     file_text_create_from_cstr_if_different(*runner->capture_run_stderr_filepath, result.captured_stderr);
   }
+
+  *runner->region = runner->region_prev;
+  runner->arg_count = 0;
 
   return result.success;
 }
