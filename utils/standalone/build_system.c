@@ -307,7 +307,7 @@ static struct Project project_load(struct Config* cfg)
                 PANIC("Expecting no more than one filepath after `>`");
               const char* cmd = ini_action->cmd[i_cmd];
               cc.capture_run_stdout = true;
-              cc.capture_run_stdout_filepath = path_from_cstr(cmd);
+              cc.capture_run_stdout_filepath = path_join(dir, path_from_cstr(cmd));
             }
             else
               cc.run_args_count++;
