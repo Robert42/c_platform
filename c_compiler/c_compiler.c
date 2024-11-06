@@ -26,8 +26,18 @@ void cc_init()
 #endif
 }
 
-static void _ccc_fmt_push_arg(const str arg, void* user_data) {fmt_write((Fmt*)user_data, "`%s` ", str_fmt(arg));}
-static bool _ccc_fmt_end_cmd(void* user_data) {Fmt* f = (Fmt*)user_data; if(f->begin < f->end && f->end[-1]==' ')f->end--; fmt_write(f, "\n"); return true;}
+static void _ccc_fmt_push_arg(const str arg, void* user_data)
+{
+  fmt_write((Fmt*)user_data, "`%s` ", str_fmt(arg));
+}
+static bool _ccc_fmt_end_cmd(void* user_data)
+{
+  Fmt* f = (Fmt*)user_data;
+  if(f->begin < f->end && f->end[-1]==' ')
+    f->end--;
+  fmt_write(f, "\n");
+  return true;
+}
 
 const char* const _C_VERSION_NAME_GCC[] = {
   [C_VERSION_1989] = "c89",
