@@ -26,12 +26,14 @@ void cc_init()
 #endif
 }
 
-static void _ccc_fmt_push_arg(const str arg, void* user_data)
+static void _ccc_fmt_push_arg(const struct C_Compiler_Config* cfg, const str arg, void* user_data)
 {
+  (void)cfg;
   fmt_write((Fmt*)user_data, "`%s` ", str_fmt(arg));
 }
-static bool _ccc_fmt_end_cmd(void* user_data)
+static bool _ccc_fmt_end_cmd(const struct C_Compiler_Config* cfg, void* user_data)
 {
+  (void)cfg;
   Fmt* f = (Fmt*)user_data;
   if(f->begin < f->end && f->end[-1]==' ')
     f->end--;
@@ -92,8 +94,11 @@ const char* const _C_TCC_WARNING_OPTIONS[] = {
   "-Werror",
 };
 
-static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const str arg, void* user_data), bool (*end_cmd)(void* user_data))
+static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const struct C_Compiler_Config* cfg, const str arg, void* user_data), bool (*end_cmd)(const struct C_Compiler_Config* cfg, void* user_data))
 {
+#define push_arg(...) push_arg(&cfg, __VA_ARGS__)
+#define end_cmd(...) end_cmd(&cfg, __VA_ARGS__)
+
   const bool has_extensions = (1 << cfg.c_version) & _C_VERSION_WITH_EXTENSIONS;
   const bool run = cfg.run_args != NULL;
 
@@ -181,6 +186,9 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
   }
 
   return end_cmd(user_data);
+
+#undef push_arg
+#undef end_cmd
 }
 
 struct _Runner
@@ -193,15 +201,14 @@ struct _Runner
   const struct C_Compiler_Config cfg;
 };
 
-static void _ccc_runner_push_arg(const str arg, struct _Runner* runner)
+static void _ccc_runner_push_arg(const struct C_Compiler_Config* cfg, const str arg, struct _Runner* runner)
 {
+  (void)cfg;
   assert_usize_lt(runner->arg_count, sizeof(runner->args));
   runner->args[runner->arg_count++] = str_fmt_to_region(runner->region, arg);
 }
-static bool _ccc_runner_end_cmd(struct _Runner* runner)
+static bool _ccc_runner_end_cmd(const struct C_Compiler_Config* cfg, struct _Runner* runner)
 {
-  const struct C_Compiler_Config* cfg = &runner->cfg;
-
   assert_usize_lt(runner->arg_count, sizeof(runner->args));
   runner->args[runner->arg_count] = NULL;
 
@@ -232,8 +239,8 @@ static bool _ccc_runner_end_cmd(struct _Runner* runner)
   return result.success;
 }
 
-static void _ccc_run_push_arg(const str arg, void* user_data) {_ccc_runner_push_arg(arg, (struct _Runner*)user_data);}
-static bool _ccc_run_end_cmd(void* user_data) {return _ccc_runner_end_cmd((struct _Runner*)user_data);}
+static void _ccc_run_push_arg(const struct C_Compiler_Config* cfg, const str arg, void* user_data) {_ccc_runner_push_arg(cfg, arg, (struct _Runner*)user_data);}
+static bool _ccc_run_end_cmd(const struct C_Compiler_Config* cfg, void* user_data) {return _ccc_runner_end_cmd(cfg, (struct _Runner*)user_data);}
 
 bool cc_run(struct C_Compiler_Config cfg)
 {
