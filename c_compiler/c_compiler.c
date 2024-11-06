@@ -180,10 +180,7 @@ struct _Runner
   char* args[128];
   usize arg_count;
 
-  bool capture_run_stdout;
-  bool capture_run_stderr;
-  const Path* capture_run_stdout_filepath;
-  const Path* capture_run_stderr_filepath;
+  const struct C_Compiler_Config cfg;
 };
 
 static void _ccc_runner_push_arg(const str arg, struct _Runner* runner)
@@ -196,22 +193,25 @@ static bool _ccc_runner_end_cmd(struct _Runner* runner)
   assert_usize_lt(runner->arg_count, sizeof(runner->args));
   runner->args[runner->arg_count] = NULL;
 
+  const bool write_stdout = runner->cfg.capture_run_stdout && runner->cfg.capture_run_stdout_filepath.len!=0;
+  const bool write_stderr = runner->cfg.capture_run_stderr && runner->cfg.capture_run_stderr_filepath.len!=0;
+
   const struct Proc_Exec_Blocking_Result result = proc_exec_blocking(runner->args, (struct Proc_Exec_Blocking_Settings){
-    .capture_stdout = runner->capture_run_stdout,
-    .capture_stderr = runner->capture_run_stderr,
-    .region_stdout = runner->capture_run_stdout_filepath ? &STACK : NULL,
-    .region_stderr = runner->capture_run_stderr_filepath ? &STACK : NULL,
+    .capture_stdout = runner->cfg.capture_run_stdout,
+    .capture_stderr = runner->cfg.capture_run_stderr,
+    .region_stdout = write_stdout ? &STACK : NULL,
+    .region_stderr = write_stderr ? &STACK : NULL,
   });
 
-  if(runner->capture_run_stdout_filepath)
+  if(write_stdout)
   {
-    mkpath(path_parent(*runner->capture_run_stdout_filepath));
-    file_text_create_from_cstr_if_different(*runner->capture_run_stdout_filepath, result.captured_stdout);
+    mkpath(path_parent(runner->cfg.capture_run_stdout_filepath));
+    file_text_create_from_cstr_if_different(runner->cfg.capture_run_stdout_filepath, result.captured_stdout);
   }
-  if(runner->capture_run_stderr_filepath)
+  if(write_stderr)
   {
-    mkpath(path_parent(*runner->capture_run_stderr_filepath));
-    file_text_create_from_cstr_if_different(*runner->capture_run_stderr_filepath, result.captured_stderr);
+    mkpath(path_parent(runner->cfg.capture_run_stderr_filepath));
+    file_text_create_from_cstr_if_different(runner->cfg.capture_run_stderr_filepath, result.captured_stderr);
   }
 
   *runner->region = runner->region_prev;
@@ -230,10 +230,7 @@ bool cc_run(struct C_Compiler_Config cfg)
   struct _Runner runner = {
     .region = &STACK,
     .region_prev = STACK,
-    .capture_run_stdout = cfg.capture_run_stdout,
-    .capture_run_stderr = cfg.capture_run_stderr,
-    .capture_run_stdout_filepath = cfg.capture_run_stdout && cfg.capture_run_stdout_filepath.len ? &cfg.capture_run_stdout_filepath : NULL,
-    .capture_run_stderr_filepath = cfg.capture_run_stderr && cfg.capture_run_stderr_filepath.len ? &cfg.capture_run_stderr_filepath : NULL,
+    .cfg = cfg,
   };
 
   if(cfg.gen_parent_dir && cfg.output_file.len > 0)
