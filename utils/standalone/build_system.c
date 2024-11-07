@@ -123,19 +123,14 @@ int main(int argc, const char** argv)
       if(prev_action != USIZE_MAX)
         simple_file_watcher_deinit(&watcher);
 
-      Path path_to_watch;
-      switch(project.action[cfg.action].trigger_fs_path_count)
+      const Path* paths_to_watch = project.action[cfg.action].trigger_fs_path;
+      usize paths_to_watch_count = project.action[cfg.action].trigger_fs_path_count;
+      if(paths_to_watch_count == 0)
       {
-      case 0:
-        path_to_watch = build_path;
-        break;
-      case 1:
-        path_to_watch = project.action[cfg.action].trigger_fs_path[0];
-        break;
-      default:
-        TODO("TODO: watch multiple paths (directories & files) in `trigger_fs_path` (instead of parent dir of the ini file)");
+        paths_to_watch = &build_path;
+        paths_to_watch_count = 1;
       }
-      watcher = simple_file_watcher_init(path_to_watch, (Fn_File_Filter*)&watch_files_filter, &ctx);
+      watcher = simple_file_watcher_init(paths_to_watch[0], (Fn_File_Filter*)&watch_files_filter, &ctx);
     }
 
 #if CLEAR
