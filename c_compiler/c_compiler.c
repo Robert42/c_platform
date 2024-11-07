@@ -128,8 +128,6 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
 #define push_arg(...) push_arg(&cfg, __VA_ARGS__)
 #define end_cmd(...) end_cmd(&cfg, __VA_ARGS__)
 
-  enum _CCC_End_Cmd ecmd = CCCECMD_COMPILE;
-
   const bool has_extensions = (1 << cfg.c_version) & _C_VERSION_WITH_EXTENSIONS;
   const bool run = cfg.run_args != NULL;
 
@@ -207,7 +205,7 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
       break;
     case CC_GCC:
     case CC_CLANG:
-      if(!end_cmd(ecmd, user_data))
+      if(!end_cmd(CCCECMD_COMPILE, user_data))
         return user_data;
       push_arg(path_as_str(&cfg.output_file), user_data);
       break;
@@ -215,10 +213,9 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     for(usize i=0; i<cfg.run_args_count; ++i)
       push_arg(str_from_cstr(cfg.run_args[i]), user_data);
 
-    ecmd = CCCECMD_RUN;
-  }
-
-  return end_cmd(ecmd, user_data);
+    return end_cmd(CCCECMD_RUN, user_data);
+  }else
+    return end_cmd(CCCECMD_COMPILE, user_data);
 
 #undef push_arg
 #undef end_cmd
