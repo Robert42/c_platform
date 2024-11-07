@@ -141,9 +141,6 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
   watcher->dirs_fd = inotify_init1(IN_NONBLOCK);
   LINUX_ASSERT_NE(watcher->dirs_fd, -1);
 
-  const int root_wd = inotify_add_watch(watcher->dirs_fd, watcher->root_dir.cstr, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
-  LINUX_ASSERT_NE(root_wd, -1);
-
   // recursively visit directories to watch them and their content, too
   setintcddo_reset(watcher->watched_files);
   {
@@ -154,6 +151,10 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
       return 1;
     }
     LINUX_ASSERT_NE(root_dir_fd, -1);
+
+    const int root_wd = inotify_add_watch(watcher->dirs_fd, watcher->root_dir.cstr, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
+    LINUX_ASSERT_NE(root_wd, -1);
+
     number_relevant_files_added = _simple_file_watcher_watch_subdirs(root_dir_fd, watcher, watcher->root_dir);
     close(root_dir_fd);
   }
