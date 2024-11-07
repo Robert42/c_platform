@@ -87,6 +87,7 @@ void c_compiler_test()
       .c_file = path_from_cstr("main.c"),
       .skip_warning_flags = false,
       .debug = false,
+      .capture_run_stdout = false,
     }),
     "`tcc` "
     "`-Wall` "
@@ -186,6 +187,41 @@ void c_compiler_test()
     }),
     "`gcc` `-g` `-std=gnu11` `-o` `bin/exe` `main.c`\n"
     "`bin/exe` `x y z` `uvw`\n"
+  );
+
+  // ==== capture ====
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_GCC,
+      .debug = true,
+      .skip_warning_flags = true,
+      .c_version = C_VERSION_GNU_1989,
+      .c_file = path_from_cstr("main.c"),
+      .run_args = args,
+      .run_args_count = 0,
+      .output_file = path_from_cstr("bin/exe"),
+      .capture_run_stdout = true,
+      .capture_run_stdout_filepath = path_from_cstr("abc.txt"),
+    }),
+    "`gcc` `-g` `-std=gnu89` `-o` `bin/exe` `main.c`\n"
+    "`bin/exe` `>` `abc.txt`\n"
+  );
+
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_GCC,
+      .debug = true,
+      .skip_warning_flags = true,
+      .c_version = C_VERSION_GNU_1989,
+      .c_file = path_from_cstr("main.c"),
+      .run_args = args,
+      .run_args_count = 0,
+      .output_file = path_from_cstr("bin/exe"),
+      .capture_run_stderr = true,
+      .capture_run_stderr_filepath = path_from_cstr("abc.txt"),
+    }),
+    "`gcc` `-g` `-std=gnu89` `-o` `bin/exe` `main.c`\n"
+    "`bin/exe` `2>` `abc.txt`\n"
   );
 }
 
