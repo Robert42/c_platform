@@ -50,7 +50,7 @@ static bool _ccc_fmt_end_cmd(const struct C_Compiler_Config* cfg, enum _CCC_End_
       if(cfg->capture_run_stdout_filepath.len > 0)
         _ccc_fmt_push_arg(cfg, path_as_str(&cfg->capture_run_stdout_filepath), user_data);
       else
-        TODO();
+        _ccc_fmt_push_arg(cfg, STR_LIT("/dev/null"), user_data);
     }
     if(cfg->capture_run_stderr)
     {
@@ -58,7 +58,7 @@ static bool _ccc_fmt_end_cmd(const struct C_Compiler_Config* cfg, enum _CCC_End_
       if(cfg->capture_run_stderr_filepath.len > 0)
         _ccc_fmt_push_arg(cfg, path_as_str(&cfg->capture_run_stderr_filepath), user_data);
       else
-        TODO();
+        _ccc_fmt_push_arg(cfg, STR_LIT("/dev/null"), user_data);
     }
     break;
   }

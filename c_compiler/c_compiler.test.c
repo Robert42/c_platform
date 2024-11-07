@@ -223,6 +223,38 @@ void c_compiler_test()
     "`gcc` `-g` `-std=gnu89` `-o` `bin/exe` `main.c`\n"
     "`bin/exe` `2>` `abc.txt`\n"
   );
+
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_GCC,
+      .debug = true,
+      .skip_warning_flags = true,
+      .c_version = C_VERSION_GNU_1989,
+      .c_file = path_from_cstr("main.c"),
+      .run_args = args,
+      .run_args_count = 0,
+      .output_file = path_from_cstr("bin/exe"),
+      .capture_run_stdout = true,
+    }),
+    "`gcc` `-g` `-std=gnu89` `-o` `bin/exe` `main.c`\n"
+    "`bin/exe` `>` `/dev/null`\n"
+  );
+
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_GCC,
+      .debug = true,
+      .skip_warning_flags = true,
+      .c_version = C_VERSION_GNU_1989,
+      .c_file = path_from_cstr("main.c"),
+      .run_args = args,
+      .run_args_count = 0,
+      .output_file = path_from_cstr("bin/exe"),
+      .capture_run_stderr = true,
+    }),
+    "`gcc` `-g` `-std=gnu89` `-o` `bin/exe` `main.c`\n"
+    "`bin/exe` `2>` `/dev/null`\n"
+  );
 }
 
 #undef ASSERT_CC_CMF_EQ
