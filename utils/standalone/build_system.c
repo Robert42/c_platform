@@ -282,10 +282,11 @@ static struct Project project_load(struct Config* cfg)
         }
         else if(cstr_starts_with(cmd, "-I"))
         {
+          cmd += 2;
+
           Path* include_dir = MEM_REGION_ALLOC(&PERSISTENT, Path);
           *include_dir = path_join(dir, path_from_cstr(cmd));
 
-          cmd += 2;
           assert_usize_lt(cc.include_dir_count, ARRAY_LEN(cc.include_dir));
           cc.include_dir[cc.include_dir_count++] = include_dir;
         }
