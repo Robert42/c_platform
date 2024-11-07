@@ -14,7 +14,7 @@
 static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher);
 #endif
 
-struct Simple_File_Watcher simple_file_watcher_init(Path root_dir, Fn_File_Filter *filter, void* user_data)
+struct Simple_File_Watcher simple_file_watcher_init(const Path* roots_to_watch, usize roots_to_watch_count, Fn_File_Filter *filter, void* user_data)
 {
   struct Simple_File_Watcher watcher = {
     .filter = filter,
@@ -22,7 +22,8 @@ struct Simple_File_Watcher simple_file_watcher_init(Path root_dir, Fn_File_Filte
   };
 
 #ifdef __linux__
-  watcher.root_dir = root_dir; // the result was allocated with malloc
+  watcher.roots_to_watch = roots_to_watch;
+  watcher.roots_to_watch_count = roots_to_watch_count;
   watcher.watched_files = calloc(sizeof(*watcher.watched_files), 1);
 
   watcher.dirs_fd = -1; // prevent _simple_file_watcher_reinit from closing the fd
@@ -143,21 +144,22 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
 
   // recursively visit directories to watch them and their content, too
   setintcddo_reset(watcher->watched_files);
-  for(usize i=0; i<1/*TODO*/; ++i)
+  for(usize i=0; i<watcher->roots_to_watch_count; ++i)
   {
-    int root_dir_fd = open(watcher->root_dir.cstr, O_DIRECTORY | O_RDONLY, 0);
+    const Path root_dir = watcher->roots_to_watch[i];
+    int root_dir_fd = open(root_dir.cstr, O_DIRECTORY | O_RDONLY, 0);
     if(root_dir_fd == -1 && errno==ENOTDIR)
     {
-      _simple_file_watcher_watch_regular_file(watcher->root_dir, watcher);
+      _simple_file_watcher_watch_regular_file(root_dir, watcher);
       number_relevant_files_added++;
       continue;
     }
     LINUX_ASSERT_NE(root_dir_fd, -1);
 
-    const int root_wd = inotify_add_watch(watcher->dirs_fd, watcher->root_dir.cstr, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
+    const int root_wd = inotify_add_watch(watcher->dirs_fd, root_dir.cstr, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
     LINUX_ASSERT_NE(root_wd, -1);
 
-    number_relevant_files_added = _simple_file_watcher_watch_subdirs(root_dir_fd, watcher, watcher->root_dir);
+    number_relevant_files_added = _simple_file_watcher_watch_subdirs(root_dir_fd, watcher, root_dir);
     close(root_dir_fd);
   }
   number_relevant_files_added += watcher->watched_files->len_old != 0; // some relevant files were removed

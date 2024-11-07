@@ -130,7 +130,7 @@ int main(int argc, const char** argv)
         paths_to_watch = &build_path;
         paths_to_watch_count = 1;
       }
-      watcher = simple_file_watcher_init(paths_to_watch[0], (Fn_File_Filter*)&watch_files_filter, &ctx);
+      watcher = simple_file_watcher_init(paths_to_watch, paths_to_watch_count, (Fn_File_Filter*)&watch_files_filter, &ctx);
     }
 
 #if CLEAR
