@@ -143,12 +143,14 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
 
   // recursively visit directories to watch them and their content, too
   setintcddo_reset(watcher->watched_files);
+  for(usize i=0; i<1/*TODO*/; ++i)
   {
     int root_dir_fd = open(watcher->root_dir.cstr, O_DIRECTORY | O_RDONLY, 0);
     if(root_dir_fd == -1 && errno==ENOTDIR)
     {
       _simple_file_watcher_watch_regular_file(watcher->root_dir, watcher);
-      return 1;
+      number_relevant_files_added++;
+      continue;
     }
     LINUX_ASSERT_NE(root_dir_fd, -1);
 
