@@ -18,6 +18,7 @@ struct Config
   enum C_Compiler cc;
   usize action; // index
   Path build_ini_path;
+  bool verbose;
 };
 
 struct Context
@@ -155,6 +156,8 @@ int main(int argc, const char** argv)
     case ACTION_CC:
     {
       const struct C_Compiler_Config cc = action.cc;
+      if(cfg.verbose)
+        cc_command_print(cc);
       const u64 time_begin = timer_now();
       const bool success = cc_run(cc);
       const u64 time_end = timer_now();
@@ -192,6 +195,9 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
       if(++i >= argc) errx(EXIT_FAILURE, "Missing compiler after `--cc`\n");
 
       cfg.cc = cc_compiler_for_name(argv[i]);
+    }else if(cstr_eq(argv[i], "-v"))
+    {
+      cfg.verbose = true;
     }else if(i+1 == argc)
       cfg.build_ini_path = path_from_cstr(argv[i]);
     else

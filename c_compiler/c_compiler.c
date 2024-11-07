@@ -303,6 +303,14 @@ void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg)
   _ccc(cfg, f, _ccc_fmt_push_arg, _ccc_fmt_end_cmd);
 }
 
+void cc_command_print(struct C_Compiler_Config cfg)
+{
+  char buf[256];
+  Fmt f = fmt_new(buf, sizeof(buf));
+  cc_command_fmt(&f, cfg);
+  printf("%s", f.begin);
+}
+
 bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
 {
   const char* no_args;
