@@ -255,6 +255,23 @@ void c_compiler_test()
     "`gcc` `-g` `-std=gnu89` `-o` `bin/exe` `main.c`\n"
     "`bin/exe` `2>` `/dev/null`\n"
   );
+
+  // ==== include dir ====
+  Path include_a_b_c = path_from_cstr("a/b/c");
+  Path include_x_y_z = path_from_cstr("x/y/z");
+
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_GCC,
+      .debug = false,
+      .include_dir = {&include_a_b_c, &include_x_y_z},
+      .include_dir_count = 2,
+      .skip_warning_flags = true,
+      .c_version = C_VERSION_GNU_1989,
+      .c_file = path_from_cstr("main.c"),
+    }),
+    "`gcc` `-std=gnu89` `-Ia/b/c` `-Ix/y/z` `main.c`\n"
+  );
 }
 
 #undef ASSERT_CC_CMF_EQ

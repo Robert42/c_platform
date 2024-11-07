@@ -186,6 +186,15 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     }
     break;
   }
+  
+  for(usize i=0; i<cfg.include_dir_count; ++i)
+  {
+    char _buf_include[sizeof(Path)+2];
+    Fmt f = fmt_new(_buf_include, sizeof(_buf_include));
+    fmt_write(&f, "-I%s", cfg.include_dir[i]->cstr);
+
+    push_arg((str){f.begin, f.end}, user_data);
+  }
 
   if(cfg.cc==CC_TCC && run)
     push_arg(STR_LIT("-run"), user_data);
@@ -199,6 +208,7 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
 
   if(run)
   {
+    assert_usize_gt(cfg.output_file.len, 0);
     switch(cfg.cc)
     {
     case CC_TCC:

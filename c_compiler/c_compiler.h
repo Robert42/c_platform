@@ -37,6 +37,9 @@ struct C_Compiler_Config
   Path c_file; // ignored with `run_args` is NULL
   Path output_file; // `-o file_out`
 
+  Path* include_dir[32]; // `-Ia/b/c`
+  usize include_dir_count;
+
   // - If null: `-o file_out`
   // - If not null: List of run_args_count arguments. `-o file_out && file_out run_args[0] run_args[1] ... run_args[run_args_count-1]`
   const char** run_args;

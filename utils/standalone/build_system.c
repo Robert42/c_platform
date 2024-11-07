@@ -274,6 +274,15 @@ static struct Project project_load(struct Config* cfg)
           cmd += 5;
           cc.c_version = cc_version_for_name(cmd);
         }
+        else if(cstr_starts_with(cmd, "-I"))
+        {
+          Path* include_dir = MEM_REGION_ALLOC(&PERSISTENT, Path);
+          *include_dir = path_join(dir, path_from_cstr(cmd));
+
+          cmd += 2;
+          assert_usize_lt(cc.include_dir_count, ARRAY_LEN(cc.include_dir));
+          cc.include_dir[cc.include_dir_count++] = include_dir;
+        }
         else if(cstr_ends_with(cmd, ".c"))
           cc.c_file = path_join(dir, path_from_cstr(cmd));
         else if(cstr_eq(cmd, "-g"))
