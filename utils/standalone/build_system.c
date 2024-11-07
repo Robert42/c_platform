@@ -130,7 +130,7 @@ int main(int argc, const char** argv)
         path_to_watch = build_path;
         break;
       case 1:
-        path_to_watch = path_join(build_path, path_from_cstr(project.action[cfg.action].trigger_fs_path[0]));
+        path_to_watch = project.action[cfg.action].trigger_fs_path[0];
         break;
       default:
         TODO("TODO: watch multiple paths (directories & files) in `trigger_fs_path` (instead of parent dir of the ini file)");
@@ -236,8 +236,12 @@ static struct Project project_load(struct Config* cfg)
 
     action->name = ini_action->name;
 
-    action->trigger_fs_path = ini_action->trigger_fs_path;
-    action->trigger_fs_path_count = ini_action->trigger_fs_path_count;
+    const usize watch_path_count = ini_action->trigger_fs_path_count;
+    Path* watch_paths = MEM_REGION_ALLOC_ARRAY(&PERSISTENT, Path, watch_path_count);
+    for(usize i_path=0; i_path<watch_path_count; ++i_path)
+      watch_paths[i_path] = path_join(dir, path_from_cstr(ini_action->trigger_fs_path[i_path]));
+    action->trigger_fs_path_count = watch_path_count;
+    action->trigger_fs_path = watch_paths;
 
     action->trigger_fs_suffix_count = ini_action->trigger_fs_suffix_count;
     action->trigger_fs_suffix = ini_action->trigger_fs_suffix;

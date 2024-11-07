@@ -21,7 +21,7 @@ struct Project_Action
   const char** trigger_fs_suffix;
   usize trigger_fs_suffix_count;
 
-  const char** trigger_fs_path;
+  const Path* trigger_fs_path;
   usize trigger_fs_path_count;
 };
 
