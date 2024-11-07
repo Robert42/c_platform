@@ -75,4 +75,13 @@ void path_test()
   assert_bool_eq(path_is_c_file(".o"), false);
   assert_bool_eq(path_is_c_file("foo.c.tar.gz"), false);
   assert_bool_eq(path_is_c_file("c"), false);
+
+  // ==== path_has_suffix_one_of ====
+  const char* archive_formats[] = {".xz", ".tar", ".zip"};
+  
+  assert_bool_eq(path_has_suffix_one_of("img.jpg", &archive_formats[0], ARRAY_LEN(archive_formats)), false);
+  assert_bool_eq(path_has_suffix_one_of("img.xz", &archive_formats[0], ARRAY_LEN(archive_formats)), true);
+  assert_bool_eq(path_has_suffix_one_of("img.tar", &archive_formats[0], ARRAY_LEN(archive_formats)), true);
+  assert_bool_eq(path_has_suffix_one_of("img.zip", &archive_formats[0], ARRAY_LEN(archive_formats)), true);
+  assert_bool_eq(path_has_suffix_one_of("img.tar.gz", &archive_formats[0], ARRAY_LEN(archive_formats)), false);
 }

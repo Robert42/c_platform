@@ -12,6 +12,13 @@ bool char_is_ws(char x)
   }
 }
 
+const char* cstr_trim_left(const char* x)
+{
+  while(char_is_ws(*x))
+    ++x;
+  return x;
+}
+
 void cstr_trim_right(char* xs)
 {
   usize i = strlen(xs);
@@ -21,7 +28,7 @@ void cstr_trim_right(char* xs)
 
 char* cstr_to_lower(Mem_Region* region, const char* s)
 {
-  char* xs = (char*)mem_region_alloc_bytes_unaligned(region, strlen(s)+1);
+  char* xs = cstr_copy(region, s);
   for(char* x=xs; ; ++s, ++x)
   {
     *x = ascii_to_lower(*s);
@@ -29,6 +36,11 @@ char* cstr_to_lower(Mem_Region* region, const char* s)
       break;
   }
   return xs;
+}
+
+char* cstr_copy(Mem_Region* region, const char* s)
+{
+  return (char*)mem_region_alloc_bytes_unaligned(region, strlen(s)+1);
 }
 
 void convert_cstr_to_lower(char* s)
@@ -57,3 +69,30 @@ void convert_cstr_to_upper(char* s)
     *s = ascii_to_upper(*s);
 }
 
+#if ENV_ARCH == ARCH_AARCH64 || ENV_ARCH == ARCH_X86_64
+usize cstr_to_usize(const char** s)
+{
+  debug_assert_usize_eq(sizeof(unsigned long), sizeof(usize));
+  debug_assert_usize_eq(alignof(unsigned long), alignof(usize));
+
+  const char* begin = *s;
+  return strtoul(begin, (char**)s, 10);
+}
+#else
+#error unimplemented
+#endif
+
+bool cstr_eq(const char* x, const char* y)
+{
+  return strcmp(x, y) == 0;
+}
+
+bool cstr_starts_with(const char* haystack, const char* needle)
+{
+  return str_starts_with(str_from_cstr(haystack), str_from_cstr(needle));
+}
+
+bool cstr_ends_with(const char* haystack, const char* needle)
+{
+  return str_ends_with(str_from_cstr(haystack), str_from_cstr(needle));
+}

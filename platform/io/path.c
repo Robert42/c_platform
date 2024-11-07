@@ -118,6 +118,11 @@ Path path_realpath(Path p)
 }
 #endif
 
+str path_as_str(const Path* p)
+{
+  return (str){p->cstr, p->cstr + p->len};
+}
+
 bool path_is_c_file(const char* path)
 {
   const usize len = strlen(path);
@@ -131,4 +136,19 @@ bool path_is_c_file(const char* path)
   default:
     return false;
   }
+}
+
+bool path_has_suffix_one_of(const char* path, const char** suffix, usize suffix_count)
+{
+  const usize len = strlen(path);
+  str path_str = {path, path+len};
+
+  for(usize i=0; i<suffix_count; ++i)
+  {
+    const str suffix_str = str_from_cstr_len(suffix[i], strlen(suffix[i]));
+    if(str_ends_with(path_str, suffix_str))
+      return true;
+  }
+
+  return false;
 }

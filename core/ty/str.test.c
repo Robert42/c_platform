@@ -55,6 +55,23 @@ void str_test()
     assert_int_gt(str_cmp(str_from_cstr_len(src, 3), str_from_cstr_len(src, 2)), 0);
   }
 
+  // str_cstr_cmp
+  {
+    assert_int_eq(str_cstr_cmp(STR_LIT(""), ""), 0);
+    assert_int_lt(str_cstr_cmp(STR_LIT(""), "x"), 0);
+    assert_int_lt(str_cstr_cmp(STR_LIT("\0"), "x"), 0);
+    assert_int_gt(str_cstr_cmp(STR_LIT("\0"), ""), 0);
+    assert_int_gt(str_cstr_cmp(STR_LIT("x\0z"), "x"), 0);
+    assert_int_gt(str_cstr_cmp(STR_LIT("x"), ""), 0);
+    assert_int_lt(str_cstr_cmp(STR_LIT(""), "xyz"), 0);
+    assert_int_gt(str_cstr_cmp(STR_LIT("xyz"), ""), 0);
+
+    assert_int_eq(str_cstr_cmp(STR_LIT("x"), "x"), 0);
+    assert_int_eq(str_cstr_cmp(STR_LIT("xyz"), "xyz"), 0);
+    assert_int_lt(str_cstr_cmp(STR_LIT("xyy"), "xyz"), 0);
+    assert_int_gt(str_cstr_cmp(STR_LIT("xzz"), "xyz"), 0);
+  }
+
   {
     assert_cstr_eq(str_fmt(STR_LIT("xyz")), "xyz");
   }
@@ -65,5 +82,35 @@ void str_test()
     Mem_Region region = MEM_REGION_FROM_ARRAY(BUFFER);
     
     assert_cstr_eq(cstr_fmt(&region, "Hello, %s!", "World"), "Hello, World!");
+  }
+
+  // str_trim_right
+  {
+    assert_str_eq(str_trim_right(STR_LIT("")), STR_LIT(""));
+    assert_str_eq(str_trim_right(STR_LIT("  \n  \t  ")), STR_LIT(""));
+    assert_str_eq(str_trim_right(STR_LIT("xyz")), STR_LIT("xyz"));
+    assert_str_eq(str_trim_right(STR_LIT("xyz  \n  \t  ")), STR_LIT("xyz"));
+  }
+
+  // str_ends_with
+  {
+    assert_bool_eq(str_ends_with(STR_LIT(""), STR_LIT("")), true);
+    assert_bool_eq(str_ends_with(STR_LIT("x"), STR_LIT("")), true);
+    assert_bool_eq(str_ends_with(STR_LIT("x"), STR_LIT("x")), true);
+    assert_bool_eq(str_ends_with(STR_LIT("x"), STR_LIT("y")), false);
+    assert_bool_eq(str_ends_with(STR_LIT("xy"), STR_LIT("x")), false);
+    assert_bool_eq(str_ends_with(STR_LIT("yx"), STR_LIT("x")), true);
+    assert_bool_eq(str_ends_with(STR_LIT("x"), STR_LIT("xx")), false);
+  }
+
+  // str_starts_with
+  {
+    assert_bool_eq(str_starts_with(STR_LIT(""), STR_LIT("")), true);
+    assert_bool_eq(str_starts_with(STR_LIT("x"), STR_LIT("")), true);
+    assert_bool_eq(str_starts_with(STR_LIT("x"), STR_LIT("x")), true);
+    assert_bool_eq(str_starts_with(STR_LIT("x"), STR_LIT("y")), false);
+    assert_bool_eq(str_starts_with(STR_LIT("xy"), STR_LIT("x")), true);
+    assert_bool_eq(str_starts_with(STR_LIT("yx"), STR_LIT("x")), false);
+    assert_bool_eq(str_starts_with(STR_LIT("x"), STR_LIT("xx")), false);
   }
 }

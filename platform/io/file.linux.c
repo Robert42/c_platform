@@ -1,6 +1,23 @@
 // Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
 #include "file.linux.h"
 
+void mkpath(Path p)
+{
+  int result = mkdir(p.cstr, 0777);
+  if(result!=-1 || errno == EEXIST)
+    return;
+
+  if(strchr(p.cstr, '/') && errno==ENOENT)
+  {
+    mkpath(path_parent(p));
+    LINUX_ASSERT_NE(mkdir(p.cstr, 0777), -1);
+  }else
+  {
+    printf("errno: %i\n", errno);
+    __linux_call_failed__("mkdir", __FILE__, __LINE__);
+  }
+}
+
 Bytes_Mut _linux_read_all_bytes_from_fd(int fd, Mem_Region* region)
 {
     debug_assert_ptr_ne(region, NULL);

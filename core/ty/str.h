@@ -33,6 +33,8 @@ usize str_len(str s);
 str str_from_cstr_len(const char* s, usize len);
 #define STR_LIT(XS) str_from_cstr_len(XS, ARRAY_LEN(XS)-1)
 
+str str_from_cstr(const char* s);
+
 /*@
   requires str_valid(x) && str_valid(y);
   assigns \nothing;
@@ -45,8 +47,15 @@ str str_from_cstr_len(const char* s, usize len);
     (\exists usize i; 0 <= i < str_len(x)-1 && 0 <= i < str_len(y)-1 ==> x.begin[0 .. i-1] == y.begin[0 .. i-1] && x.begin[i] > y.begin[i]);
 */
 int str_cmp(str x, str y);
+int str_cstr_cmp(str x, const char* y);
 
-const char* str_fmt(str x);
+bool str_starts_with(str haystack, str needle);
+bool str_ends_with(str haystack, str needle);
+
+str str_trim_right(str xs);
+
+char* str_fmt_to_region(Mem_Region* region, str x);
+char* str_fmt(str x);
 
 /*@
   assigns *region \from fmt;

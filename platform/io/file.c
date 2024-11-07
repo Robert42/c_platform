@@ -3,6 +3,12 @@
 
 #include "file.h"
 
+char* file_text_read_to_cstr(Path p, Mem_Region* region)
+{
+  Bytes_Mut bytes = _read_all_file_bytes(p.cstr, region);
+  return (char*)bytes.begin;
+}
+
 void file_text_create_from_cstr(Path p, const char* str)
 {
   _create_file_from_bytes(p.cstr, str, strlen(str));

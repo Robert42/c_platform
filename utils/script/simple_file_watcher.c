@@ -14,14 +14,16 @@
 static void _simple_file_watcher_reinit(struct Simple_File_Watcher* watcher);
 #endif
 
-struct Simple_File_Watcher simple_file_watcher_init(Path root_dir, Fn_File_Filter *filter)
+struct Simple_File_Watcher simple_file_watcher_init(const Path* roots_to_watch, usize roots_to_watch_count, Fn_File_Filter *filter, void* user_data)
 {
   struct Simple_File_Watcher watcher = {
     .filter = filter,
+    .user_data = user_data,
   };
 
 #ifdef __linux__
-  watcher.root_dir = root_dir; // the result was allocated with malloc
+  watcher.roots_to_watch = roots_to_watch;
+  watcher.roots_to_watch_count = roots_to_watch_count;
   watcher.watched_files = calloc(sizeof(*watcher.watched_files), 1);
 
   watcher.dirs_fd = -1; // prevent _simple_file_watcher_reinit from closing the fd
@@ -45,6 +47,19 @@ void simple_file_watcher_deinit(struct Simple_File_Watcher* watcher)
 bool _dir_to_ignore(const char* x)
 {
   return x[0]=='.' && (x[1]==0 || (x[1]=='.' && x[2]==0) || (x[1]=='g' && x[2]=='i' && x[3]=='t' && x[4]==0));
+}
+
+static bool _simple_file_watcher_watch_regular_file(Path path, struct Simple_File_Watcher* watcher)
+{
+  // printf("regular file: %s\n", path.cstr);
+
+  const int file_wd = inotify_add_watch(watcher->file_fd, path.cstr, IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
+  LINUX_ASSERT_NE(file_wd, -1);
+
+  const bool is_new = setintcddo_insert(watcher->watched_files, file_wd) == SETINTCDDOC_NEW;
+  // if(is_new)
+  //   printf("new relevant file found: %s\n", path.cstr);
+  return is_new;
 }
 
 static usize _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_Watcher* watcher, const Path dir)
@@ -88,17 +103,10 @@ static usize _simple_file_watcher_watch_subdirs(int dir_fd, struct Simple_File_W
         break;
       }
       case DT_REG:
-        if(watcher->filter(entry->d_name))
+        if(watcher->filter(entry->d_name, watcher->user_data))
         {
           const Path path = path_join(dir, path_from_cstr(entry->d_name)); // modify path to point to the current file
-          // printf("regular file: %s\n", path.cstr);
-
-          const int file_wd = inotify_add_watch(watcher->file_fd, path.cstr, IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
-          LINUX_ASSERT_NE(file_wd, -1);
-
-          const bool is_new = setintcddo_insert(watcher->watched_files, file_wd) == SETINTCDDOC_NEW;
-          // if(is_new)
-          //   printf("new relevant file found: %s\n", path.cstr);
+          const bool is_new = _simple_file_watcher_watch_regular_file(path, watcher);
           number_relevant_files_added += is_new;
         }
         break;
@@ -134,15 +142,24 @@ static usize _simple_file_watcher_rebuild_tree(struct Simple_File_Watcher* watch
   watcher->dirs_fd = inotify_init1(IN_NONBLOCK);
   LINUX_ASSERT_NE(watcher->dirs_fd, -1);
 
-  const int root_wd = inotify_add_watch(watcher->dirs_fd, watcher->root_dir.cstr, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
-  LINUX_ASSERT_NE(root_wd, -1);
-
   // recursively visit directories to watch them and their content, too
   setintcddo_reset(watcher->watched_files);
+  for(usize i=0; i<watcher->roots_to_watch_count; ++i)
   {
-    const int root_dir_fd = open(watcher->root_dir.cstr, O_DIRECTORY | O_RDONLY, 0);
+    const Path root_dir = watcher->roots_to_watch[i];
+    int root_dir_fd = open(root_dir.cstr, O_DIRECTORY | O_RDONLY, 0);
+    if(root_dir_fd == -1 && errno==ENOTDIR)
+    {
+      _simple_file_watcher_watch_regular_file(root_dir, watcher);
+      number_relevant_files_added++;
+      continue;
+    }
     LINUX_ASSERT_NE(root_dir_fd, -1);
-    number_relevant_files_added = _simple_file_watcher_watch_subdirs(root_dir_fd, watcher, watcher->root_dir);
+
+    const int root_wd = inotify_add_watch(watcher->dirs_fd, root_dir.cstr, IN_MOVED_TO|IN_MOVE_SELF|IN_CREATE);
+    LINUX_ASSERT_NE(root_wd, -1);
+
+    number_relevant_files_added = _simple_file_watcher_watch_subdirs(root_dir_fd, watcher, root_dir);
     close(root_dir_fd);
   }
   number_relevant_files_added += watcher->watched_files->len_old != 0; // some relevant files were removed
@@ -319,4 +336,10 @@ bool simple_file_watcher_wait_for_change(struct Simple_File_Watcher* watcher)
 
 #undef DBG_EVENTS
 #endif // __linux__
+
+bool watch_c_files(const char* filepath, void* user_data)
+{
+  (void)user_data;
+  return path_is_c_file(filepath);
+}
 

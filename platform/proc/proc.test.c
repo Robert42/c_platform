@@ -9,6 +9,8 @@ void proc_test()
   const struct Proc_Exec_Blocking_Settings capture_stdout = {.capture_stdout=true, .region_stdout=&region};
   const struct Proc_Exec_Blocking_Settings capture_stderr = {.capture_stderr=true, .region_stderr=&region};
 
+  for(usize i=0; i<sizeof(BUFFER); ++i) BUFFER[i] = 0xCC;
+
   // If I ever run these tests outside linux, it may be a good idea to create
   // own programs to test instead of using linux commands.
   // Alternatively start different processes depending on the OS
@@ -27,6 +29,7 @@ void proc_test()
 
   {
     region.begin = BUFFER;
+    for(usize i=0; i<sizeof(BUFFER); ++i) BUFFER[i] = 0xCC;
     char* const args[] = {"tcc", "/NOT_EXISTING", NULL};
     struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, capture_stderr);
 

@@ -25,6 +25,7 @@ typedef _Bool bool;
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #endif
 
@@ -40,4 +41,6 @@ typedef uint64_t u64;
 typedef  int64_t s64;
 typedef size_t usize;
 typedef ssize_t ssize;
+
+#define USIZE_MAX SIZE_MAX
 

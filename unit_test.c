@@ -6,11 +6,13 @@
 #include "platform/platform.c"
 #include "utils/utils.c"
 #include "ui/ui.c"
+#include "c_compiler/c_compiler.c"
 
 #include "core/test.c"
 #include "platform/test.c"
 #include "utils/test.c"
 #include "ui/test.c"
+#include "c_compiler/c_compiler.test.c"
 
 #define PRINT_ENV 0
 
@@ -40,6 +42,7 @@ int main(UNUSED int argc, UNUSED const char** argv)
   platform_test();
   utils_test();
   ui_test();
+  c_compiler_test();
 
   printf("%s==== DONE ====%s\n", TERM.green_bold, TERM.normal);
 
