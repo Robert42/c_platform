@@ -46,7 +46,7 @@ int main(int argc, const char** argv)
   c_script_init();
 
   struct Config cfg = build_system_cfg_load(argc, argv);
-  const Path build_path = path_parent(path_realpath(cfg.build_ini_path));
+  const Path build_path = path_parent(cfg.build_ini_path);
 
 #if PRINT_PATHS_AND_EXIT
   printf("cfg.build_ini_path: <%s>\n", cfg.build_ini_path.cstr);
@@ -204,6 +204,7 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
       errx(EXIT_FAILURE, "Unexpected argument\n```\n%s\n```\n", argv[i]);
   }
 
+  cfg.build_ini_path = path_realpath(cfg.build_ini_path);
   return cfg;
 }
 
