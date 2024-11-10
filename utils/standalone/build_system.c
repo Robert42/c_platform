@@ -19,6 +19,7 @@ struct Config
   usize action; // index
   Path build_ini_path;
   bool verbose;
+  bool debug_build;
 };
 
 struct Context
@@ -194,7 +195,10 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
     }else if(cstr_eq(argv[i], "-v"))
     {
       cfg.verbose = true;
-    }else if(i+1 == argc)
+    }else if(cstr_eq(argv[i], "-g"))
+    {
+      cfg.debug_build = true;
+    }else if(i+1 == argc && argv[i][0]!='-')
       cfg.build_ini_path = path_from_cstr(argv[i]);
     else
       errx(EXIT_FAILURE, "Unexpected argument\n```\n%s\n```\n", argv[i]);
@@ -265,7 +269,7 @@ static struct Project project_load(struct Config* cfg)
       struct C_Compiler_Config cc = {
         .cc = cfg->cc,
         .c_version = C_VERSION_2011,
-        .debug = false,
+        .debug = cfg->debug_build,
         .disable_vla = true, // TODO
         .sanitize_memory = false, // TODO
         .c_file = {},
