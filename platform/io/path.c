@@ -74,9 +74,13 @@ Path path_concat(Path a, Path b)
 {
   if(a.len == 0)
     return b;
+  return path_concat_skipping(a, b, 0);
+}
 
+Path path_concat_skipping(Path a, Path b, usize skip)
+{
   debug_assert_usize_lte(a.len + b.len, PATH_LEN_MAX);
-  for(usize i=0; i<b.len; ++i)
+  for(usize i=skip; i<b.len; ++i)
     a.cstr[a.len++] = b.cstr[i];
   a.cstr[a.len] = 0;
 
@@ -93,7 +97,11 @@ Path path_join(Path a, Path b)
   if(a.cstr[a.len-1] != '/')
     a = path_append_char(a, '/');
 
-  return path_concat(a, b);
+  usize skip = 0;
+  if(b.cstr[0] == '.' && b.cstr[1] == '/')
+    skip += 2;
+
+  return path_concat_skipping(a, b, skip);
 }
 
 Path path_join_cstr_append_cstr(Path dir, const char* name_1, const char* name_2)

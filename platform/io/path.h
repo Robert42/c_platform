@@ -17,6 +17,7 @@ Path path_parent(Path p);
 Path path_append_char(Path a, char b);
 Path path_append_cstr(Path a, const char* b);
 Path path_concat(Path a, Path b);
+Path path_concat_skipping(Path a, Path b, usize skip);
 Path path_join(Path a, Path b);
 Path path_join_cstr_append_cstr(Path dir, const char* name_1, const char* name_2);
 Path path_realpath(Path p);

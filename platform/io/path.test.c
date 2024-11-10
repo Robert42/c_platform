@@ -57,12 +57,24 @@ void path_test()
   assert_cstr_eq(path_concat(path_from_cstr("a"), path_from_cstr("")).cstr, "a");
   assert_cstr_eq(path_concat(path_from_cstr("abc"), path_from_cstr("uvw")).cstr, "abcuvw");
   assert_cstr_eq(path_concat(path_from_cstr("abc/"), path_from_cstr("uvw")).cstr, "abc/uvw");
+  
+  // ==== path_concat_skipping ====
+  assert_cstr_eq(path_concat_skipping(path_from_cstr(""), path_from_cstr("b"), 0).cstr, "b");
+  assert_cstr_eq(path_concat_skipping(path_from_cstr(""), path_from_cstr("b"), 1).cstr, "");
+  assert_cstr_eq(path_concat_skipping(path_from_cstr(""), path_from_cstr("b"), 10).cstr, "");
+  assert_cstr_eq(path_concat_skipping(path_from_cstr("a"), path_from_cstr(""), 0).cstr, "a");
+  assert_cstr_eq(path_concat_skipping(path_from_cstr("a"), path_from_cstr(""), 1).cstr, "a");
+  assert_cstr_eq(path_concat_skipping(path_from_cstr("abc"), path_from_cstr("uvw"), 2).cstr, "abcw");
+  assert_cstr_eq(path_concat_skipping(path_from_cstr("abc/"), path_from_cstr("uvw"), 1).cstr, "abc/vw");
 
   // ==== path_join ====
   assert_cstr_eq(path_join(path_from_cstr(""), path_from_cstr("b")).cstr, "b");
   assert_cstr_eq(path_join(path_from_cstr("a"), path_from_cstr("")).cstr, "a");
   assert_cstr_eq(path_join(path_from_cstr("abc"), path_from_cstr("uvw")).cstr, "abc/uvw");
   assert_cstr_eq(path_join(path_from_cstr("abc/"), path_from_cstr("uvw")).cstr, "abc/uvw");
+  
+  assert_cstr_eq(path_join(path_from_cstr("abc"), path_from_cstr("./uvw")).cstr, "abc/uvw");
+  assert_cstr_eq(path_join(path_from_cstr("abc/"), path_from_cstr("./uvw")).cstr, "abc/uvw");
 
   // ==== path_is_c_file ====
   assert_bool_eq(path_is_c_file(""), false);
