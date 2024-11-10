@@ -1,6 +1,7 @@
 # ==== compiled binaries ====
 a.out
 /all_tests
+/codegen
 /verify
 /tdd
 /unit_test
