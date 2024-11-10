@@ -122,6 +122,7 @@ int main(int argc, const char** argv)
     {
       if(prev_action != USIZE_MAX)
         simple_file_watcher_deinit(&watcher);
+      prev_action = cfg.action;
 
       const Path* paths_to_watch = project.action[cfg.action].trigger_fs_path;
       usize paths_to_watch_count = project.action[cfg.action].trigger_fs_path_count;
