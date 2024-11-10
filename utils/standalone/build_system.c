@@ -252,7 +252,8 @@ static struct Project project_load(struct Config* cfg)
       if(strchr(suffix, '?') != NULL)
         PANIC("suffix `%s` not support.\nRequirement: Contains no `?`");
 
-      printf("suffix: `%s`\n", suffix);
+      if(cfg->verbose)
+        printf("suffix: `%s`\n", suffix);
       action->trigger_fs_suffix[i_suffix] = suffix+1; // skip the leading `*`
     }
 
