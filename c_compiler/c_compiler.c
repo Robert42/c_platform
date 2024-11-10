@@ -262,15 +262,21 @@ static bool _ccc_runner_end_cmd(const struct C_Compiler_Config* cfg, enum _CCC_E
     .region_stderr = write_stderr ? &STACK : NULL,
   });
 
-  if(write_stdout)
+  switch(ecmd)
   {
-    mkpath(path_parent(cfg->capture_run_stdout_filepath));
-    file_text_create_from_cstr_if_different(cfg->capture_run_stdout_filepath, result.captured_stdout);
-  }
-  if(write_stderr)
-  {
-    mkpath(path_parent(cfg->capture_run_stderr_filepath));
-    file_text_create_from_cstr_if_different(cfg->capture_run_stderr_filepath, result.captured_stderr);
+  case CCCECMD_COMPILE:
+    break;
+  case CCCECMD_RUN:
+    if(write_stdout)
+    {
+      mkpath(path_parent(cfg->capture_run_stdout_filepath));
+      file_text_create_from_cstr_if_different(cfg->capture_run_stdout_filepath, result.captured_stdout);
+    }
+    if(write_stderr)
+    {
+      mkpath(path_parent(cfg->capture_run_stderr_filepath));
+      file_text_create_from_cstr_if_different(cfg->capture_run_stderr_filepath, result.captured_stderr);
+    }
   }
 
   *runner->region = runner->region_prev;
