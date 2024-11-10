@@ -45,6 +45,8 @@ const char* secure_getenv(const char* name);
 
 #endif // __linux__
 
+int feof(FILE* f);
+
 #else // ENV_COMPILER == COMPILER_TCC
 
 #include <stdio.h>
