@@ -242,7 +242,7 @@ static struct Project project_load(struct Config* cfg)
     action->trigger_fs_suffix_count = ini_action->trigger_fs_suffix_count;
     action->trigger_fs_suffix = ini_action->trigger_fs_suffix;
 
-    for(usize i_suffix=0; i_suffix<root.action_count; ++i_suffix)
+    for(usize i_suffix=0; i_suffix<action->trigger_fs_suffix_count; ++i_suffix)
     {
       const char* suffix = action->trigger_fs_suffix[i_suffix];
       if(suffix[0] != '*')
