@@ -362,7 +362,7 @@ enum C_Compiler cc_compiler_for_name(const char* name)
 
 enum C_Version cc_version_for_name(const char* name)
 {
-  for(int i=0; i<CC_COUNT; ++i)
+  for(usize i=0; i<ARRAY_LEN(_C_VERSION_NAME_GCC); ++i)
     if(cstr_eq(name, _C_VERSION_NAME_GCC[i]))
       return (enum C_Version)i;
   errx(EXIT_FAILURE, "Unknown version `%s`\n", name);
