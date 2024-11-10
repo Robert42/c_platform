@@ -116,6 +116,8 @@ Path path_realpath(Path p)
   char* buffer = (char*)mem_region_alloc_bytes_unaligned(&STACK, MAXPATHLEN);
 
   char* maybe_path = realpath(p.cstr, buffer);
+  if(UNLIKELY(maybe_path == NULL && errno==ENOENT))
+    PANIC("No such file or directory: <%s>", p.cstr);
   LINUX_ASSERT_NE(maybe_path, NULL);
 
   p = path_from_cstr(maybe_path);
