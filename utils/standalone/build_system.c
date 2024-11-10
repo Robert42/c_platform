@@ -268,7 +268,7 @@ static struct Project project_load(struct Config* cfg)
         .debug = false,
         .disable_vla = true, // TODO
         .sanitize_memory = false, // TODO
-        .c_file = false,
+        .c_file = {},
         .skip_warning_flags = false,
         .gen_parent_dir = true,
         .capture_run_stdout = false,
