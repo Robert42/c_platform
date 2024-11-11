@@ -12,6 +12,9 @@ a.out
 
 *.o
 
+# ==== static analysis ====
+*.plist
+
 # ==== debugging ====
 
 /*.rr/
