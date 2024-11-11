@@ -417,7 +417,7 @@ bool cc_compiler_is_available(enum C_Compiler cc)
     .capture_stderr = true,
   };
 
-  char* const * args = args_tcc;
+  char* const * args = NULL;
 
   switch(cc)
   {
@@ -425,6 +425,7 @@ bool cc_compiler_is_available(enum C_Compiler cc)
   case CC_GCC: args = args_gcc; break;
   case CC_CLANG: args = args_clang; break;
   }
+  debug_assert_ptr_ne(args, NULL);
 
   return proc_exec_blocking(args, suppress_output).success;
 }
