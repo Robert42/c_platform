@@ -39,6 +39,8 @@
 
 #if defined(__aarch64__)
 #define ENV_ARCH ARCH_AARCH64
+#elif defined(__x86_64__)
+#define ENV_ARCH ARCH_AARCH64
 #else
 #error unsupported
 #endif
