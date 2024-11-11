@@ -133,6 +133,26 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
 
   push_arg(str_from_cstr(_C_COMPILER_CMD[cfg.cc]), user_data);
 
+  if(cfg.static_analysis)
+  {
+    switch(cfg.cc)
+    {
+    case CC_TCC:
+      break;
+    case CC_GCC:
+      push_arg(STR_LIT("-fanalyzer"), user_data);
+      push_arg(STR_LIT("-Wanalyzer-too-complex"), user_data);
+      break;
+    case CC_CLANG:
+      push_arg(STR_LIT("--analyze"), user_data);
+      push_arg(STR_LIT("-Xclang"), user_data);
+      push_arg(STR_LIT("-analyzer-config"), user_data);
+      push_arg(STR_LIT("-Xclang"), user_data);
+      push_arg(STR_LIT("crosscheck-with-z3=true"), user_data);
+      break;
+    }
+  }
+
   if(cfg.debug)
   {
     switch(cfg.cc)

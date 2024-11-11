@@ -272,6 +272,30 @@ void c_compiler_test()
     }),
     "`gcc` `-std=gnu89` `-Ia/b/c` `-Ix/y/z` `main.c`\n"
   );
+
+  // ==== static analysis ====
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_GCC,
+      .debug = false,
+      .skip_warning_flags = true,
+      .c_version = C_VERSION_GNU_1989,
+      .c_file = path_from_cstr("main.c"),
+      .static_analysis = true,
+    }),
+    "`gcc` `-fanalyzer` `-Wanalyzer-too-complex` `-std=gnu89` `main.c`\n"
+  );
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_CLANG,
+      .debug = false,
+      .skip_warning_flags = true,
+      .c_version = C_VERSION_1999,
+      .c_file = path_from_cstr("main.c"),
+      .static_analysis = true,
+    }),
+    "`clang` `--analyze` `-Xclang` `-analyzer-config` `-Xclang` `crosscheck-with-z3=true` `-std=c99` `-pedantic` `main.c`\n"
+  );
 }
 
 #undef ASSERT_CC_CMF_EQ

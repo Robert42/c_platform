@@ -20,6 +20,7 @@ struct Config
   Path build_ini_path;
   bool verbose;
   bool debug_build;
+  bool static_analysis;
 };
 
 struct Context
@@ -34,6 +35,9 @@ static struct Config cfg_default()
     .cc = cc_fastest_available(),
     .action = USIZE_MAX,
     .build_ini_path = path_from_cstr("build.ini"),
+    .verbose = false,
+    .debug_build = false,
+    .static_analysis = false,
   };
 }
 
@@ -198,6 +202,9 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
     }else if(cstr_eq(argv[i], "-g"))
     {
       cfg.debug_build = true;
+    }else if(cstr_eq(argv[i], "--analyze"))
+    {
+      cfg.static_analysis = true;
     }else if(i+1 == argc && argv[i][0]!='-')
       cfg.build_ini_path = path_from_cstr(argv[i]);
     else
@@ -272,6 +279,7 @@ static struct Project project_load(struct Config* cfg)
         .debug = cfg->debug_build,
         .disable_vla = true, // TODO
         .sanitize_memory = false, // TODO
+        .static_analysis = cfg->static_analysis,
         .c_file = {},
         .skip_warning_flags = false,
         .gen_parent_dir = true,
@@ -300,6 +308,8 @@ static struct Project project_load(struct Config* cfg)
           cc.c_file = path_join(dir, path_from_cstr(cmd));
         else if(cstr_eq(cmd, "-g"))
           cc.debug = true;
+        else if(cstr_eq(cmd, "--analyze"))
+          cc.static_analysis = true;
         else if(cstr_eq(cmd, "-o"))
         {
           i_cmd++;
