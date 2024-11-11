@@ -42,8 +42,10 @@ void ini_parse(Mem_Region* region, const struct Ini_Format* format, const char* 
     case 'a' ... 'z':
     case 'A' ... 'Z':
     {
-      assert_ptr_ne(curr_section_format, NULL); // not inside section
       str field_name = tok_skip_ident(&code);
+
+      if(curr_section_format == NULL)
+        PANIC("ini_parse: value `%s` outside of any section", str_fmt(field_name));
 
       code = cstr_trim_left(code);
       assert_char_eq(*code, '=');
