@@ -47,7 +47,22 @@ struct C_Compiler_Config
   usize run_args_count;
 };
 
-bool cc_run(struct C_Compiler_Config cfg);
+enum CC_Single_Status
+{
+  STATUS_IGNORED = 0,
+  STATUS_PENDING,
+  STATUS_FAILED,
+  STATUS_SUCCEEDED,
+};
+
+struct CC_Status
+{
+  enum CC_Single_Status compile, static_analysis, run;
+};
+bool cc_status_is_success(struct CC_Status s);
+const char* cc_status_attempted_name(struct CC_Status s);
+
+struct CC_Status cc_run(struct C_Compiler_Config cfg);
 void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg);
 void cc_command_print(struct C_Compiler_Config cfg);
 

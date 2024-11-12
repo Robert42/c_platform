@@ -160,14 +160,14 @@ int main(int argc, const char** argv)
       if(cfg.verbose)
         cc_command_print(cc);
       const u64 time_begin = timer_now();
-      const bool success = cc_run(cc);
+      const struct CC_Status status = cc_run(cc);
       const u64 time_end = timer_now();
       duration = time_end - time_begin;
 
-      const char* what = cc.run_args!=NULL ? "compile and run" : "compile";
-      const char* result = success ? "SUCCESS" : "FAILURE";
-      const char* color = success ? TERM.green : TERM.red;
-      const char* color_bold = success ? TERM.green_bold : TERM.red_bold;
+      const char* what = cc_status_attempted_name(status);
+      const char* result = cc_status_is_success(status) ? "SUCCESS" : "FAILURE";
+      const char* color = cc_status_is_success(status) ? TERM.green : TERM.red;
+      const char* color_bold = cc_status_is_success(status) ? TERM.green_bold : TERM.red_bold;
       printf("%s==== %s%s%s: %s%s%s (%s) ====%s\n", color, color_bold, action.name, color, color_bold, result, color, what, TERM.normal);
       break;
     }

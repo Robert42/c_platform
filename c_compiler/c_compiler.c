@@ -30,6 +30,7 @@ enum _CCC_End_Cmd
 {
   CCCECMD_COMPILE,
   CCCECMD_RUN,
+  CCCECMD_ANALYZE,
 };
 
 static void _ccc_fmt_push_arg(const struct C_Compiler_Config* cfg, const str arg, void* user_data)
@@ -42,6 +43,7 @@ static bool _ccc_fmt_end_cmd(const struct C_Compiler_Config* cfg, enum _CCC_End_
   switch(ecmd)
   {
   case CCCECMD_COMPILE:
+  case CCCECMD_ANALYZE:
     break;
   case CCCECMD_RUN:
     if(cfg->capture_run_stdout)
@@ -123,7 +125,7 @@ const char* const _C_TCC_WARNING_OPTIONS[] = {
   "-Werror",
 };
 
-static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const struct C_Compiler_Config* cfg, const str arg, void* user_data), bool (*end_cmd)(const struct C_Compiler_Config* cfg, enum _CCC_End_Cmd cmd, void* user_data))
+static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)(const struct C_Compiler_Config* cfg, const str arg, void* user_data), bool (*end_cmd)(const struct C_Compiler_Config* cfg, enum _CCC_End_Cmd cmd, void* user_data))
 {
 #define push_arg(...) push_arg(&cfg, __VA_ARGS__)
 #define end_cmd(...) end_cmd(&cfg, __VA_ARGS__)
@@ -138,6 +140,7 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     switch(cfg.cc)
     {
     case CC_TCC:
+      push_arg(STR_LIT("--analyze"), user_data); // tcc does not accept this argument. This is on purpose so the users gets an error message.
       break;
     case CC_GCC:
       push_arg(STR_LIT("-fanalyzer"), user_data);
@@ -226,7 +229,9 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
 
   push_arg(path_as_str(&cfg.c_file), user_data);
 
-  if(run)
+  if(cfg.static_analysis)
+    end_cmd(CCCECMD_ANALYZE, user_data);
+  else if(run)
   {
     assert_usize_gt(cfg.output_file.len, 0);
     switch(cfg.cc)
@@ -236,16 +241,16 @@ static bool _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     case CC_GCC:
     case CC_CLANG:
       if(!end_cmd(CCCECMD_COMPILE, user_data))
-        return user_data;
+        return;
       push_arg(path_as_str(&cfg.output_file), user_data);
       break;
     }
     for(usize i=0; i<cfg.run_args_count; ++i)
       push_arg(str_from_cstr(cfg.run_args[i]), user_data);
 
-    return end_cmd(CCCECMD_RUN, user_data);
+    end_cmd(CCCECMD_RUN, user_data);
   }else
-    return end_cmd(CCCECMD_COMPILE, user_data);
+    end_cmd(CCCECMD_COMPILE, user_data);
 
 #undef push_arg
 #undef end_cmd
@@ -257,6 +262,8 @@ struct _Runner
   Mem_Region region_prev;
   char* args[128];
   usize arg_count;
+
+  struct CC_Status status;
 
   const struct C_Compiler_Config cfg;
 };
@@ -282,11 +289,17 @@ static bool _ccc_runner_end_cmd(const struct C_Compiler_Config* cfg, enum _CCC_E
     .region_stderr = write_stderr ? &STACK : NULL,
   });
 
+  const enum CC_Single_Status status = result.success ? STATUS_SUCCEEDED : STATUS_FAILED;
   switch(ecmd)
   {
   case CCCECMD_COMPILE:
+    runner->status.compile = status;
+    break;
+  case CCCECMD_ANALYZE:
+    runner->status.static_analysis = status;
     break;
   case CCCECMD_RUN:
+    runner->status.run = status;
     if(write_stdout)
     {
       mkpath(path_parent(cfg->capture_run_stdout_filepath));
@@ -308,7 +321,34 @@ static bool _ccc_runner_end_cmd(const struct C_Compiler_Config* cfg, enum _CCC_E
 static void _ccc_run_push_arg(const struct C_Compiler_Config* cfg, const str arg, void* user_data) {_ccc_runner_push_arg(cfg, arg, (struct _Runner*)user_data);}
 static bool _ccc_run_end_cmd(const struct C_Compiler_Config* cfg, enum _CCC_End_Cmd ecmd, void* user_data) {return _ccc_runner_end_cmd(cfg, ecmd, (struct _Runner*)user_data);}
 
-bool cc_run(struct C_Compiler_Config cfg)
+bool cc_status_is_success(struct CC_Status s)
+{
+  return s.compile != STATUS_FAILED &&
+    s.static_analysis != STATUS_FAILED &&
+    s.run != STATUS_FAILED;
+}
+
+const char* cc_status_attempted_name(struct CC_Status s)
+{
+  if(s.static_analysis != STATUS_IGNORED)
+  {
+    debug_assert(s.compile == STATUS_IGNORED);
+    debug_assert(s.run == STATUS_IGNORED);
+    return "static analysis";
+  }
+
+  if(s.compile != STATUS_IGNORED)
+  {
+    if(s.run == STATUS_IGNORED)
+      return "compile";
+    else
+      return "compile and run";
+  }
+
+  UNIMPLEMENTED();
+}
+
+struct CC_Status cc_run(struct C_Compiler_Config cfg)
 {
   debug_assert_bool_eq(_CC_INIT_CALLED, true); // ensure cc_init was called
 
@@ -317,11 +357,21 @@ bool cc_run(struct C_Compiler_Config cfg)
     .region_prev = STACK,
     .cfg = cfg,
   };
+  if(cfg.static_analysis)
+    runner.status.static_analysis = STATUS_PENDING;
+  else
+  {
+    runner.status.compile = STATUS_PENDING;
+    if(cfg.run_args != NULL)
+      runner.status.run = STATUS_PENDING;
+  }
 
   if(cfg.gen_parent_dir && cfg.output_file.len > 0)
     mkpath(path_parent(cfg.output_file));
 
-  return _ccc(cfg, &runner, _ccc_run_push_arg, _ccc_run_end_cmd);
+  _ccc(cfg, &runner, _ccc_run_push_arg, _ccc_run_end_cmd);
+
+  return runner.status;
 }
 
 void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg)
@@ -364,7 +414,8 @@ bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file)
   }
 #endif
 
-  return cc_run(cfg);
+  struct CC_Status status = cc_run(cfg);
+  return cc_status_is_success(status);
 }
 
 static const char* _CC_NAMES[CC_COUNT] = {
