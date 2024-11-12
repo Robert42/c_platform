@@ -212,6 +212,20 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
   }
 
   cfg.build_ini_path = path_realpath(cfg.build_ini_path);
+
+  if(cfg.static_analysis)
+  {
+    switch(cfg.cc)
+    {
+    case CC_CLANG: 
+      break; // All fine, nothing to change
+    case CC_GCC: // The gcc version I have installed is not able to analyze the whole project
+    case CC_TCC: // tcc has no static analysis at all.
+      cfg.cc = CC_CLANG;
+      break;
+    }
+  }
+
   return cfg;
 }
 
