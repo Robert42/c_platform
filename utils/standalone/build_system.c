@@ -21,6 +21,7 @@ struct Config
   bool verbose;
   bool debug_build;
   bool static_analysis;
+  bool sanitize_memory;
 };
 
 struct Context
@@ -38,6 +39,7 @@ static struct Config cfg_default()
     .verbose = false,
     .debug_build = false,
     .static_analysis = false,
+    .sanitize_memory = false,
   };
 }
 
@@ -189,6 +191,7 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
 {
   struct Config cfg = cfg_default();
 
+  bool explicit_cc = false;
   for(int i=1; i<argc; ++i)
   {
     if(strcmp(argv[i], "--cc") == 0)
@@ -196,12 +199,16 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
       if(++i >= argc) errx(EXIT_FAILURE, "Missing compiler after `--cc`\n");
 
       cfg.cc = cc_compiler_for_name(argv[i]);
+      explicit_cc = true;
     }else if(cstr_eq(argv[i], "-v"))
     {
       cfg.verbose = true;
     }else if(cstr_eq(argv[i], "-g"))
     {
       cfg.debug_build = true;
+    }else if(cstr_eq(argv[i], "--sanitize"))
+    {
+      cfg.sanitize_memory = true;
     }else if(cstr_eq(argv[i], "--analyze"))
     {
       cfg.static_analysis = true;
@@ -210,6 +217,17 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
     else
       errx(EXIT_FAILURE, "Unexpected argument\n```\n%s\n```\n", argv[i]);
   }
+
+  if(cfg.cc == CC_TCC && (
+    cfg.sanitize_memory
+    || cfg.static_analysis
+    ))
+  {
+    if(explicit_cc)
+      errx(EXIT_FAILURE, "tcc does not support sanitizers nor static analysis\n");
+    cfg.cc = CC_CLANG;
+  }
+    
 
   cfg.build_ini_path = path_realpath(cfg.build_ini_path);
 
@@ -292,7 +310,7 @@ static struct Project project_load(struct Config* cfg)
         .c_version = C_VERSION_2011,
         .debug = cfg->debug_build,
         .disable_vla = true, // TODO
-        .sanitize_memory = false, // TODO
+        .sanitize_memory = cfg->sanitize_memory,
         .static_analysis = cfg->static_analysis,
         .c_file = {},
         .skip_warning_flags = false,

@@ -140,7 +140,6 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     switch(cfg.cc)
     {
     case CC_TCC:
-      push_arg(STR_LIT("--analyze"), user_data); // tcc does not accept this argument. This is on purpose so the users gets an error message.
       break;
     case CC_GCC:
       push_arg(STR_LIT("-fanalyzer"), user_data);
