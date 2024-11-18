@@ -24,6 +24,7 @@ struct Config
   bool static_analysis;
   bool sanitize_memory;
   bool once;
+  bool clear;
 };
 
 struct Context
@@ -43,6 +44,7 @@ static struct Config cfg_default()
     .static_analysis = false,
     .sanitize_memory = false,
     .once = false,
+    .clear = true,
     .action_name = NULL,
   };
 }
@@ -161,8 +163,11 @@ int main(int argc, const char** argv)
     }
 
 #if CLEAR
-    printf("%s", TERM.clear);
-    fflush(stdout);
+    if(cfg.clear)
+    {
+      printf("%s", TERM.clear);
+      fflush(stdout);
+    }
 #endif
 #if PRINT_ITER_STATS
     u64 duration = UINT64_MAX;
@@ -241,6 +246,9 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
     }else if(cstr_eq(argv[i], "--analyze"))
     {
       cfg.static_analysis = true;
+    }else if(cstr_eq(argv[i], "--no-clear"))
+    {
+      cfg.clear = false;
     }else if(i+1 == argc && argv[i][0]!='-')
       cfg.build_ini_path = path_from_cstr(argv[i]);
     else
