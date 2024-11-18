@@ -215,7 +215,7 @@ static void assert_codegen()
       for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
         fmt_write(&fh, "%s%s %s", arg_idx?", ":"", a.type, arg_name[arg_idx]);
       fmt_write(&fh, ", const char* condition, const char* file, int line)");
-      fmt_write(&fc, signature_begin); // Here, the segnature is anultlermianted string
+      fmt_write(&fc, "%s", signature_begin); // Here, the segnature is anultlermianted string
       fmt_write(&fh, ";\n");
 
       fmt_write(&fc, "\n{\n");
