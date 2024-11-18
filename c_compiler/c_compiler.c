@@ -380,7 +380,7 @@ void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg)
 
 void cc_command_print(struct C_Compiler_Config cfg)
 {
-  char buf[256];
+  char buf[4096];
   Fmt f = fmt_new(buf, sizeof(buf));
   cc_command_fmt(&f, cfg);
   printf("%s", f.begin);

@@ -25,6 +25,7 @@ struct Config
   bool sanitize_memory;
   bool once;
   bool clear;
+  bool full_check;
 };
 
 struct Context
@@ -53,6 +54,7 @@ static struct Config build_system_cfg_load(int argc, const char** argv);
 static bool watch_files_filter(const char* filepath, const struct Context* ctx);
 
 static struct Project project_load(struct Config* cfg);
+static int full_check(struct Config cfg, struct Project project);
 
 int main(int argc, const char** argv)
 {
@@ -69,6 +71,9 @@ int main(int argc, const char** argv)
   struct Project project = project_load(&cfg);
   if(project.action_count == 0)
     return 0;
+
+  if(cfg.full_check)
+    return full_check(cfg, project);
 
   if(cfg.action_name != NULL)
   {
@@ -215,6 +220,70 @@ int main(int argc, const char** argv)
   } while(simple_file_watcher_wait_for_change(&watcher));
 }
 
+enum Full_Check_Step
+{
+  FULL_CHECK_STEP_ANALYZE = 1,
+  FULL_CHECK_STEP_SANITIZE = 2,
+};
+
+bool _full_check_run(struct C_Compiler_Config cc)
+{
+  // cc_command_print(cc);
+  return cc_status_is_success(cc_run(cc));
+  return true;
+}
+
+static int full_check(struct Config cfg, struct Project project)
+{
+  bool any_compiler_found = false;
+
+  (void)cfg;
+  for(usize i_action=0; i_action<project.action_count; ++i_action)
+  {
+    const struct Project_Action action = project.action[i_action];
+    const struct C_Compiler_Config action_cc = action.cc;
+
+    for(usize i_compiler=0; i_compiler<CC_COUNT; ++i_compiler)
+    {
+      const enum C_Compiler cc = (enum C_Compiler)i_compiler;
+      if(!cc_compiler_is_available(cc))
+        continue;
+      any_compiler_found = true;
+
+      if(cc == CC_TCC || 
+        action_cc.sanitize_memory ||
+        action_cc.static_analysis)
+        if(!_full_check_run(action_cc))
+          return EXIT_FAILURE;
+
+      if(cc != CC_GCC)
+      {
+        struct C_Compiler_Config cc_cfg = action_cc;
+        cc_cfg.static_analysis = true;
+        cc_cfg.cc = cc;
+        if(!_full_check_run(cc_cfg))
+          return EXIT_FAILURE;
+      }
+
+      {
+        struct C_Compiler_Config cc_cfg = action_cc;
+        cc_cfg.sanitize_memory = true;
+        cc_cfg.cc = cc;
+        if(!_full_check_run(cc_cfg))
+          return EXIT_FAILURE;
+      }
+    }
+  }
+
+  if(!any_compiler_found)
+  {
+    fprintf(stderr, "No supported C compiler found!\n");
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
 static struct Config build_system_cfg_load(int argc, const char** argv)
 {
   struct Config cfg = cfg_default();
@@ -246,9 +315,12 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
     }else if(cstr_eq(argv[i], "--analyze"))
     {
       cfg.static_analysis = true;
-    }else if(cstr_eq(argv[i], "--no-clear"))
+    }else if(cstr_eq(argv[i], "--no_clear"))
     {
       cfg.clear = false;
+    }else if(cstr_eq(argv[i], "--full_check"))
+    {
+      cfg.full_check = true;
     }else if(i+1 == argc && argv[i][0]!='-')
       cfg.build_ini_path = path_from_cstr(argv[i]);
     else
