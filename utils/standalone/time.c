@@ -9,6 +9,8 @@
 
 int main(int argc, char** argv)
 {
+  (void)argc;
+  (void)argv;
   c_script_init();
 
   const u64 time_begin = timer_now();
