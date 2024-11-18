@@ -312,6 +312,7 @@ static int full_check(struct Config cfg, struct Project project)
     fprintf(stderr, "No supported C compiler found!\n");
     return EXIT_FAILURE;
   }
+  printf("%s==== SUCCESS! ====%s\n", TERM.green, TERM.normal);
 
   return EXIT_SUCCESS;
 }
