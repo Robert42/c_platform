@@ -441,7 +441,7 @@ static struct Project project_load(struct Config* cfg)
 
     if(ini_action->cmd_count==0)
       action->variant = ACTION_NONE;
-    else if(cstr_eq(ini_action->cmd[0], "cc"))
+    else if(cstr_eq(ini_action->cmd[0], "cc") || cc_is_compiler_name(ini_action->cmd[0]))
     {
       action->variant = ACTION_CC;
       struct C_Compiler_Config cc = {
@@ -456,6 +456,9 @@ static struct Project project_load(struct Config* cfg)
         .gen_parent_dir = true,
         .capture_run_stdout = false,
       };
+
+      if(!cstr_eq(ini_action->cmd[0], "cc"))
+        cc.cc = cc_compiler_for_name(ini_action->cmd[0]);
 
       for(usize i_cmd = 1; i_cmd<ini_action->cmd_count; ++i_cmd)
       {

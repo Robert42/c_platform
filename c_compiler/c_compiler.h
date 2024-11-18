@@ -69,6 +69,7 @@ void cc_command_print(struct C_Compiler_Config cfg);
 bool cc_compile_and_run(enum C_Compiler cc, Path c_file, Path output_file);
 enum C_Compiler cc_compiler_for_name(const char* name); // will call errx, if the name is an unknown compiler
 const char* cc_compiler_name(enum C_Compiler cc);
+bool cc_is_compiler_name(const char* name);
 
 enum C_Version cc_version_for_name(const char* name); // will call errx, if the name is an unknown compiler
 

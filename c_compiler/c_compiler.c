@@ -443,6 +443,14 @@ const char* cc_compiler_name(enum C_Compiler cc)
   return _CC_NAMES[cc];
 }
 
+bool cc_is_compiler_name(const char* name)
+{
+  for(int i=0; i<CC_COUNT; ++i)
+    if(strcmp(name, _CC_NAMES[i]) == 0)
+      return true;
+  return false;
+}
+
 static enum C_Compiler _cc_find_available(const enum C_Compiler* compilers, int len)
 {
   for(int i=0; i<len; ++i)
