@@ -15,6 +15,7 @@
 
 struct Config
 {
+  const char* action_name;
   enum C_Compiler cc;
   usize action; // index
   Path build_ini_path;
@@ -22,6 +23,7 @@ struct Config
   bool debug_build;
   bool static_analysis;
   bool sanitize_memory;
+  bool once;
 };
 
 struct Context
@@ -40,6 +42,8 @@ static struct Config cfg_default()
     .debug_build = false,
     .static_analysis = false,
     .sanitize_memory = false,
+    .once = false,
+    .action_name = NULL,
   };
 }
 
@@ -63,6 +67,21 @@ int main(int argc, const char** argv)
   struct Project project = project_load(&cfg);
   if(project.action_count == 0)
     return 0;
+
+  if(cfg.action_name != NULL)
+  {
+    for(usize i=0; i<project.action_count; ++i)
+      if(cstr_eq(project.action[i].name, cfg.action_name))
+      {
+        cfg.action = i;
+        break;
+      }
+    if(cfg.action == USIZE_MAX)
+    {
+      fprintf(stderr, "Unknown action `%s`\n", cfg.action_name);
+      return EXIT_FAILURE;
+    }
+  }
 
   struct Context ctx = {
     .cfg = &cfg,
@@ -155,6 +174,8 @@ int main(int argc, const char** argv)
     {
     case ACTION_NONE:
       printf("%s==== %s: NOP ====%s\n", TERM.green, action.name, TERM.normal);
+      if(cfg.once)
+        return EXIT_SUCCESS;
       break;
     case ACTION_CC:
     {
@@ -171,6 +192,8 @@ int main(int argc, const char** argv)
       const char* color = cc_status_is_success(status) ? TERM.green : TERM.red;
       const char* color_bold = cc_status_is_success(status) ? TERM.green_bold : TERM.red_bold;
       printf("%s==== %s%s%s: %s%s%s (%s) ====%s\n", color, color_bold, action.name, color, color_bold, result, color, what, TERM.normal);
+      if(cfg.once)
+        return cc_status_is_success(status) ? EXIT_SUCCESS : EXIT_FAILURE;
       break;
     }
     }
@@ -206,6 +229,12 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
     }else if(cstr_eq(argv[i], "-g"))
     {
       cfg.debug_build = true;
+    }else if(cstr_eq(argv[i], "--once"))
+    {
+      cfg.once = true;
+      if(++i >= argc) errx(EXIT_FAILURE, "Missing action after `--once`\n");
+
+      cfg.action_name = argv[i];
     }else if(cstr_eq(argv[i], "--sanitize"))
     {
       cfg.sanitize_memory = true;
