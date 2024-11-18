@@ -220,7 +220,7 @@ int main(int argc, const char** argv)
   } while(simple_file_watcher_wait_for_change(&watcher));
 }
 
-bool _full_check_run(struct Project_Action action, struct C_Compiler_Config cc)
+bool _full_check_run(struct Project_Action action, struct Config cfg, struct C_Compiler_Config cc)
 {
   const char* doing;
   if(cc.static_analysis)
@@ -236,7 +236,7 @@ bool _full_check_run(struct Project_Action action, struct C_Compiler_Config cc)
     fflush(stdout);
   }
 
-  if(1)
+  if(cfg.verbose)
   {
     puts("\nCommand:\n```");
     cc_command_print(cc);
@@ -263,7 +263,6 @@ static int full_check(struct Config cfg, struct Project project)
 {
   bool any_compiler_found = false;
 
-  (void)cfg;
   for(usize i_action=0; i_action<project.action_count; ++i_action)
   {
     const struct Project_Action action = project.action[i_action];
@@ -282,7 +281,7 @@ static int full_check(struct Config cfg, struct Project project)
         action_cc.sanitize_memory ||
         action_cc.static_analysis)
       {
-        if(!_full_check_run(action, action_cc))
+        if(!_full_check_run(action, cfg, action_cc))
           return EXIT_FAILURE;
         continue;
       }
@@ -292,7 +291,7 @@ static int full_check(struct Config cfg, struct Project project)
         struct C_Compiler_Config cc_cfg = action_cc;
         cc_cfg.static_analysis = true;
         cc_cfg.cc = cc;
-        if(!_full_check_run(action, cc_cfg))
+        if(!_full_check_run(action, cfg, cc_cfg))
           return EXIT_FAILURE;
       }
 
@@ -300,7 +299,7 @@ static int full_check(struct Config cfg, struct Project project)
         struct C_Compiler_Config cc_cfg = action_cc;
         cc_cfg.sanitize_memory = true;
         cc_cfg.cc = cc;
-        if(!_full_check_run(action, cc_cfg))
+        if(!_full_check_run(action, cfg, cc_cfg))
           return EXIT_FAILURE;
       }
     }
