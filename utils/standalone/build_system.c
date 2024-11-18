@@ -236,7 +236,12 @@ bool _full_check_run(struct Project_Action action, struct C_Compiler_Config cc)
     fflush(stdout);
   }
 
-  // cc_command_print(cc);
+  if(1)
+  {
+    puts("\nCommand:\n```");
+    cc_command_print(cc);
+    puts("```\n");
+  }
   const u64 time_begin = timer_now();
   const bool succeeded = cc_status_is_success(cc_run(cc));
   const u64 time_end = timer_now();
