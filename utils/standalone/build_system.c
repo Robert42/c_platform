@@ -222,6 +222,8 @@ int main(int argc, const char** argv)
 
 bool _full_check_run(struct Project_Action action, struct Config cfg, struct C_Compiler_Config cc)
 {
+  (void)action;
+
   const char* doing;
   if(cc.static_analysis)
     doing = "analyze";
