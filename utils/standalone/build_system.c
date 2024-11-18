@@ -220,17 +220,38 @@ int main(int argc, const char** argv)
   } while(simple_file_watcher_wait_for_change(&watcher));
 }
 
-enum Full_Check_Step
+bool _full_check_run(struct Project_Action action, struct C_Compiler_Config cc)
 {
-  FULL_CHECK_STEP_ANALYZE = 1,
-  FULL_CHECK_STEP_SANITIZE = 2,
-};
+  const char* doing;
+  if(cc.static_analysis)
+    doing = "analyze";
+  else if(cc.sanitize_memory)
+    doing = "sanitize";
+  else
+    doing = "compile & run";
 
-bool _full_check_run(struct C_Compiler_Config cc)
-{
+  if(TERM.clear_line[0])
+  {
+    printf("%s (%s) ...", doing, cc_compiler_name(cc.cc));
+    fflush(stdout);
+  }
+
   // cc_command_print(cc);
-  return cc_status_is_success(cc_run(cc));
-  return true;
+  const u64 time_begin = timer_now();
+  const bool succeeded = cc_status_is_success(cc_run(cc));
+  const u64 time_end = timer_now();
+  const u64 duration = time_end - time_begin;
+
+  const char* duration_cstr = duration!=UINT64_MAX ? time_format_short_duration(duration, &SCRATCH) : "---";
+
+  const char* style_name = succeeded ? TERM.green : TERM.red;
+  const char* style_result = succeeded ? TERM.green_bold : TERM.red_bold;
+  const char* result = succeeded ? "SUCCESS" : "FAILURE";
+
+  printf("%s%s%s (%s) %s%s %s(%s)%s\n", TERM.clear_line, style_name, doing, cc_compiler_name(cc.cc), style_result, result, style_name, duration_cstr, TERM.normal);
+  fflush(stdout);
+
+  return succeeded;
 }
 
 static int full_check(struct Config cfg, struct Project project)
@@ -243,6 +264,8 @@ static int full_check(struct Config cfg, struct Project project)
     const struct Project_Action action = project.action[i_action];
     const struct C_Compiler_Config action_cc = action.cc;
 
+    printf("==== %s ====\n", action.name);
+
     for(usize i_compiler=0; i_compiler<CC_COUNT; ++i_compiler)
     {
       const enum C_Compiler cc = (enum C_Compiler)i_compiler;
@@ -253,15 +276,18 @@ static int full_check(struct Config cfg, struct Project project)
       if(cc == CC_TCC || 
         action_cc.sanitize_memory ||
         action_cc.static_analysis)
-        if(!_full_check_run(action_cc))
+      {
+        if(!_full_check_run(action, action_cc))
           return EXIT_FAILURE;
+        continue;
+      }
 
       if(cc != CC_GCC)
       {
         struct C_Compiler_Config cc_cfg = action_cc;
         cc_cfg.static_analysis = true;
         cc_cfg.cc = cc;
-        if(!_full_check_run(cc_cfg))
+        if(!_full_check_run(action, cc_cfg))
           return EXIT_FAILURE;
       }
 
@@ -269,7 +295,7 @@ static int full_check(struct Config cfg, struct Project project)
         struct C_Compiler_Config cc_cfg = action_cc;
         cc_cfg.sanitize_memory = true;
         cc_cfg.cc = cc;
-        if(!_full_check_run(cc_cfg))
+        if(!_full_check_run(action, cc_cfg))
           return EXIT_FAILURE;
       }
     }
