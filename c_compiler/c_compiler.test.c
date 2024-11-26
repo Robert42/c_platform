@@ -306,6 +306,16 @@ void c_compiler_test()
     }),
     "`frama-c` `-wp` `-rte` `-cpp-extra-args=-Ia/b/c` `-cpp-extra-args=-Ix/y/z` `main.c`\n"
   );
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_CLANG,
+      .c_file = path_from_cstr("main.c"),
+      .include_dir = {&include_a_b_c, &include_x_y_z},
+      .include_dir_count = 2,
+      .static_analysis = STATIC_ANALYSIS_FRAMA_C_EVA,
+    }),
+    "`frama-c` `-eva` `-cpp-extra-args=-Ia/b/c` `-cpp-extra-args=-Ix/y/z` `main.c`\n"
+  );
 
 }
 

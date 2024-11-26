@@ -139,9 +139,21 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
   case STATIC_ANALYSIS_NATIVE:
     break;
   case STATIC_ANALYSIS_FRAMA_C_WP:
+  case STATIC_ANALYSIS_FRAMA_C_EVA:
     push_arg(STR_LIT("frama-c"), user_data);
-    push_arg(STR_LIT("-wp"), user_data);
-    push_arg(STR_LIT("-rte"), user_data);
+    switch(cfg.static_analysis)
+    {
+    case STATIC_ANALYSIS_NONE:
+    case STATIC_ANALYSIS_NATIVE:
+      UNREACHABLE();
+    case STATIC_ANALYSIS_FRAMA_C_WP:
+      push_arg(STR_LIT("-wp"), user_data);
+      push_arg(STR_LIT("-rte"), user_data);
+      break;
+    case STATIC_ANALYSIS_FRAMA_C_EVA:
+      push_arg(STR_LIT("-eva"), user_data);
+      break;
+    }
     for(usize i=0; i<cfg.include_dir_count; ++i)
     {
       char _buf_include[sizeof(Path)+2];
@@ -153,9 +165,6 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
     push_arg(path_as_str(&cfg.c_file), user_data);
     end_cmd(CCCECMD_ANALYZE, user_data);
     return;
-  case STATIC_ANALYSIS_FRAMA_C_EVA:
-    TODO();
-    break;
   }
 
   push_arg(str_from_cstr(_C_COMPILER_CMD[cfg.cc]), user_data);
