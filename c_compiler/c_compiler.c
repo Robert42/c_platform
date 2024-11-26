@@ -139,6 +139,20 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
   case STATIC_ANALYSIS_NATIVE:
     break;
   case STATIC_ANALYSIS_FRAMA_C_WP:
+    push_arg(STR_LIT("frama-c"), user_data);
+    push_arg(STR_LIT("-wp"), user_data);
+    push_arg(STR_LIT("-rte"), user_data);
+    for(usize i=0; i<cfg.include_dir_count; ++i)
+    {
+      char _buf_include[sizeof(Path)+2];
+      Fmt f = fmt_new(_buf_include, sizeof(_buf_include));
+      fmt_write(&f, "-cpp-extra-args=-I%s", cfg.include_dir[i]->cstr);
+
+      push_arg((str){f.begin, f.end}, user_data);
+    }
+    push_arg(path_as_str(&cfg.c_file), user_data);
+    end_cmd(CCCECMD_ANALYZE, user_data);
+    return;
   case STATIC_ANALYSIS_FRAMA_C_EVA:
     TODO();
     break;
