@@ -133,9 +133,20 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
   const bool has_extensions = (1 << cfg.c_version) & _C_VERSION_WITH_EXTENSIONS;
   const bool run = cfg.run_args != NULL;
 
+  switch(cfg.static_analysis)
+  {
+  case STATIC_ANALYSIS_NONE:
+  case STATIC_ANALYSIS_NATIVE:
+    break;
+  case STATIC_ANALYSIS_FRAMA_C_WP:
+  case STATIC_ANALYSIS_FRAMA_C_EVA:
+    TODO();
+    break;
+  }
+
   push_arg(str_from_cstr(_C_COMPILER_CMD[cfg.cc]), user_data);
 
-  if(cfg.static_analysis)
+  if(cfg.static_analysis != STATIC_ANALYSIS_NONE)
   {
     switch(cfg.cc)
     {
@@ -228,7 +239,7 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
 
   push_arg(path_as_str(&cfg.c_file), user_data);
 
-  if(cfg.static_analysis)
+  if(cfg.static_analysis != STATIC_ANALYSIS_NONE)
     end_cmd(CCCECMD_ANALYZE, user_data);
   else if(run)
   {
@@ -356,7 +367,7 @@ struct CC_Status cc_run(struct C_Compiler_Config cfg)
     .region_prev = STACK,
     .cfg = cfg,
   };
-  if(cfg.static_analysis)
+  if(cfg.static_analysis != STATIC_ANALYSIS_NONE)
     runner.status.static_analysis = STATUS_PENDING;
   else
   {

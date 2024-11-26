@@ -9,6 +9,14 @@ enum C_Compiler
 };
 #define CC_COUNT 3
 
+enum Static_Analysis
+{
+  STATIC_ANALYSIS_NONE,
+  STATIC_ANALYSIS_NATIVE,
+  STATIC_ANALYSIS_FRAMA_C_WP,
+  STATIC_ANALYSIS_FRAMA_C_EVA,
+};
+
 enum C_Version
 {
   C_VERSION_1989,
@@ -23,11 +31,11 @@ struct C_Compiler_Config
 {
   enum C_Compiler cc : 8; // `gcc`, `clang`, `tcc`, ...
   enum C_Version c_version : 4; // `-std=c89`, `-std=c99`, `-std=c11`
+  enum Static_Analysis static_analysis : 4;
   bool debug : 1; // `-g`
   bool disable_vla : 1; // `-Werror=vla`
   bool skip_warning_flags : 1; // used by tests to reduce duplicate testcases
   bool sanitize_memory : 1;
-  bool static_analysis : 1;
   bool gen_parent_dir : 1;
 
   bool capture_run_stdout : 1; // ignored if `run_args` is NULL

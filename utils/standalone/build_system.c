@@ -21,7 +21,7 @@ struct Config
   Path build_ini_path;
   bool verbose;
   bool debug_build;
-  bool static_analysis;
+  enum Static_Analysis static_analysis;
   bool sanitize_memory;
   bool once;
   bool clear;
@@ -42,7 +42,7 @@ static struct Config cfg_default()
     .build_ini_path = path_from_cstr("build.ini"),
     .verbose = false,
     .debug_build = false,
-    .static_analysis = false,
+    .static_analysis = STATIC_ANALYSIS_NONE,
     .sanitize_memory = false,
     .once = false,
     .clear = true,
@@ -225,7 +225,7 @@ bool _full_check_run(struct Project_Action action, struct Config cfg, struct C_C
   (void)action;
 
   const char* doing;
-  if(cc.static_analysis)
+  if(cc.static_analysis != STATIC_ANALYSIS_NONE)
     doing = "analyze";
   else if(cc.sanitize_memory)
     doing = "sanitize";
@@ -281,7 +281,7 @@ static int full_check(struct Config cfg, struct Project project)
 
       if(cc == CC_TCC || 
         action_cc.sanitize_memory ||
-        action_cc.static_analysis)
+        action_cc.static_analysis != STATIC_ANALYSIS_NONE)
       {
         if(!_full_check_run(action, cfg, action_cc))
           return EXIT_FAILURE;
@@ -291,7 +291,7 @@ static int full_check(struct Config cfg, struct Project project)
       if(cc != CC_GCC)
       {
         struct C_Compiler_Config cc_cfg = action_cc;
-        cc_cfg.static_analysis = true;
+        cc_cfg.static_analysis = STATIC_ANALYSIS_NATIVE;
         cc_cfg.cc = cc;
         if(!_full_check_run(action, cfg, cc_cfg))
           return EXIT_FAILURE;
@@ -347,7 +347,13 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
       cfg.sanitize_memory = true;
     }else if(cstr_eq(argv[i], "--analyze"))
     {
-      cfg.static_analysis = true;
+      cfg.static_analysis = STATIC_ANALYSIS_NATIVE;
+    }else if(cstr_eq(argv[i], "--frama_c=wp"))
+    {
+      cfg.static_analysis = STATIC_ANALYSIS_FRAMA_C_WP;
+    }else if(cstr_eq(argv[i], "--frama_c=eva"))
+    {
+      cfg.static_analysis = STATIC_ANALYSIS_FRAMA_C_EVA;
     }else if(cstr_eq(argv[i], "--no_clear"))
     {
       cfg.clear = false;
@@ -362,7 +368,7 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
 
   if(cfg.cc == CC_TCC && (
     cfg.sanitize_memory
-    || cfg.static_analysis
+    || cfg.static_analysis == STATIC_ANALYSIS_NATIVE
     ))
   {
     if(explicit_cc)
@@ -373,7 +379,7 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
 
   cfg.build_ini_path = path_realpath(cfg.build_ini_path);
 
-  if(cfg.static_analysis)
+  if(cfg.static_analysis == STATIC_ANALYSIS_NATIVE)
   {
     switch(cfg.cc)
     {
@@ -486,7 +492,7 @@ static struct Project project_load(struct Config* cfg)
         else if(cstr_eq(cmd, "-g"))
           cc.debug = true;
         else if(cstr_eq(cmd, "--analyze"))
-          cc.static_analysis = true;
+          cc.static_analysis = STATIC_ANALYSIS_NATIVE;
         else if(cstr_eq(cmd, "-o"))
         {
           i_cmd++;
