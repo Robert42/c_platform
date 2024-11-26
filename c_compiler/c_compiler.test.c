@@ -281,7 +281,7 @@ void c_compiler_test()
       .skip_warning_flags = true,
       .c_version = C_VERSION_GNU_1989,
       .c_file = path_from_cstr("main.c"),
-      .static_analysis = true,
+      .static_analysis = STATIC_ANALYSIS_NATIVE,
     }),
     "`gcc` `-fanalyzer` `-Wanalyzer-too-complex` `-std=gnu89` `main.c`\n"
   );
@@ -292,7 +292,7 @@ void c_compiler_test()
       .skip_warning_flags = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
-      .static_analysis = true,
+      .static_analysis = STATIC_ANALYSIS_NATIVE,
     }),
     "`clang` `--analyze` `-Xclang` `-analyzer-config` `-Xclang` `crosscheck-with-z3=true` `-std=c99` `-pedantic` `main.c`\n"
   );
