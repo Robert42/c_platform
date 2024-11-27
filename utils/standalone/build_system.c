@@ -26,6 +26,7 @@ struct Config
   bool once;
   bool clear;
   bool full_check;
+  bool quick_check;
 };
 
 struct Context
@@ -277,6 +278,9 @@ static int full_check(struct Config cfg, struct Project project)
       const enum C_Compiler cc = (enum C_Compiler)i_compiler;
       if(!cc_compiler_is_available(cc))
         continue;
+      if(cfg.quick_check && (action_cc.sanitize_memory || action_cc.static_analysis != STATIC_ANALYSIS_NONE))
+        continue;
+
       any_compiler_found = true;
 
       if(cc == CC_TCC || 
@@ -288,7 +292,7 @@ static int full_check(struct Config cfg, struct Project project)
         continue;
       }
 
-      if(cc != CC_GCC)
+      if(cc != CC_GCC && !cfg.quick_check)
       {
         struct C_Compiler_Config cc_cfg = action_cc;
         cc_cfg.static_analysis = STATIC_ANALYSIS_NATIVE;
@@ -299,7 +303,7 @@ static int full_check(struct Config cfg, struct Project project)
 
       {
         struct C_Compiler_Config cc_cfg = action_cc;
-        cc_cfg.sanitize_memory = true;
+        cc_cfg.sanitize_memory = !cfg.quick_check;
         cc_cfg.cc = cc;
         if(!_full_check_run(action, cfg, cc_cfg))
           return EXIT_FAILURE;
@@ -360,6 +364,10 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
     }else if(cstr_eq(argv[i], "--full_check"))
     {
       cfg.full_check = true;
+    }else if(cstr_eq(argv[i], "--quick_check"))
+    {
+      cfg.full_check = true;
+      cfg.quick_check = true;
     }else if(i+1 == argc && argv[i][0]!='-')
       cfg.build_ini_path = path_from_cstr(argv[i]);
     else
