@@ -16,6 +16,8 @@ const char* const BANNER =
 
 int main(int argc, char** argv)
 {
+  (void)argc;
+  (void)argv;
   c_script_init();
 
   assert_codegen();

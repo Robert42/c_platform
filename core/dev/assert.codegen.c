@@ -101,7 +101,7 @@ static void assert_codegen()
 #define X(NAME, TYPE, FMT_CODE, CAST, DIFF) { \
     const char* const name = #NAME; \
     const int first_assert = num_assertions; \
-    for(int xy=0; xy<ARRAY_LEN(bin_condition_code); ++xy) \
+    for(usize xy=0; xy<ARRAY_LEN(bin_condition_code); ++xy) \
     { \
       const char* condition = cstr_fmt(&STACK, "x %s y", bin_condition_code[xy]); \
       assertions[num_assertions++] = (struct Codegen_Assert){ \
@@ -116,7 +116,7 @@ static void assert_codegen()
     } \
     if(CREATE_RANGE(X_MACRO_ASSERT_NUM_CMP_RNG)) \
     { \
-      for(int i=0; i<ARRAY_LEN(rng_conditions); ++i) \
+      for(usize i=0; i<ARRAY_LEN(rng_conditions); ++i) \
       { \
         const u16 xy = rng_conditions[i]>>8; \
         const u16 yz = rng_conditions[i] & 0xff; \
@@ -179,7 +179,7 @@ static void assert_codegen()
     fmt_write(&fh, "// ==== %s ====\n", g.name);
     fmt_write(&fc, "// ==== %s ====\n", g.name);
     
-    for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
+    for(usize assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
     {
       struct Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
@@ -215,7 +215,7 @@ static void assert_codegen()
       for(int arg_idx=0; arg_idx<a.num_args; ++arg_idx)
         fmt_write(&fh, "%s%s %s", arg_idx?", ":"", a.type, arg_name[arg_idx]);
       fmt_write(&fh, ", const char* condition, const char* file, int line)");
-      fmt_write(&fc, signature_begin); // Here, the segnature is anultlermianted string
+      fmt_write(&fc, "%s", signature_begin); // Here, the segnature is anultlermianted string
       fmt_write(&fh, ";\n");
 
       fmt_write(&fc, "\n{\n");
@@ -247,7 +247,7 @@ static void assert_codegen()
 
     fmt_write(&fh, "// ==== %s ====\n", g.name);
 
-    for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
+    for(usize assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
     {
       struct Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
@@ -268,7 +268,7 @@ static void assert_codegen()
 
     fmt_write(&fh, "// ==== %s ====\n", g.name);
 
-    for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
+    for(usize assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
     {
       struct Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names
@@ -287,7 +287,7 @@ static void assert_codegen()
 
     fmt_write(&fh, "// ==== %s ====\n", g.name);
     
-    for(int assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
+    for(usize assert_idx=g.begin; assert_idx<g.end; ++assert_idx)
     {
       struct Codegen_Assert a = assertions[assert_idx];
       assert_usize_lte(a.num_args, ARRAY_LEN(arg_name)); // Need more names

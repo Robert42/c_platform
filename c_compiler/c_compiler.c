@@ -133,9 +133,43 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
   const bool has_extensions = (1 << cfg.c_version) & _C_VERSION_WITH_EXTENSIONS;
   const bool run = cfg.run_args != NULL;
 
+  switch(cfg.static_analysis)
+  {
+  case STATIC_ANALYSIS_NONE:
+  case STATIC_ANALYSIS_NATIVE:
+    break;
+  case STATIC_ANALYSIS_FRAMA_C_WP:
+  case STATIC_ANALYSIS_FRAMA_C_EVA:
+    push_arg(STR_LIT("frama-c"), user_data);
+    switch(cfg.static_analysis)
+    {
+    case STATIC_ANALYSIS_NONE:
+    case STATIC_ANALYSIS_NATIVE:
+      UNREACHABLE();
+    case STATIC_ANALYSIS_FRAMA_C_WP:
+      push_arg(STR_LIT("-wp"), user_data);
+      push_arg(STR_LIT("-rte"), user_data);
+      break;
+    case STATIC_ANALYSIS_FRAMA_C_EVA:
+      push_arg(STR_LIT("-eva"), user_data);
+      break;
+    }
+    for(usize i=0; i<cfg.include_dir_count; ++i)
+    {
+      char _buf_include[sizeof(Path)+2];
+      Fmt f = fmt_new(_buf_include, sizeof(_buf_include));
+      fmt_write(&f, "-cpp-extra-args=-I%s", cfg.include_dir[i]->cstr);
+
+      push_arg((str){f.begin, f.end}, user_data);
+    }
+    push_arg(path_as_str(&cfg.c_file), user_data);
+    end_cmd(CCCECMD_ANALYZE, user_data);
+    return;
+  }
+
   push_arg(str_from_cstr(_C_COMPILER_CMD[cfg.cc]), user_data);
 
-  if(cfg.static_analysis)
+  if(cfg.static_analysis != STATIC_ANALYSIS_NONE)
   {
     switch(cfg.cc)
     {
@@ -228,7 +262,7 @@ static void _ccc(struct C_Compiler_Config cfg, void* user_data, void (*push_arg)
 
   push_arg(path_as_str(&cfg.c_file), user_data);
 
-  if(cfg.static_analysis)
+  if(cfg.static_analysis != STATIC_ANALYSIS_NONE)
     end_cmd(CCCECMD_ANALYZE, user_data);
   else if(run)
   {
@@ -356,7 +390,7 @@ struct CC_Status cc_run(struct C_Compiler_Config cfg)
     .region_prev = STACK,
     .cfg = cfg,
   };
-  if(cfg.static_analysis)
+  if(cfg.static_analysis != STATIC_ANALYSIS_NONE)
     runner.status.static_analysis = STATUS_PENDING;
   else
   {
@@ -380,7 +414,7 @@ void cc_command_fmt(Fmt* f, struct C_Compiler_Config cfg)
 
 void cc_command_print(struct C_Compiler_Config cfg)
 {
-  char buf[256];
+  char buf[4096];
   Fmt f = fmt_new(buf, sizeof(buf));
   cc_command_fmt(&f, cfg);
   printf("%s", f.begin);
@@ -441,6 +475,14 @@ enum C_Version cc_version_for_name(const char* name)
 const char* cc_compiler_name(enum C_Compiler cc)
 {
   return _CC_NAMES[cc];
+}
+
+bool cc_is_compiler_name(const char* name)
+{
+  for(int i=0; i<CC_COUNT; ++i)
+    if(strcmp(name, _CC_NAMES[i]) == 0)
+      return true;
+  return false;
 }
 
 static enum C_Compiler _cc_find_available(const enum C_Compiler* compilers, int len)

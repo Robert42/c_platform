@@ -281,7 +281,7 @@ void c_compiler_test()
       .skip_warning_flags = true,
       .c_version = C_VERSION_GNU_1989,
       .c_file = path_from_cstr("main.c"),
-      .static_analysis = true,
+      .static_analysis = STATIC_ANALYSIS_NATIVE,
     }),
     "`gcc` `-fanalyzer` `-Wanalyzer-too-complex` `-std=gnu89` `main.c`\n"
   );
@@ -292,10 +292,31 @@ void c_compiler_test()
       .skip_warning_flags = true,
       .c_version = C_VERSION_1999,
       .c_file = path_from_cstr("main.c"),
-      .static_analysis = true,
+      .static_analysis = STATIC_ANALYSIS_NATIVE,
     }),
     "`clang` `--analyze` `-Xclang` `-analyzer-config` `-Xclang` `crosscheck-with-z3=true` `-std=c99` `-pedantic` `main.c`\n"
   );
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_CLANG,
+      .c_file = path_from_cstr("main.c"),
+      .include_dir = {&include_a_b_c, &include_x_y_z},
+      .include_dir_count = 2,
+      .static_analysis = STATIC_ANALYSIS_FRAMA_C_WP,
+    }),
+    "`frama-c` `-wp` `-rte` `-cpp-extra-args=-Ia/b/c` `-cpp-extra-args=-Ix/y/z` `main.c`\n"
+  );
+  ASSERT_CC_CMF_EQ(
+    ((struct C_Compiler_Config){
+      .cc = CC_CLANG,
+      .c_file = path_from_cstr("main.c"),
+      .include_dir = {&include_a_b_c, &include_x_y_z},
+      .include_dir_count = 2,
+      .static_analysis = STATIC_ANALYSIS_FRAMA_C_EVA,
+    }),
+    "`frama-c` `-eva` `-cpp-extra-args=-Ia/b/c` `-cpp-extra-args=-Ix/y/z` `main.c`\n"
+  );
+
 }
 
 #undef ASSERT_CC_CMF_EQ

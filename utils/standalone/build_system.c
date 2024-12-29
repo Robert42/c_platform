@@ -15,13 +15,18 @@
 
 struct Config
 {
+  const char* action_name;
   enum C_Compiler cc;
   usize action; // index
   Path build_ini_path;
   bool verbose;
   bool debug_build;
-  bool static_analysis;
+  enum Static_Analysis static_analysis;
   bool sanitize_memory;
+  bool once;
+  bool clear;
+  bool full_check;
+  bool quick_check;
 };
 
 struct Context
@@ -38,8 +43,11 @@ static struct Config cfg_default()
     .build_ini_path = path_from_cstr("build.ini"),
     .verbose = false,
     .debug_build = false,
-    .static_analysis = false,
+    .static_analysis = STATIC_ANALYSIS_NONE,
     .sanitize_memory = false,
+    .once = false,
+    .clear = true,
+    .action_name = NULL,
   };
 }
 
@@ -47,6 +55,7 @@ static struct Config build_system_cfg_load(int argc, const char** argv);
 static bool watch_files_filter(const char* filepath, const struct Context* ctx);
 
 static struct Project project_load(struct Config* cfg);
+static int full_check(struct Config cfg, struct Project project);
 
 int main(int argc, const char** argv)
 {
@@ -63,6 +72,24 @@ int main(int argc, const char** argv)
   struct Project project = project_load(&cfg);
   if(project.action_count == 0)
     return 0;
+
+  if(cfg.full_check)
+    return full_check(cfg, project);
+
+  if(cfg.action_name != NULL)
+  {
+    for(usize i=0; i<project.action_count; ++i)
+      if(cstr_eq(project.action[i].name, cfg.action_name))
+      {
+        cfg.action = i;
+        break;
+      }
+    if(cfg.action == USIZE_MAX)
+    {
+      fprintf(stderr, "Unknown action `%s`\n", cfg.action_name);
+      return EXIT_FAILURE;
+    }
+  }
 
   struct Context ctx = {
     .cfg = &cfg,
@@ -142,8 +169,11 @@ int main(int argc, const char** argv)
     }
 
 #if CLEAR
-    printf("%s", TERM.clear);
-    fflush(stdout);
+    if(cfg.clear)
+    {
+      printf("%s", TERM.clear);
+      fflush(stdout);
+    }
 #endif
 #if PRINT_ITER_STATS
     u64 duration = UINT64_MAX;
@@ -155,6 +185,8 @@ int main(int argc, const char** argv)
     {
     case ACTION_NONE:
       printf("%s==== %s: NOP ====%s\n", TERM.green, action.name, TERM.normal);
+      if(cfg.once)
+        return EXIT_SUCCESS;
       break;
     case ACTION_CC:
     {
@@ -171,6 +203,8 @@ int main(int argc, const char** argv)
       const char* color = cc_status_is_success(status) ? TERM.green : TERM.red;
       const char* color_bold = cc_status_is_success(status) ? TERM.green_bold : TERM.red_bold;
       printf("%s==== %s%s%s: %s%s%s (%s) ====%s\n", color, color_bold, action.name, color, color_bold, result, color, what, TERM.normal);
+      if(cfg.once)
+        return cc_status_is_success(status) ? EXIT_SUCCESS : EXIT_FAILURE;
       break;
     }
     }
@@ -185,6 +219,106 @@ int main(int argc, const char** argv)
 #endif
     scratch_swap();
   } while(simple_file_watcher_wait_for_change(&watcher));
+}
+
+bool _full_check_run(struct Project_Action action, struct Config cfg, struct C_Compiler_Config cc)
+{
+  (void)action;
+
+  const char* doing;
+  if(cc.static_analysis != STATIC_ANALYSIS_NONE)
+    doing = "analyze";
+  else if(cc.sanitize_memory)
+    doing = "sanitize";
+  else
+    doing = "compile & run";
+
+  if(TERM.clear_line[0])
+  {
+    printf("%s (%s) ...", doing, cc_compiler_name(cc.cc));
+    fflush(stdout);
+  }
+
+  if(cfg.verbose)
+  {
+    puts("\nCommand:\n```");
+    cc_command_print(cc);
+    puts("```\n");
+  }
+  const u64 time_begin = timer_now();
+  const bool succeeded = cc_status_is_success(cc_run(cc));
+  const u64 time_end = timer_now();
+  const u64 duration = time_end - time_begin;
+
+  const char* duration_cstr = duration!=UINT64_MAX ? time_format_short_duration(duration, &SCRATCH) : "---";
+
+  const char* style_name = succeeded ? TERM.green : TERM.red;
+  const char* style_result = succeeded ? TERM.green_bold : TERM.red_bold;
+  const char* result = succeeded ? "SUCCESS" : "FAILURE";
+
+  printf("%s%s%s (%s) %s%s %s(%s)%s\n", TERM.clear_line, style_name, doing, cc_compiler_name(cc.cc), style_result, result, style_name, duration_cstr, TERM.normal);
+  fflush(stdout);
+
+  return succeeded;
+}
+
+static int full_check(struct Config cfg, struct Project project)
+{
+  bool any_compiler_found = false;
+
+  for(usize i_action=0; i_action<project.action_count; ++i_action)
+  {
+    const struct Project_Action action = project.action[i_action];
+    const struct C_Compiler_Config action_cc = action.cc;
+
+    printf("==== %s ====\n", action.name);
+
+    for(usize i_compiler=0; i_compiler<CC_COUNT; ++i_compiler)
+    {
+      const enum C_Compiler cc = (enum C_Compiler)i_compiler;
+      if(!cc_compiler_is_available(cc))
+        continue;
+      if(cfg.quick_check && (action_cc.sanitize_memory || action_cc.static_analysis != STATIC_ANALYSIS_NONE))
+        continue;
+
+      any_compiler_found = true;
+
+      if(cc == CC_TCC || 
+        action_cc.sanitize_memory ||
+        action_cc.static_analysis != STATIC_ANALYSIS_NONE)
+      {
+        if(!_full_check_run(action, cfg, action_cc))
+          return EXIT_FAILURE;
+        continue;
+      }
+
+      if(cc != CC_GCC && !cfg.quick_check)
+      {
+        struct C_Compiler_Config cc_cfg = action_cc;
+        cc_cfg.static_analysis = STATIC_ANALYSIS_NATIVE;
+        cc_cfg.cc = cc;
+        if(!_full_check_run(action, cfg, cc_cfg))
+          return EXIT_FAILURE;
+      }
+
+      {
+        struct C_Compiler_Config cc_cfg = action_cc;
+        cc_cfg.sanitize_memory = !cfg.quick_check;
+        cc_cfg.cc = cc;
+        if(!_full_check_run(action, cfg, cc_cfg))
+          return EXIT_FAILURE;
+      }
+    }
+  }
+
+  if(!any_compiler_found)
+  {
+    fprintf(stderr, "No supported C compiler found!\n");
+    return EXIT_FAILURE;
+  }
+  printf("%s==== SUCCESS! ====%s\n", TERM.green_bold, TERM.normal);
+
+  return EXIT_SUCCESS;
 }
 
 static struct Config build_system_cfg_load(int argc, const char** argv)
@@ -206,12 +340,34 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
     }else if(cstr_eq(argv[i], "-g"))
     {
       cfg.debug_build = true;
+    }else if(cstr_eq(argv[i], "--once"))
+    {
+      cfg.once = true;
+      if(++i >= argc) errx(EXIT_FAILURE, "Missing action after `--once`\n");
+
+      cfg.action_name = argv[i];
     }else if(cstr_eq(argv[i], "--sanitize"))
     {
       cfg.sanitize_memory = true;
     }else if(cstr_eq(argv[i], "--analyze"))
     {
-      cfg.static_analysis = true;
+      cfg.static_analysis = STATIC_ANALYSIS_NATIVE;
+    }else if(cstr_eq(argv[i], "--frama_c=wp"))
+    {
+      cfg.static_analysis = STATIC_ANALYSIS_FRAMA_C_WP;
+    }else if(cstr_eq(argv[i], "--frama_c=eva"))
+    {
+      cfg.static_analysis = STATIC_ANALYSIS_FRAMA_C_EVA;
+    }else if(cstr_eq(argv[i], "--no_clear"))
+    {
+      cfg.clear = false;
+    }else if(cstr_eq(argv[i], "--full_check"))
+    {
+      cfg.full_check = true;
+    }else if(cstr_eq(argv[i], "--quick_check"))
+    {
+      cfg.full_check = true;
+      cfg.quick_check = true;
     }else if(i+1 == argc && argv[i][0]!='-')
       cfg.build_ini_path = path_from_cstr(argv[i]);
     else
@@ -220,7 +376,7 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
 
   if(cfg.cc == CC_TCC && (
     cfg.sanitize_memory
-    || cfg.static_analysis
+    || cfg.static_analysis == STATIC_ANALYSIS_NATIVE
     ))
   {
     if(explicit_cc)
@@ -231,7 +387,7 @@ static struct Config build_system_cfg_load(int argc, const char** argv)
 
   cfg.build_ini_path = path_realpath(cfg.build_ini_path);
 
-  if(cfg.static_analysis)
+  if(cfg.static_analysis == STATIC_ANALYSIS_NATIVE)
   {
     switch(cfg.cc)
     {
@@ -302,7 +458,7 @@ static struct Project project_load(struct Config* cfg)
 
     if(ini_action->cmd_count==0)
       action->variant = ACTION_NONE;
-    else if(cstr_eq(ini_action->cmd[0], "cc"))
+    else if(cstr_eq(ini_action->cmd[0], "cc") || cc_is_compiler_name(ini_action->cmd[0]))
     {
       action->variant = ACTION_CC;
       struct C_Compiler_Config cc = {
@@ -317,6 +473,9 @@ static struct Project project_load(struct Config* cfg)
         .gen_parent_dir = true,
         .capture_run_stdout = false,
       };
+
+      if(!cstr_eq(ini_action->cmd[0], "cc"))
+        cc.cc = cc_compiler_for_name(ini_action->cmd[0]);
 
       for(usize i_cmd = 1; i_cmd<ini_action->cmd_count; ++i_cmd)
       {
@@ -341,7 +500,7 @@ static struct Project project_load(struct Config* cfg)
         else if(cstr_eq(cmd, "-g"))
           cc.debug = true;
         else if(cstr_eq(cmd, "--analyze"))
-          cc.static_analysis = true;
+          cc.static_analysis = STATIC_ANALYSIS_NATIVE;
         else if(cstr_eq(cmd, "-o"))
         {
           i_cmd++;
