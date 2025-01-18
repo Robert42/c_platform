@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
+// Copyright (c) 2024-2025 Robert Hildebrandt. All rights reserved.
 #include "proc.h"
 
 struct S { bool x, y; };
@@ -30,10 +30,10 @@ void proc_test()
   {
     region.begin = BUFFER;
     for(usize i=0; i<sizeof(BUFFER); ++i) BUFFER[i] = 0xCC;
-    char* const args[] = {"tcc", "/NOT_EXISTING", NULL};
+    char* const args[] = {"ls", "--totally_normal_option", NULL};
     struct Proc_Exec_Blocking_Result result = proc_exec_blocking(args, capture_stderr);
 
-    const char* expected = "tcc: error: file '/NOT_EXISTING' not found\n";
+    const char* expected = "ls: unrecognized option '--totally_normal_option'\nTry 'ls --help' for more information.\n";
     assert_cstr_eq(result.captured_stderr, expected);
     debug_assert_ptr_eq(region.begin, BUFFER + strlen(expected)+1);
     assert_int_ne(result.exit_code, EXIT_SUCCESS);
