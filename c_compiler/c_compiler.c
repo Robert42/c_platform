@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
+// Copyright (c) 2024-2025 Robert Hildebrandt. All rights reserved.
 #include "c_compiler.h"
 
 #ifndef DISABLE_SANITIZER
@@ -500,8 +500,8 @@ enum C_Compiler cc_fastest_available()
 {
   const enum C_Compiler FASTEST_FIRST[CC_COUNT] = {
     CC_TCC,
-    CC_GCC,
     CC_CLANG,
+    CC_GCC,
   };
 
   return _cc_find_available(FASTEST_FIRST, ARRAY_LEN(FASTEST_FIRST));
