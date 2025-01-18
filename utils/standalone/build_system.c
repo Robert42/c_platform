@@ -1,13 +1,19 @@
-// Copyright (c) 2024 Robert Hildebrandt. All rights reserved.
+// Copyright (c) 2024-2025 Robert Hildebrandt. All rights reserved.
 
 #include "../../c_script.h"
 #include "../collections/set/setintcddo.c"
 #include "../script/simple_file_watcher.c" // depends on setintcddo.c, x_macros.h
 #include "build_system/project.h"
 
-// ```
-// clear && gcc -O2 utils/standalone/build_system.c -o utils/standalone/bs && utils/standalone/bs /path/to/build.ini
-// ```
+/*
+ ```
+clear
+
+gcc -O2 utils/standalone/build_system.c -o utils/standalone/bs
+
+utils/standalone/bs /path/to/build.ini
+```
+*/
 
 #define PRINT_ITER_STATS 1
 #define CLEAR 1
